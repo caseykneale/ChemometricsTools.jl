@@ -8,6 +8,9 @@ struct Pipeline
     inplace::Bool
 end
 
+#Naive Constructor...
+Pipeline(Transforms) = Pipeline(Transforms, false)
+
 function PipelineInPlace( X, FnStack...)
     pipeline = Array{Any,1}(undef, length(FnStack))
     for (i, fn) in enumerate( FnStack )
@@ -104,7 +107,10 @@ struct PCA <: Transform
     algorithm::String
 end
 
-function PCA_NIPALS(X; Factors = 2, tolerance = 1e-7, maxiters = 200)
+#NIPALS based PCA.
+#Kind of advantageous is you don't want to outright compute all latent variables.
+#Kind of slow, but a must for a chemometrics package...
+function PCA_NIPALS(X; Factors = min(size(X)) - 1, tolerance = 1e-7, maxiters = 200)
     tolsq = tolerance * tolerance
     #Instantiate some variables up front for performance...
     Xsize = size(X)
@@ -115,7 +121,7 @@ function PCA_NIPALS(X; Factors = 2, tolerance = 1e-7, maxiters = 200)
     #Set tolerance to floating point precision
     Residuals = copy(X)
     for factor in 1:Factors
-        lastErr = sum(abs.(Residuals)); curErr = tolerance + 1; #diffErr = tolsq + 1;
+        lastErr = sum(abs.(Residuals)); curErr = tolerance + 1;
         t = Residuals[:, 1]
         iterations = 0
         while (abs(curErr - lastErr) > tolsq) && (iterations < maxiters)
@@ -138,7 +144,8 @@ function PCA_NIPALS(X; Factors = 2, tolerance = 1e-7, maxiters = 200)
     return PCA(Tm, Pm, EigVal, "NIPALS")
 end
 
-function PCA(Z; Factors = 2)
+#SVD based PCA
+function PCA(Z; Factors = min(size(Z)) - 1)
     svdres = LinearAlgebra.svd(Z)
     return PCA(svdres.U[:, 1:Factors], svdres.Vt[1:Factors, :], svdres.S[1:Factors], "SVD")
 end
