@@ -2,7 +2,7 @@ using Distributions
 
 #Unwritten...
 function KNN_OneClass(X)
-
+    println("Coming soon...")
 end
 
 struct PCA_Hotelling
@@ -21,7 +21,7 @@ function Q(X, PCAModel::PCA; Significance = 0.05, Variance = 0.99)
     L = cumsum(PCA.SingularValues[ 1 : 3 ])
     H0 = 1.0 - ( ( 2.0 * L[ 1 ] * L[ 3 ] ) / ( 3.0 * L[ 2 ]^2 ) )
     Guass = quantile( Normal(), 1.0 - Significance )
-    Upper = L[1] * ( ( ( H0 * Gauss * sqrt( 2.0 * L[2] ) ) / L[1] ) + 1.0 + ( ( L[2] * H0 * ( H0 - 1.0 )/ L[1]^2) )^(1.0/H0)
+    Upper = L[1] * ( ( ( H0 * Gauss * sqrt( 2.0 * L[2] ) ) / L[1] ) + 1.0 + ( ( L[2] * H0 * ( H0 - 1.0 )/ L[1]^2) )^(1.0/H0))
     return Q
 end
 

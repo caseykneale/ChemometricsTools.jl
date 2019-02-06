@@ -23,7 +23,7 @@ end
 KFoldsValidation(folds, x, y) = KFoldsValidation( Int( floor( size( x )[ 1 ] / folds) ), size( y )[ 1 ], x, y)
 LeaveOneOut(x,y) = KFoldsValidation( size( x )[ 1 ], size( y )[ 1 ], x, y )
 
-function Base.iterate( iter::KFolds, state = 0 )
+function Base.iterate( iter::KFoldsValidation, state = 0 )
     i = state;
     if (i * iter.foldsize) >= iter.observations; return nothing; end
     predictInds = []; trainInds = []

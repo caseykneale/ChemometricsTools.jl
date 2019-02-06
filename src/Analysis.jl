@@ -31,8 +31,8 @@ end
 
 #Untested...
 struct BlandAltman
-    means::Array(Float64, 1)
-    differences::Array(Float64, 1)
+    means::Array{Float64, 1}
+    differences::Array{Float64, 1}
     UpperLimit::Float64
     Center::Float64
     LowerLimit::Float64
@@ -50,6 +50,6 @@ function BlandAltman(Y1, Y2)
     LowerLimit = MeanofDiffs - bounds * StdofDiffs
     #To:Do Add trend-line....
     Outliers = findall( (diffs .> MeanofDiffs + 1.96*StdofDiffs) )
-    Outliers = vcat(Outliers, findall( diffs < MeanofDiffs - 1.96*StdofDiffs )
+    Outliers = vcat(Outliers, findall( diffs < MeanofDiffs - 1.96*StdofDiffs ) )
     return BlandAltman( means, diffs, UpperLimit, Center, LowerLimit, Outliers )
 end

@@ -1,12 +1,16 @@
 module ChemometricsTools
 
+    include("Transformations.jl")
+    export PipelineInPlace, Pipeline, Center, StandardNormalVariate, RangeNorm,
+        MultiplicativeScatterCorrection, PCA_NIPALS, PCA, ExplainedVariance
+
     include("Analysis.jl")
     export CanonicalCorrelationAnalysis, BlandAltman
 
     include("AnomalyDetection.jl")
     export KNN_OneClass, PCA_Hotelling, Q, Hotelling
 
-    include("ClassificationModel.jl")
+    include("ClassificationModels.jl")
     export Threshold, MulticlassThreshold, HighestVote, KNN,
         LinearDiscriminantAnalysis, ExplainedVariance
 
@@ -36,10 +40,6 @@ module ChemometricsTools
 
     include("Training.jl")
     export Shuffle, VenetianBlinds, Shuffle!, LeaveOneOut, KFoldsValidation
-
-    include("Transformations.jl")
-    export PipelineInPlace, Pipeline, Center, StandardNormalVariate, RangeNorm,
-        MultiplicativeScatterCorrection, PCA_NIPALS, PCA, ExplainedVariance
 
 #ToDo: Add tests...
 
