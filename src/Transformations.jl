@@ -29,7 +29,7 @@ end
 function (P::Pipeline)(X; inverse = false)
     if inverse
         if P.inplace
-            for fn in reverse( X.transforms ); X .= fn( X; inverse = true ) ; end
+            for fn in reverse( P.transforms ); X .= fn( X; inverse = true ) ; end
         else
             foldr( ( p, X ) -> p(X; inverse = inverse), P.transforms, init = X)
         end
@@ -47,12 +47,16 @@ struct CenterTransform{B} <: Transform
     Mean::B
 end
 
-function Center(Z)
-    mu = StatsBase.mean(Z, dims = 1)
-    CenterTransform( mu )
-end
+Center(Z) = CenterTransform( StatsBase.mean(Z, dims = 1) )
+
 #Call with new data transforms the new data, or inverts it
 (T::CenterTransform)(Z; inverse = false) = (inverse) ? (Z .+ T.Mean) : (Z .- T.Mean)
+
+struct ScaleTransform{B} <: Transform
+    StdDev::B
+end
+Scale(Z) = ScaleTransform( StatsBase.std(Z, dims = 1) )
+(T::ScaleTransform)(Z; inverse = false) = (inverse) ? (Z .* T.StdDev) : (Z ./ T.StdDev)
 
 struct StandardNormalVariate{B,C} <: Transform
     Mean::B
