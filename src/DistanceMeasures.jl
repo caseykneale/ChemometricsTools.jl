@@ -16,7 +16,6 @@ function ManhattanDistance(X, Y)
     Result = zeros(size(X)[1], size(Y)[1])
     for rowx in 1 : (size(X)[1]), rowy in 1 : size(Y)[1]
         Result[rowx, rowy] = sum( abs.( X[rowx,:] - Y[rowy,:]  ) )
-        Result[rowy, rowx] = Result[rowx, rowy]
     end
     return Result
 end

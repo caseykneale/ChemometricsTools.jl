@@ -1,7 +1,7 @@
 using StatsBase
 using LinearAlgebra
 
-include("Transformations.jl")
+#include("Transformations.jl")
 
 #Forces Array1's to Array2s of the same shape...
 forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a

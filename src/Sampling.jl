@@ -1,4 +1,4 @@
-include("DistanceMeasures.jl");
+#include("DistanceMeasures.jl");
 
 CICol(a::CartesianIndex) = collect(Tuple(a))[2]
 CIRow(a::CartesianIndex) = collect(Tuple(a))[1]

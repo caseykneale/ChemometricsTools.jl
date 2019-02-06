@@ -1,6 +1,6 @@
 using StatsBase
 using LinearAlgebra
-include("DistanceMeasures.jl")
+#include("DistanceMeasures.jl")
 
 abstract type ClassificationModel end
 

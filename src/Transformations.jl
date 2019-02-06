@@ -37,6 +37,7 @@ function (P::Pipeline)(X; inverse = false)
             foldr( ( p, X ) -> p(X; inverse = inverse), P.transforms, init = X)
         end
     else
+        @assert all( isa.(P.transforms, Transform) )
         if P.inplace
             for fn in enumerate( X.transforms ); X .= fn( X ) ; end
         else

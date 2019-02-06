@@ -1,5 +1,5 @@
 using StatsBase
-include("DistanceMeasures.jl")
+#include("DistanceMeasures.jl")
 
 abstract type ClusterModel end
 
