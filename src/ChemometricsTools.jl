@@ -2,10 +2,10 @@ module ChemometricsTools
 
     include("Transformations.jl")
     export Transform, PipelineInPlace, Pipeline, Center, Scale, StandardNormalVariate, RangeNorm,
-        MultiplicativeScatterCorrection, PCA_NIPALS, PCA, ExplainedVariance
+        MultiplicativeScatterCorrection
 
     include("Analysis.jl")
-    export CanonicalCorrelationAnalysis, BlandAltman
+    export PCA_NIPALS, PCA, CanonicalCorrelationAnalysis, BlandAltman, ExplainedVariance
 
     include("AnomalyDetection.jl")
     export KNN_OneClass, PCA_Hotelling, Q, Hotelling

@@ -1,6 +1,61 @@
 using LinearAlgebra
 using StatsBase
 
+struct PCA
+    Scores
+    Loadings
+    SingularValues
+    algorithm::String
+end
+
+#NIPALS based PCA.
+#Kind of advantageous is you don't want to outright compute all latent variables.
+#Kind of slow, but a must for a chemometrics package...
+function PCA_NIPALS(X; Factors = minimum(size(X)) - 1, tolerance = 1e-7, maxiters = 200)
+    tolsq = tolerance * tolerance
+    #Instantiate some variables up front for performance...
+    Xsize = size(X)
+    Tm = zeros( ( Xsize[1], Factors ) )
+    Pm = zeros( ( Factors, Xsize[2] ) )
+    t = zeros( ( 1, Xsize[1] ) )
+    p = zeros( ( 1, Xsize[2] ) )
+    #Set tolerance to floating point precision
+    Residuals = copy(X)
+    for factor in 1:Factors
+        lastErr = sum(abs.(Residuals)); curErr = tolerance + 1;
+        t = Residuals[:, 1]
+        iterations = 0
+        while (abs(curErr - lastErr) > tolsq) && (iterations < maxiters)
+            p = Residuals' * t
+            p = p ./ sqrt.( p' * p )
+            t = Residuals * p
+            #Track change in Frobenius norm
+            lastErr = curErr
+            curErr = sqrt(sum( ( Residuals - ( t * p' ) ) .^ 2))
+            iterations += 1
+        end
+        Residuals -= t * p'
+        Tm[:,factor] = t
+        Pm[factor,:] = p
+    end
+    #Find singular values/eigenvalues
+    EigVal = sqrt.( LinearAlgebra.diag( Tm' * Tm ) )
+    #Scale loadings by singular values
+    Tm = Tm * LinearAlgebra.Diagonal( 1.0 / EigVal )
+    return PCA(Tm, Pm, EigVal, "NIPALS")
+end
+
+#SVD based PCA
+function PCA(Z; Factors = minimum(size(Z)) - 1)
+    svdres = LinearAlgebra.svd(Z)
+    return PCA(svdres.U[:, 1:Factors], svdres.Vt[1:Factors, :], svdres.S[1:Factors], "SVD")
+end
+
+#Calling a PCA object on new data brings the new data into the PCA transforms basis...
+(T::PCA)(Z::Array; Factors = length(T.SingularValues), inverse = false) = (inverse) ? Z * (Diagonal(T.SingularValues[1:Factors]) * T.Loadings[1:Factors,:]) : Z * (Diagonal( 1 ./ T.SingularValues[1:Factors]) * T.Loadings[1:Factors,:])'
+
+ExplainedVariance(PCA::PCA) = ( PCA.SingularValues .^ 2 ) ./ sum( PCA.SingularValues .^ 2 )
+
 function MatrixInverseSqrt(X, threshold = 1e-6)
     eig = eigen(X)
     diagelems = 1.0 ./ sqrt.( max.( eig.values , 0.0 ) )
@@ -16,7 +71,7 @@ struct CanonicalCorrelationAnalysis
 end
 
 function CanonicalCorrelationAnalysis(A, B)
-    (Obs,Vars) = size(A);
+    (Obs,Vars) = size(A);;
     CAA = (1/Obs) .* A * A'
     CBB = (1/Obs) .* B * B'
     CAB = (1/Obs) .* A * B'
