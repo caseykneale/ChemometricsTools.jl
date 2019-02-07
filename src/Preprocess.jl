@@ -1,7 +1,6 @@
 using LinearAlgebra
 using DSP
 
-#include("Transformations.jl")
 
 function FirstDerivative(X::Array)
     Xsize = (length(size( X )) > 1) ? size( X ) : (1,length(X))
@@ -14,6 +13,7 @@ function FirstDerivative(X::Array)
     end
     return XNew
 end
+
 
 function SecondDerivative(X)
     Xsize = (length(size( X )) > 1) ? size( X ) : (1,length(X))

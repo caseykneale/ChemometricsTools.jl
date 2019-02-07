@@ -1,7 +1,7 @@
 module ChemometricsTools
 
     include("Transformations.jl")
-    export PipelineInPlace, Pipeline, Center, Scale, StandardNormalVariate, RangeNorm,
+    export Transform, PipelineInPlace, Pipeline, Center, Scale, StandardNormalVariate, RangeNorm,
         MultiplicativeScatterCorrection, PCA_NIPALS, PCA, ExplainedVariance
 
     include("Analysis.jl")

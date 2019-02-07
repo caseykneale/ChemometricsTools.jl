@@ -23,7 +23,7 @@ end
 function Pipeline( X, FnStack...)
     pipeline = Array{Any,1}(undef, length(FnStack))
     for (i, fn) in enumerate( FnStack )
-        pipeline[i] = fn(X)
+        pipeline[i] = isa(fn, Function) ? fn : fn(X)
         X = pipeline[i]( X )
     end
     return Pipeline(Tuple(pipeline), false)
@@ -31,36 +31,39 @@ end
 
 function (P::Pipeline)(X; inverse = false)
     if inverse
+        @assert any( isa.(P.transforms, Function) ) == false
+        println(!any( isa.(P.transforms, Function) ))
         if P.inplace
             for fn in reverse( P.transforms ); X .= fn( X; inverse = true ) ; end
         else
-            foldr( ( p, X ) -> p(X; inverse = inverse), P.transforms, init = X)
+            foldr( ( p, X ) -> p(X; inverse = true), P.transforms, init = X)
         end
     else
-        @assert all( isa.(P.transforms, Transform) )
         if P.inplace
             for fn in enumerate( X.transforms ); X .= fn( X ) ; end
         else
-            foldl( ( X, p ) -> p(X; inverse = inverse), P.transforms, init = X)
+            foldl( ( X, p ) -> p(X), P.transforms, init = X)
         end
     end
 end
 
 
-struct CenterTransform{B} <: Transform
+struct Center{B} <: Transform
     Mean::B
+    invertible::Bool
 end
 
-Center(Z) = CenterTransform( StatsBase.mean(Z, dims = 1) )
+Center(Z) = Center( StatsBase.mean(Z, dims = 1), true )
 
 #Call with new data transforms the new data, or inverts it
-(T::CenterTransform)(Z; inverse = false) = (inverse) ? (Z .+ T.Mean) : (Z .- T.Mean)
+(T::Center)(Z; inverse = false) = (inverse) ? (Z .+ T.Mean) : (Z .- T.Mean)
 
-struct ScaleTransform{B} <: Transform
+struct Scale{B} <: Transform
     StdDev::B
+    invertible::Bool
 end
-Scale(Z) = ScaleTransform( StatsBase.std(Z, dims = 1) )
-(T::ScaleTransform)(Z; inverse = false) = (inverse) ? (Z .* T.StdDev) : (Z ./ T.StdDev)
+Scale(Z) = Scale( StatsBase.std(Z, dims = 1),  true )
+(T::Scale)(Z; inverse = false) = (inverse) ? (Z .* T.StdDev) : (Z ./ T.StdDev)
 
 struct StandardNormalVariate{B,C} <: Transform
     Mean::B
@@ -88,7 +91,7 @@ end
 
 (T::RangeNorm)(Z; inverse = false) = (inverse) ? ( (Z .* ( T.Maxes .- T.Mins ) ) .+ T.Mins) : (Z .- T.Mins) ./ ( T.Maxes .- T.Mins )
 
-struct MultiplicativeScatterCorrection
+struct MultiplicativeScatterCorrection <: Transform
     Bias
     Coefficients
 end
