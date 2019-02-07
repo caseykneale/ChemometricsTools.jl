@@ -64,7 +64,7 @@ Well we get an assertion error.
 
 ### Automation Example
 We can take advantage of how pipelines are created; at their core they are tuples of transforms. So if we can make an array of transforms given some conditions we can store them and apply them. A fun example of this is the whimsical paper by Willem Windig et. al's for 'Loopy Multiplicative Scatter Transform', which we can implement here with ease.
-*Loopy MSC: A Simple Way to Improve Multiplicative Scatter Correction. Willem Windig, Jeremy Shaver, Rasmus Bro. 2008. Vol 62, issue: 10, 1153-1159*
+*Loopy MSC: A Simple Way to Improve Multiplicative Scatter Correction. Willem Windig, Jeremy Shaver, Rasmus Bro. Applied Spectroscopy. 2008. Vol 62, issue: 10, 1153-1159*
 
 Let's look at the classic Diesel data before loopy MSC
 ![Before Loopy MSC](/images/Raw.png)
@@ -83,7 +83,7 @@ while RMSE(Last, Current) > 1e-5
         Current = TransformArray[end](Last)
     end
 end
-
+#Make the pipeline object from the array of stored transforms
 LoopyPipe = Pipeline( Tuple( TransformArray ) );
 ```
 For a sanity check we can ensure the output of the algorithm  is the same as the new pipeline so it can be applied to new data.
@@ -92,3 +92,4 @@ Current == LoopyPipe(RealSpectra)
 ```
 More importantly did we remove scatter after 3 automated iterations of MSC?
 ![After Loopy MSC](/images/Loopy.png)
+Yes, yes we did. Easy right?
