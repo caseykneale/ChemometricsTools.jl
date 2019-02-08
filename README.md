@@ -119,4 +119,12 @@ PLSR = PartialLeastSquares(TrainX, TrainY; Factors = BestLV)
 RMSE( PLSR(TestX), TestY )
 ```
 ![20 fold cross validation](/images/CV.png)
-*Note:* there are quite a few other functions that make model training convenient for end-users. Such as Shuffle, Shuffle!, LeaveOneOut, Venetian Blinds, Kennard Stone, etc.
+*Note:* there are quite a few other functions that make model training convenient for end-users. Such as Shuffle, Shuffle!, LeaveOneOut, Venetian Blinds, etc.
+
+The lovely Kennard-Stone sampling algorithm is also on board,
+![Kennard-Stone](/images/KS.png)
+
+#Specialized tools?
+You might be saying, ridge regression, least, squares, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics?
+
+Well, we have some specialized tools for chemometricians in special fields. For instance, we have Fractional Derivatives for the electrochemists (and the adventurous), and have plans for a few other tools for chemical data that packages in other languages have left out. Stay tuned...

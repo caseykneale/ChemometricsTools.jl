@@ -1,5 +1,7 @@
-SquareEuclideanDistance(X, Y) = ( sum(X .^ 2, dims = 2) .+ sum(Y .^ 2, dims = 2)') .- (2 * X * Y')
+SquareEuclideanDistance(X) = ( sum(X .^ 2, dims = 2) .+ sum(X .^ 2, dims = 2)') .- (2 * X * X')
+EuclideanDistance(X) = sqrt.(SquareEuclideanDistance(X))
 
+SquareEuclideanDistance(X, Y) = ( sum(X .^ 2, dims = 2) .+ sum(Y .^ 2, dims = 2)') .- (2 * X * Y')
 EuclideanDistance(X, Y) = sqrt.(SquareEuclideanDistance(X, Y))
 
 #Only computes half distance and mirrors it...

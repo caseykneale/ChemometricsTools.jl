@@ -20,6 +20,7 @@ function Shuffle!( X, Y )
 end
 
 VenetianBlinds(X) = ( X[1:2:end], X[2:2:end] )
+VenetianBlinds(X,Y) = (( X[1:2:end], Y[1:2:end] ), ( X[2:2:end], Y[2:2:end] ) )
 
 struct KFoldsValidation
     K::Int

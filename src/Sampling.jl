@@ -1,14 +1,18 @@
-#include("DistanceMeasures.jl");
-
 CICol(a::CartesianIndex) = collect(Tuple(a))[2]
 CIRow(a::CartesianIndex) = collect(Tuple(a))[1]
 
 #Might be a bug in this but on first glance it appears to work...
 #Only one computation of the distance matrix - not bad!
-function KennardStone(X, TrainSamples)
+function KennardStone(X, TrainSamples; distance = "euclidean")
     Obs = 1:size(X)[1]
     FullSet = collect( Obs )
-    DistMat = SquareEuclideanDistance( X, X )
+    DistMat = []
+    if distance == "euclidean"
+        DistMat = SquareEuclideanDistance( X )
+    elseif distance == "manhattan"
+        DistMat = ManhattanDistance( X )
+    end
+    @assert DistMat != []
     DistMat = hcat([[0] ; Obs], vcat( Obs', DistMat ))
     Candidates = Array{Int64, 1}(zeros( TrainSamples ))
     #Grab the 2 most seperated points
