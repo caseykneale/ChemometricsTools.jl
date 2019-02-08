@@ -125,7 +125,23 @@ RMSE( PLSR(TestX), TestY )
 ```
 ![20 fold cross validation](/images/CV.png)
 
-*Note:* there are quite a few other functions that make model training convenient for end-users. Such as Shuffle, Shuffle!, LeaveOneOut, Venetian Blinds, etc.
+That's great right? but, hey that was kinda slow. Knowing what we know about ALS based models, we can do the same operation in linear time with respect to factors by computing the most latent variables first and only recomputing the regression coefficients. An example of this is below,
+
+```julia
+Err = repeat([0.0], 22);
+Models = []
+for Lv in 22:-1:1
+    for ( i, ( Fold, HoldOut ) ) in enumerate(KFoldsValidation(20, TrainX, TrainY))
+        if Lv == 22
+            push!( Models, PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv) )
+        end
+        Err[Lv] += SSE( Models[i]( HoldOut[1]; Factors = Lv), HoldOut[2] )
+    end
+end
+```
+This approach is ~5 times faster on a single core( < 2 seconds), pours through 7Gb less data, and makes 1/5th the allocations. If you wanted you could distribute the inner loop (using Distributed.jl) and see drastic speed ups! 
+
+*Aside:* there are quite a few other functions that make model training convenient for end-users. Such as Shuffle, Shuffle!, LeaveOneOut, Venetian Blinds, etc.
 
 The lovely Kennard-Stone sampling algorithm is also on board,
 ![Kennard-Stone](/images/KS.png)
