@@ -95,7 +95,9 @@ For a sanity check we can ensure the output of the algorithm  is the same as the
 Current == LoopyPipe(RealSpectra)
 ```
 Looks like our automation driven pipeline is equivalent to the loop it took to make it. More importantly did we remove scatter after 3 automated iterations of MSC?
+
 ![After Loopy MSC](/images/Loopy.png)
+
 Yes, yes we did. Pretty easy right?
 
 # Model training
