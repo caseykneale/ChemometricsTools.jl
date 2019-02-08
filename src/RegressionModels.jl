@@ -1,8 +1,6 @@
 using StatsBase
 using LinearAlgebra
 
-#include("Transformations.jl")
-
 #Forces Array1's to Array2s of the same shape...
 forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
 
@@ -79,7 +77,7 @@ struct PartialLeastSquares <: RegressionModels
 end
 
 #PLS-2 algorithm, this was decided because it is the most general...
-function PartialLeastSquares( X, Y, Factors; tolerance = 1e-8, maxiters = 200 )
+function PartialLeastSquares( X, Y; Factors = minimum(size(X)) - 2, tolerance = 1e-8, maxiters = 200 )
     #A TUTORIAL PAUL GELADI and BRUCE R.KOWALSKI. Analytica Chimica Acta,
     #186, (1986) PARTIAL LEAST-SQUARES REGRESSION:
     (Xrows, Xcols) = size(X)
@@ -136,7 +134,7 @@ function PredictFn(X, M::PartialLeastSquares; Factors)
     end
     return X * Coeffs
 end
-(M::PartialLeastSquares)(X; Factors = 2) = PredictFn(X, M; Factors = Factors)
+(M::PartialLeastSquares)(X; Factors = M.Factors) = PredictFn(X, M; Factors = Factors)
 
 struct ExtremeLearningMachine <: RegressionModels
     Reservoir

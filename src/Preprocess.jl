@@ -14,7 +14,6 @@ function FirstDerivative(X::Array)
     return XNew
 end
 
-
 function SecondDerivative(X)
     Xsize = (length(size( X )) > 1) ? size( X ) : (1,length(X))
     if Xsize[1] == 1 #Sorry but if you put in the wrong dim array its gonna transpose...

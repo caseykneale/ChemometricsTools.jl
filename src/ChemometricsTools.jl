@@ -39,7 +39,7 @@ module ChemometricsTools
     export KennardStone
 
     include("Training.jl")
-    export Shuffle, VenetianBlinds, Shuffle!, LeaveOneOut, KFoldsValidation
+    export Shuffle, VenetianBlinds, Shuffle!, LeaveOneOut, KFoldsValidation, SplitByProportion
 
 #ToDo: Add tests...
 
