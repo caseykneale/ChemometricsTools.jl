@@ -90,25 +90,3 @@ function RangeNorm( Z )
 end
 
 (T::RangeNorm)(Z; inverse = false) = (inverse) ? ( (Z .* ( T.Maxes .- T.Mins ) ) .+ T.Mins) : (Z .- T.Mins) ./ ( T.Maxes .- T.Mins )
-
-struct MultiplicativeScatterCorrection <: Transform
-    BiasedMeans
-    Bias
-    Coefficients
-end
-
-function MultiplicativeScatterCorrection(Z)
-    BiasedMeans = hcat( ones( ( size(Z)[2], 1) ) , StatsBase.mean( Z, dims = 1 )[1,:] )
-    Coeffs =  ( Z * BiasedMeans )' \ ( BiasedMeans' * BiasedMeans )
-    MultiplicativeScatterCorrection( BiasedMeans, Coeffs[1,:], Coeffs[2,:] )
-end
-
-function (T::MultiplicativeScatterCorrection)(Z; inverse = false)
-    if inverse
-        #arg...
-        return (Z .* Coeffs[:,2]) .+ Coeffs[:,1]
-    else
-        Coeffs = ( Z * T.BiasedMeans )' \ ( T.BiasedMeans' * T.BiasedMeans )
-        return (Z .- Coeffs[1]) ./ Coeffs[2]
-    end
-end

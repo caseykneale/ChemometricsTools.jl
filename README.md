@@ -94,3 +94,29 @@ More importantly did we remove scatter after 3 automated iterations of MSC?
 ![After Loopy MSC](/images/Loopy.png)
 
 Yes, yes we did. Easy right?
+
+# Model training
+There are a few built-in's to make training models a snap. Philosophically I decided, making wrapper functions to perform Cross Validation is not fair to the end-user. There are many cases where we want specialized CV's and we don't want to write then debug nested for-loops that run for hours. Or hacking into rigid GridSearch code when it'd be easier to write the equivalent from scratch. Instead, I used Julia's iterators to make K Fold's validations convenient, below is an example Partial Least Squares Regression CV.
+
+```julia
+#Split our data
+((TrainX,TrainY),(TestX, TestY)) = SplitByProportion(x, yprop, 0.7);
+#Preprocess it
+MSC_Obj = MultiplicativeScatterCorrection(TrainX);
+TrainX = MSC_Obj(TrainX);
+TestX = MSC_Obj(TestX);
+#Begin CV!
+LatentVariables = 22
+Err = repeat([0.0], LatentVariables);
+#Note this is the Julian way to nest two loops
+for Lv in 1:LatentVariables, (Fold, HoldOut) in KFoldsValidation(20, TrainX, TrainY)
+    PLSR = PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv)
+    Err[Lv] += SSE( PLSR(HoldOut[1]), HoldOut[2] )
+end
+scatter(Err, xlabel = "Latent Variables", ylabel = "Cumulative SSE", labels = ["Error"])
+BestLV = argmin(Err)
+PLSR = PartialLeastSquares(TrainX, TrainY; Factors = BestLV)
+RMSE( PLSR(TestX), TestY )
+```
+![20 fold cross validation](/images/CV.png)
+*Note:* there are quite a few other functions that make model training convenient for end-users. Such as Shuffle, Shuffle!, LeaveOneOut, Venetian Blinds, Kennard Stone, etc.

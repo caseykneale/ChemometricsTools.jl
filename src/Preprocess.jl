@@ -1,6 +1,24 @@
 using LinearAlgebra
 using DSP
 
+#Pretty sure this is reversible like a transform, but don't have time to solve it
+#in reverse yet...
+struct MultiplicativeScatterCorrection
+    BiasedMeans
+    Bias
+    Coefficients
+end
+
+function MultiplicativeScatterCorrection(Z)
+    BiasedMeans = hcat( ones( ( size(Z)[2], 1) ) , StatsBase.mean( Z, dims = 1 )[1,:] )
+    Coeffs = ( BiasedMeans' * BiasedMeans ) \ ( Z * BiasedMeans )'
+    MultiplicativeScatterCorrection( BiasedMeans, Coeffs[1,:], Coeffs[2,:] )
+end
+
+function (T::MultiplicativeScatterCorrection)(Z)
+    Coeffs = ( T.BiasedMeans' * T.BiasedMeans ) \ ( Z * T.BiasedMeans )'
+    return (Z .- Coeffs[1,:]) ./ Coeffs[2,:]
+end
 
 function FirstDerivative(X::Array)
     Xsize = (length(size( X )) > 1) ? size( X ) : (1,length(X))
