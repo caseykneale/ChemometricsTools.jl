@@ -3,6 +3,9 @@ This is an essential collection of tools to do Chemometrics in Julia. The goals 
 
 In it's current state all of the algorithms available in this package operate exclusively on 1 or 2 Arrays. To be specific, the format of input arrays should be such that the number of rows are the observations, and the number of columns are the variables. This choice was made out of convenience and my personal bias. If enough users want DataFrames, Tables, JuliaDB formats, maybe this will change. For now the package is best suited to the treatment and analysis of continuous data.
 
+### Package Status
+This thing is brand new. From it's inception it's about 2 weeks old. Many of the tools available can be used, and most of those are implemented correctly! However, there's a lot of glue code not in place yet, and some of the methods haven't been tested (and were quickly written). So use at your own risk for now; in a week or two this should be functional and trustworthy, and at that point collaborators will be sought!
+
 ### Transforms/Pipelines
 Two design choices introduced in this package are "Transformations" and "Pipelines". These allow for preprocessing and data transformations to be reused or chained for reliable analytic throughput. Below are some examples based on some faux data,
 ```julia
@@ -119,12 +122,13 @@ PLSR = PartialLeastSquares(TrainX, TrainY; Factors = BestLV)
 RMSE( PLSR(TestX), TestY )
 ```
 ![20 fold cross validation](/images/CV.png)
+
 *Note:* there are quite a few other functions that make model training convenient for end-users. Such as Shuffle, Shuffle!, LeaveOneOut, Venetian Blinds, etc.
 
 The lovely Kennard-Stone sampling algorithm is also on board,
 ![Kennard-Stone](/images/KS.png)
 
-#Specialized tools?
-You might be saying, ridge regression, least, squares, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics?
+# Specialized tools?
+You might be saying, ridge regression, least squares, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics?
 
-Well, we have some specialized tools for chemometricians in special fields. For instance, we have Fractional Derivatives for the electrochemists (and the adventurous), and have plans for a few other tools for chemical data that packages in other languages have left out. Stay tuned...
+Well, we have some specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, and there are certainly plans for a few other tools for chemical data that packages in other languages have left out. Stay tuned... Right now some bare bones stuff still needs to be tuned for correctness, and some analysis functions need to be added.
