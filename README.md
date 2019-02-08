@@ -4,7 +4,7 @@ This is an essential collection of tools to do Chemometrics in Julia. The goals 
 In it's current state all of the algorithms available in this package operate exclusively on 1 or 2 Arrays. To be specific, the format of input arrays should be such that the number of rows are the observations, and the number of columns are the variables. This choice was made out of convenience and my personal bias. If enough users want DataFrames, Tables, JuliaDB formats, maybe this will change. For now the package is best suited to the treatment and analysis of continuous data.
 
 ### Package Status
-This thing is brand new. From it's inception it's about 2 weeks old. Many of the tools available can be used, and most of those are implemented correctly! However, there's a lot of glue code not in place yet, and some of the methods haven't been tested (and were quickly written). So use at your own risk for now; in a week or two this should be functional and trustworthy, and at that point collaborators will be sought!
+This thing is brand new (~2 weeks old). Many of the tools available can be used, and most of those are implemented correctly. However, there's a lot of glue code not in place yet, and some of the methods haven't been tested (and were quickly written). So use at your own risk for now; in a week or two this should be functional and trustworthy, and at that point collaborators will be sought!
 
 ### Transforms/Pipelines
 Two design choices introduced in this package are "Transformations" and "Pipelines". These allow for preprocessing and data transformations to be reused or chained for reliable analytic throughput. Below are some examples based on some faux data,
@@ -13,7 +13,7 @@ FauxSpectra1 = randn(10,200);
 FauxSpectra2 = randn(5, 200);
 ```
 #### Transformations
-We can use transformations to treat data from multiple sources the same way. This helps mitigate user-error for cases where test data is scaled based on training data, calibration transfer etc.
+We can use transformations to treat data from multiple sources the same way. This helps mitigate user-error for cases where test data is scaled based on training data, calibration transfer, etc.
 
 ```julia
 SNV = StandardNormalVariate(FauxSpectra1);
@@ -66,12 +66,13 @@ PreprocessPipe(Processed; inverse = true)
 Well we get an assertion error.
 
 ### Automation Example
-We can take advantage of how pipelines are created; at their core they are tuples of transforms/functions. So if we can make an array of transforms and set some conditions we can store them and apply them. A fun example of this is the whimsical paper by Willem Windig et. al's for 'Loopy Multiplicative Scatter Transform', which we can implement here with ease.
+We can take advantage of how pipelines are created; at their core they are tuples of transforms/functions. So if we can make an array of transforms and set some conditions they can be stored and applied to unseen data. A fun example of an automated transform pipeline is in the whimsical paper written by Willem Windig et. al's. That paper is called 'Loopy Multiplicative Scatter Transform'. Below I'll show how we can implement that algorithm here (or anything similar) with ease.
 *Loopy MSC: A Simple Way to Improve Multiplicative Scatter Correction. Willem Windig, Jeremy Shaver, Rasmus Bro. Applied Spectroscopy. 2008. Vol 62, issue: 10, 1153-1159*
 
-Let's look at the classic Diesel data before loopy MSC
+First let's look at the classic Diesel data before applying Loopy MSC
 ![Before Loopy MSC](/images/Raw.png)
 
+Alright, there is scatter, let's go for it,
 ```julia
 RealSpectra = convert(Array, CSV.read("/diesel_spectra.csv"));
 Current = RealSpectra;
@@ -86,20 +87,19 @@ while RMSE(Last, Current) > 1e-5
         Current = TransformArray[end](Last)
     end
 end
-#Make the pipeline object from the array of stored transforms
+#Now we can make a pipeline object from the array of stored transforms
 LoopyPipe = Pipeline( Tuple( TransformArray ) );
 ```
 For a sanity check we can ensure the output of the algorithm  is the same as the new pipeline so it can be applied to new data.
 ```julia
 Current == LoopyPipe(RealSpectra)
 ```
-More importantly did we remove scatter after 3 automated iterations of MSC?
+Looks like our automation driven pipeline is equivalent to the loop it took to make it. More importantly did we remove scatter after 3 automated iterations of MSC?
 ![After Loopy MSC](/images/Loopy.png)
-
-Yes, yes we did. Easy right?
+Yes, yes we did. Pretty easy right?
 
 # Model training
-There are a few built-in's to make training models a snap. Philosophically I decided, making wrapper functions to perform Cross Validation is not fair to the end-user. There are many cases where we want specialized CV's and we don't want to write then debug nested for-loops that run for hours. Or hacking into rigid GridSearch code when it'd be easier to write the equivalent from scratch. Instead, I used Julia's iterators to make K Fold's validations convenient, below is an example Partial Least Squares Regression CV.
+There are a few built-in's to make training models a snap. Philosophically I decided, making wrapper functions to perform Cross Validation is not fair to the end-user. There are many cases where we want specialized CV's but we don't want to write nested for-loops that run for hours then debug them... Similarly, most people don't want to spend their time hacking into rigid GridSearch code, scouring stack exchange and package documentation. Especially when it'd be easier to write an equivalent approach that's self documenting from scratch. Instead, I used Julia's iterators to make K-Fold validations convenient, below is an example Partial Least Squares Regression CV.
 
 ```julia
 #Split our data

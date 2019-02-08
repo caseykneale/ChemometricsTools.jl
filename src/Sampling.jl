@@ -3,6 +3,8 @@ CIRow(a::CartesianIndex) = collect(Tuple(a))[1]
 
 #Might be a bug in this but on first glance it appears to work...
 #Only one computation of the distance matrix - not bad!
+#R. W. Kennard & L. A. Stone (1969) Computer Aided Design of Experiments, Technometrics, 11:
+#1, 137-148, DOI: 10.1080/00401706.1969.10490666 
 function KennardStone(X, TrainSamples; distance = "euclidean")
     Obs = 1:size(X)[1]
     FullSet = collect( Obs )
