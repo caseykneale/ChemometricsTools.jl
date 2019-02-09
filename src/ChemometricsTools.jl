@@ -1,31 +1,31 @@
 module ChemometricsTools
+    include("ClassificationMetrics.jl")
+    export LabelEncoding, HotToCold, ColdToHot, MulticlassStats,
+        Threshold, MulticlassThreshold, HighestVote 
+
+    include("RegressionMetrics.jl")
+    export ME, MAE, MAPE, SSE, MSE, RMSE, SSTotal, SSReg, SSRes, RSquare,
+        PearsonCorrelationCoefficient, PercentRMSE
+
+    include("DistanceMeasures.jl")
+    export SquareEuclideanDistance, EuclideanDistance, ManhattanDistance
 
     include("Transformations.jl")
     export Transform, PipelineInPlace, Pipeline, Center, Scale, StandardNormalVariate, RangeNorm,
         MultiplicativeScatterCorrection
 
     include("Analysis.jl")
-    export PCA_NIPALS, PCA, CanonicalCorrelationAnalysis, BlandAltman, ExplainedVariance
+    export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, BlandAltman, ExplainedVariance
 
     include("AnomalyDetection.jl")
     export KNN_OneClass, PCA_Hotelling, Q, Hotelling
 
-    include("ClassificationMetrics.jl")
-    export LabelEncoding, HotToCold, ColdToHot, MulticlassStats
-
     include("ClassificationModels.jl")
-    export Threshold, MulticlassThreshold, HighestVote, KNN,
-        LinearDiscriminantAnalysis, ExplainedVariance
+    export KNN, GuassianDiscriminant
 
     include("Clustering.jl")
     export TotalClusterSS, WithinClusterSS, BetweenClusterSS,
         KMeansClustering, KMeans
-
-    include("DistanceMeasures.jl")
-    export SquareEuclideanDistance, EuclideanDistance, ManhattanDistance
-
-    include("Ensembles.jl")
-    export MakeIntervals
 
     include("Preprocess.jl")
     export FirstDerivative, SecondDerivative, FractionalDerivative, SavitzkyGolay,
@@ -33,10 +33,12 @@ module ChemometricsTools
         #,TransferByOrthogonalProjection
 
     include("RegressionModels.jl")
-    export ME, MAE, MAPE, SSE, MSE, RMSE, SSTotal, SSReg, SSRes, RSquare,
-        PearsonCorrelationCoefficient, ClassicLeastSquares, RidgeRegression,
-        PrincipalComponentRegression, PartialLeastSquares, ExtremeLearningMachine,
-        PredictFn
+    export ClassicLeastSquares, RidgeRegression, PrincipalComponentRegression,
+        PartialLeastSquares, ExtremeLearningMachine, PredictFn
+
+
+    include("Ensembles.jl")
+    export MakeIntervals
 
     include("Sampling.jl")
     export KennardStone

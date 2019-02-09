@@ -2,8 +2,6 @@ using StatsBase
 using LinearAlgebra
 
 abstract type ClassificationModel end
-include("/home/caseykneale/Desktop/Spectroscopy/chemotools/ChemometricsTools/src/Analysis.jl")
-
 
 #Untested...
 struct KNN <: ClassificationModel
@@ -30,63 +28,49 @@ function ( model::KNN )( Z; K = 1 )
     return Predictions
 end
 
-function ( model::LinearDiscriminantAnalysis )( Z; Factors = 3 )
+include("/home/caseykneale/Desktop/Spectroscopy/chemotools/ChemometricsTools/src/Analysis.jl")
+
+#Generalized Gaussian Discriminant Analysis
+struct GaussianDiscriminant
+    Basis::Union{PCA, LDA}
+    ClassSize
+    pi
+    ProjectedClassMeans
+    ProjectedClassCovariances
+end
+
+function GaussianDiscriminant(M, X, Y; Factors = nothing)
+    (Obs, ClassNumber) = size( Y )
+    Variables = size( X )[ 2 ]
+    ClassSize = zeros( ClassNumber )
+    Factors = isa(Factors, Nothing) ? length(M.Values) : Factors
+    Projected = M(X; Factors = Factors)
+    #Calculate the probability density functions for each class
+    YPred = zeros(Obs, ClassNumber)
+    ProjClassMeans = zeros( ClassNumber, Factors)
+    ClassCovariances = []
+    for class in 1 : ClassNumber
+        Members = Y[ :, class ] .== 1
+        ClassSize[class] = sum(Members)
+        ProjClassMeans[class, :] = StatsBase.mean(Projected[Members,:], dims = 1)
+        MeanCentered = Projected[Members,:] .- ProjClassMeans[class,:]'
+        push!(ClassCovariances, (1.0 / (ClassSize[class] - 1.0 )) .* ( MeanCentered' * MeanCentered  ) )
+    end
+    return GaussianDiscriminant(M, ClassSize, ClassSize ./ Obs, ProjClassMeans, ClassCovariances )
+end
+
+function ( model::GaussianDiscriminant )( Z; Factors = length(model.Basis.Values) )
     ClassNumber = length(model.ClassSize)
     YHat = zeros( size(Z)[1] , ClassNumber )
-
+    Projected = model.Basis(Z; Factors = Factors)
     for class in 1 : ClassNumber
-        Projected = Z * model.Loadings[:,1:Factors]
         MeanCentered = Projected .- model.ProjectedClassMeans[class,1:Factors]'
-
-        scalar = (2.0 * pi)^Factors * LinearAlgebra.det(model.ProjectedClassCovariances[class])
-        scalar *= 1.0 / sqrt( scalar )
+        ProjClassCov = model.ProjectedClassCovariances[ class ][1:Factors, 1:Factors]
+        scalar = 1.0 / sqrt( ( 2.0 * pi )^Factors * LinearAlgebra.det( ProjClassCov ) )
         for obs in 1 : size(Z)[1]
-            PDF = scalar * exp(-0.5 * MeanCentered[obs,:]' * Base.inv( model.ProjectedClassCovariances[class][1:Factors,1:Factors] ) * MeanCentered[obs,:] )
+            PDF = scalar * exp(-0.5 * MeanCentered[obs,:]' * Base.inv( ProjClassCov ) * MeanCentered[obs,:] )
             YHat[obs, class] = model.pi[class] .* PDF
         end
     end
     return YHat
 end
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# include("/home/caseykneale/Desktop/Spectroscopy/chemotools/ChemometricsTools/src/Transformations.jl")
-# include("/home/caseykneale/Desktop/Spectroscopy/chemotools/ChemometricsTools/src/ClassificationMetrics.jl");
-# include("/home/caseykneale/Desktop/Spectroscopy/chemotools/ChemometricsTools/src/DistanceMeasures.jl");
-#
-# using CSV
-# using DataFrames
-# Raw = CSV.read("/home/caseykneale/Desktop/Spectroscopy/Data/MIR_Fruit_purees.csv");
-# Lbls = convert.(Bool, occursin.( "NON", String.(names( Raw )) )[2:end]);
-# Dump = collect(convert(Array, Raw)[:,2:end]');
-# Fraud = Dump[Lbls,:];
-# Legit = Dump[.!Lbls,:];
-#
-# Train = vcat(Fraud[1:400, :], Legit[1:200, : ] );
-# snv = StandardNormalVariate(Train);
-# TrainS = snv(Train);
-# Train_pca = PCA(TrainS; Factors = 15);
-# TrainS = Train_pca(TrainS);
-#
-# Test = vcat(Fraud[401:end, :], Legit[201:end, : ] );
-# TestS = snv(Test);
-# TestS = Train_pca(TestS);
-# TrnLbl = vcat( repeat([1],400),repeat([0],200) );
-# TstLbl = vcat( repeat([1],232),repeat([0],151) );
-#
-# Enc = LabelEncoding(TrnLbl)
-# Hot = ColdToHot(TrnLbl, Enc);
-# Enc.LabelCount
-#
-# LDA = LinearDiscriminantAnalysis(TrainS , Hot)
-# LDA.EigenValues
-# using Plots
-# a = 0
-# a = scatter(LDA.Scores[1:400,1], LDA.Scores[1:400,2]);
-# scatter!(a, LDA.Scores[401:600,1], LDA.Scores[401:600,2])
-#
-# Voted = HighestVote(LDA(TestS ; Factors = 2)) .- 1;
-# using StatsBase
-# StatsBase.countmap(Voted)
-#
-# MulticlassStats(Voted, TstLbl, Enc)

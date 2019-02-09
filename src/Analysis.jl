@@ -4,7 +4,7 @@ using StatsBase
 struct PCA
     Scores
     Loadings
-    SingularValues
+    Values
     algorithm::String
 end
 
@@ -52,24 +52,17 @@ function PCA(Z; Factors = minimum(size(Z)) - 1)
 end
 
 #Calling a PCA object on new data brings the new data into the PCA transforms basis...
-(T::PCA)(Z::Array; Factors = length(T.SingularValues), inverse = false) = (inverse) ? Z * (Diagonal(T.SingularValues[1:Factors]) * T.Loadings[1:Factors,:]) : Z * (Diagonal( 1 ./ T.SingularValues[1:Factors]) * T.Loadings[1:Factors,:])'
+(T::PCA)(Z::Array; Factors = length(T.Values), inverse = false) = (inverse) ? Z * (Diagonal(T.Values[1:Factors]) * T.Loadings[1:Factors,:]) : Z * (Diagonal( 1 ./ T.Values[1:Factors]) * T.Loadings[1:Factors,:])'
 
-ExplainedVariance(PCA::PCA) = ( PCA.SingularValues .^ 2 ) ./ sum( PCA.SingularValues .^ 2 )
+ExplainedVariance(PCA::PCA) = ( PCA.Values .^ 2 ) ./ sum( PCA.Values .^ 2 )
 
-
-
-struct LinearDiscriminantAnalysis
-    ClassSize
-    pi
-    ClassMeans
-    ProjectedClassMeans
-    ProjectedClassCovariances
+struct LDA
     Scores
     Loadings
-    EigenValues
+    Values
 end
 
-function LinearDiscriminantAnalysis(X, Y; Factors = 1)
+function LDA(X, Y; Factors = 1)
     (Obs, ClassNumber) = size( Y )
     Variables = size( X )[ 2 ]
     #Instantiate some variables...
@@ -103,33 +96,17 @@ function LinearDiscriminantAnalysis(X, Y; Factors = 1)
     ReVals = real.(eig.values)
     Sorted = sortperm( ReVals, rev = true)
     Contributions = ReVals[Sorted] .>= 1e-9
-    ReVecs = real.(eig.vectors[:, Sorted[ Contributions] ] )
+    Loadings = real.(eig.vectors[:, Sorted[ Contributions] ] )
     #Project the X data into the LDA basis
-    Projected = X * ReVecs
-    #Calculate the probability density functions for each class
-    pik = ClassSize ./ Obs
-    YPred = zeros(Obs, ClassNumber)
-    ProjClassMeans = zeros( ClassNumber, sum(Contributions))#Variables )
-    classcovariance = []
-    for class in 1 : ClassNumber
-        Members = Y[ :, class ] .== 1
-        ProjClassMeans[class, :] = StatsBase.mean(Projected[Members,:], dims = 1)
-        MeanCentered = Projected[Members,:] .- ProjClassMeans[class,:]'
-        push!(classcovariance, (1.0 / (ClassSize[class] - 1.0 )) .* ( MeanCentered' * MeanCentered  ) )
-    end
-    return LinearDiscriminantAnalysis(  ClassSize, pik,
-                                        ClassMeans, ProjClassMeans,
-                                        classcovariance,
-                                        Projected,
-                                        ReVecs,
-                                        ReVals[ Sorted[ Contributions] ] )
+    Scores = X * Loadings
+    return LDA( Scores, Loadings, ReVals[ Sorted[ Contributions] ] )
 end
 
-# function ( model::LinearDiscriminantAnalysis )( Z; Factors = 3, inverse = false )
-#     Projected = Z * model.Loadings[:,1:Factors]
-# end
+function ( model::LDA )( Z; Factors = length(model.Values), inverse = false )
+     Projected = Z * model.Loadings[:,1:Factors]
+end
 
-ExplainedVariance(LDA::LinearDiscriminantAnalysis) = LDA.Eigenvalues ./ sum(LDA.Eigenvalues)
+ExplainedVariance(lda::LDA) = lda.Values ./ sum(lda.Values)
 
 
 function MatrixInverseSqrt(X, threshold = 1e-6)
