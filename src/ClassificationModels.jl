@@ -3,22 +3,6 @@ using LinearAlgebra
 
 abstract type ClassificationModel end
 
-Threshold(yhat; level = 0.5) = map( y -> (y >= level) ? 1 : 0, yhat)
-#Warning this function can allow for no class assignments...
-function MulticlassThreshold(yhat; level = 0.5)
-    newY = zeros(size(yhat))
-    for obs in 1 : size(yhat)[1]
-        (val, ind) = findmax( yhat[obs,:] )
-        if val > level
-            newY[ind] = val
-        end
-    end
-    return newY
-end
-
-function HighestVote(yhat)
-    return [ findmax( yhat[obs,:] )[2] for obs in 1 : size(yhat)[1]  ]
-end
 
 #Untested...
 struct KNN <: ClassificationModel
@@ -28,18 +12,18 @@ struct KNN <: ClassificationModel
 end
 
 function ( model::KNN )( Z, K = 1 )
-    DistMat = zeros( size( KNN.X )[ 1 ], size( X )[ 1 ] )
-    Predictions = zeros( size( X )[ 1 ] )
+    DistMat = zeros( size( model.X )[ 1 ], size( Z )[ 1 ] )
+    Predictions = zeros( size( Z )[ 1 ] )
     #Apply Distance Fn
     if model.DistanceType == :euclidean
-        DistMat = SquareEuclideanDistance(KNN.X, Z)
+        DistMat = SquareEuclideanDistance(model.X, Z)
     elseif model.DistanceType == :manhattan
-        DistMat = ManhattanDistance(KNN.X, Z)
+        DistMat = ManhattanDistance(model.X, Z)
     end
     #Find nearest neighbors and majority vote
-    for obs in 1 : size( X )[ 1 ]
-        Preds = sortperm( DistMat[obs, :] )[ 1 : K ]
-        Predictions[ obs ] = argmax( StatsBase.countmap( KNN.Y[ Preds ] ) )
+    for obs in 1 : size( Z )[ 1 ]
+        Preds = sortperm( DistMat[:, obs] )[ 1 : K ]
+        Predictions[ obs ] = argmax( StatsBase.countmap( model.Y[ Preds ] ) )
     end
 
     return Predictions
@@ -57,8 +41,9 @@ struct LinearDiscriminantAnalysis <: ClassificationModel
     EigenValues
 end
 
-function LinearDiscriminantAnalysis(X, Y)
-    (Obs, ClassNumber) = size( X )
+
+function LinearDiscriminantAnalysis(X, Y; Factors = 1)
+    (Obs, ClassNumber) = size( Y )
     Variables = size( X )[ 2 ]
     #Instantiate some variables...
     ClassMeans = zeros( ClassNumber, Variables )
@@ -81,11 +66,10 @@ function LinearDiscriminantAnalysis(X, Y)
         MeanCentered = X[Members,:] .- ClassMeans[class, : ]'
         WithinCovariance .+= (1.0 / (Obs - Members[class])) * ( MeanCentered' * MeanCentered  )
     end
-
     #Calculate the discriminant axis
     eig = LinearAlgebra.eigen(Base.inv(WithinCovariance) * BetweenCovariance)
     #Project the X data into the LDA basis
-    Projected = X * eig.vectors
+    Projected = X * real.(eig.vectors)
     #Calculate the probability density functions for each class
     pik = ClassSize ./ Obs
     YPred = zeros(Obs, ClassNumber)
@@ -97,10 +81,12 @@ function LinearDiscriminantAnalysis(X, Y)
         MeanCentered = Projected[Members,:] .- ProjClassMeans[class,:]'
         push!(classcovariance, (1.0 / (Obs - ClassSize[class] )) .* ( MeanCentered' * MeanCentered  ) )
     end
+
     return LinearDiscriminantAnalysis(  ClassSize, pik,
                                         ClassMeans, ProjClassMeans,
-                                        Projected[:,reverse(1:Variables)], eig.vectors[:,reverse(1:Variables)],
-                                        classcovariance, eig.values[reverse(1:Variables)] )
+                                        Projected[:,reverse(1:Variables)],
+                                        real.(eig.vectors[:,reverse(1:Variables)]),
+                                        classcovariance, real.(eig.values[reverse(1:Variables)]) )
 end
 
 function ( model::LinearDiscriminantAnalysis )( Z; Factors = 3 )
@@ -123,7 +109,58 @@ end
 
 ExplainedVariance(LDA::LinearDiscriminantAnalysis) = LDA.Eigenvalues ./ sum(LDA.Eigenvalues)
 
-using CSV
+#
+# include("/home/caseykneale/Desktop/Spectroscopy/chemotools/ChemometricsTools/src/ClassificationMetrics.jl")
+# include("/home/caseykneale/Desktop/Spectroscopy/chemotools/ChemometricsTools/src/Transformations.jl")
+# include("/home/caseykneale/Desktop/Spectroscopy/chemotools/ChemometricsTools/src/Analysis.jl")
+# include("/home/caseykneale/Desktop/Spectroscopy/chemotools/ChemometricsTools/src/DistanceMeasures.jl")
+#
+#
+#
+# using CSV
+# using DataFrames
+# Raw = CSV.read("/home/caseykneale/Desktop/Spectroscopy/Data/MIR_Fruit_purees.csv");
+# Lbls = convert.(Bool, occursin.( "NON", String.(names( Raw )) )[2:end]);
+# Dump = collect(convert(Array, Raw)[:,2:end]');
+# Fraud = Dump[Lbls,:];
+# Legit = Dump[.!Lbls,:];
+#
+# size(Fraud)
+# size(Legit)
+#
+# Train = vcat(Fraud[1:400, :], Legit[1:200, : ] );
+# snv = StandardNormalVariate(Train)
+# #Train = snv(Train);
+# #Train_pca = PCA(Train; Factors = 10)
+# #Train = Train_pca(Train; Factors = 10);
+#
+#
+#
+# Test = vcat(Fraud[401:end, :], Legit[201:end, : ] );
+# #Test = snv(Test);
+# #Test = Train_pca(Test; Factors = 10);
+#
+# TrnLbl = vcat( repeat([1],400),repeat([0],200) );
+# TstLbl = vcat( repeat([1],231),repeat([0],150) );
+#
+# Enc = LabelEncoding(TrnLbl)
+# Hot = ColdToHot(TrnLbl, Enc);
+#
+#
+# LDA = LinearDiscriminantAnalysis(Train , Hot)
+#
+# HighestVote(LDA(Test ; Factors = 4))
+#
+# sum(TstLbl)
+#
+#
+#
+knn=KNN(Train, HotToCold(TrnLbl, Enc), :euclidean)
+#sum(knn(Test))
 
+#knn(Test)
 
-Raw = CSV.read(/home/caseykneale/Desktop/Spectroscopy/Data)
+#MulticlassStats(knn(Test), HotToCold(TstLbl, Enc), Enc)
+
+#
+# sum(TstLbl)

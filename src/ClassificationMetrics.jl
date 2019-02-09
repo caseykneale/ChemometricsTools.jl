@@ -1,6 +1,7 @@
-
 using LinearAlgebra
 using Statistics
+
+forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
 
 struct ClassificationLabel
     ToHot::Dict
@@ -35,6 +36,7 @@ function ColdToHot(Y, Schema::ClassificationLabel)
 end
 
 function HotToCold(Y, Schema::ClassificationLabel)
+    Y = forceMatrix(Y)
     (lenY, Feats) = size( Y )
     @assert Feats == Schema.LabelCount
     Output = zeros( lenY )
@@ -93,4 +95,23 @@ function MulticlassStats(Y, GT, schema; Microaverage = true)
                     "Accuracy" => Accuracy,         "FMeasure" => FMeasure,
                     "FAR" => FAR,                   "FNR" => FNR )
     end
+end
+
+#Voting Schemes
+Threshold(yhat; level = 0.5) = map( y -> (y >= level) ? 1 : 0, yhat)
+
+#Warning this function can allow for no class assignments...
+function MulticlassThreshold(yhat; level = 0.5)
+    newY = zeros(size(yhat))
+    for obs in 1 : size(yhat)[1]
+        (val, ind) = findmax( yhat[obs,:] )
+        if val > level
+            newY[ind] = val
+        end
+    end
+    return newY
+end
+
+function HighestVote(yhat)
+    return [ findmax( yhat[obs,:] )[2] for obs in 1 : size(yhat)[1]  ]
 end
