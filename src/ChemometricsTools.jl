@@ -1,7 +1,7 @@
 module ChemometricsTools
     include("ClassificationMetrics.jl")
     export LabelEncoding, HotToCold, ColdToHot, MulticlassStats,
-        Threshold, MulticlassThreshold, HighestVote 
+        Threshold, MulticlassThreshold, HighestVote
 
     include("RegressionMetrics.jl")
     export ME, MAE, MAPE, SSE, MSE, RMSE, SSTotal, SSReg, SSRes, RSquare,
@@ -21,7 +21,7 @@ module ChemometricsTools
     export KNN_OneClass, PCA_Hotelling, Q, Hotelling
 
     include("ClassificationModels.jl")
-    export KNN, GuassianDiscriminant
+    export KNN, GaussianDiscriminant
 
     include("Clustering.jl")
     export TotalClusterSS, WithinClusterSS, BetweenClusterSS,

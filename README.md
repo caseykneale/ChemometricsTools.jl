@@ -1,10 +1,10 @@
 # ChemometricsTools
-This is an essential collection of tools to do Chemometrics in Julia. The goals for this package are as follows: only rely on basic dependencies, essential algorithms should read similar to pseudocode in papers, and provide flexible tooling for the end-user's fast and reliable work flow.
+This is an essential collection of tools to perform Chemometric analysis' in Julia. The goals for this package are as follows: rely only on basic dependencies for longevity and stability, essential algorithms should read similar to pseudocode in papers, and the tools provided should be fast, flexible, and reliable (That's the Julia way after-all). No code will directly call R, Python, C, etc, it will be written in Julia from the ground up.
 
-In it's current state all of the algorithms available in this package operate exclusively on 1 or 2 Arrays. To be specific, the format of input arrays should be such that the number of rows are the observations, and the number of columns are the variables. This choice was made out of convenience and my personal bias. If enough users want DataFrames, Tables, JuliaDB formats, maybe this will change. For now the package is best suited to the treatment and analysis of continuous data.
+In it's current state all of the algorithms available in this package operate exclusively on 1 or 2 Arrays. To be specific, the format of input arrays should be such that the number of rows are the observations, and the number of columns are the variables. This choice was made out of convenience and my personal bias. If enough users want DataFrames, Tables, JuliaDB formats, maybe this will change. For now the package is best suited to the treatment and analysis of continuous data. Surely there's plans to broaden the scope.
 
-### Package Status
-This thing is brand new (~2 weeks old). Many of the tools available can be used, and most of those are implemented correctly. However, there's a lot of glue code not in place yet, and some of the methods haven't been tested (and were quickly written). So use at your own risk for now; in a week or two this should be functional and trustworthy, and at that point collaborators will be sought!
+### Package Status => Early View
+This thing is brand new (~2 weeks old). Many of the tools available can be used, and most of those are implemented correctly. Betchya anything there are bugs in the repo! So use at your own risk for now. In a week or two this should be functional and trustworthy, and at that point collaborators will be sought. I'm releasing an early preview for constructive criticism and awareness.
 
 ### Transforms/Pipelines
 Two design choices introduced in this package are "Transformations" and "Pipelines". These allow for preprocessing and data transformations to be reused or chained for reliable analytic throughput. Below are some examples based on some faux data,
@@ -139,14 +139,64 @@ for Lv in 22:-1:1
     end
 end
 ```
-This approach is ~5 times faster on a single core( < 2 seconds), pours through 7Gb less data, and makes 1/5th the allocations. If you wanted you could distribute the inner loop (using Distributed.jl) and see drastic speed ups! 
+This approach is ~5 times faster on a single core( < 2 seconds), pours through 7Gb less data, and makes 1/5th the allocations. If you wanted you could distribute the inner loop (using Distributed.jl) and see drastic speed ups!
 
 *Aside:* there are quite a few other functions that make model training convenient for end-users. Such as Shuffle, Shuffle!, LeaveOneOut, Venetian Blinds, etc.
 
 The lovely Kennard-Stone sampling algorithm is also on board,
 ![Kennard-Stone](/images/KS.png)
 
-# Specialized tools?
-You might be saying, ridge regression, least squares, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics?
+# Classification Analysis
+There's also a bunch of tools for changes of basis such as: principal components analysis, linear discriminant analysis, orthogonal signal correction, etc. With those kinda of tools we can reduce the dimensions of our data and make classes more seperable. So seperable that trivial classification methods like gaussian discriminant can get us pretty good results. Below is an example analysis performed on mid-infrared spectra of strawberry purees and adulterated strawberry purees (yes fraudulent food items are a common concern).
 
-Well, we have some specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, and there are certainly plans for a few other tools for chemical data that packages in other languages have left out. Stay tuned... Right now some bare bones stuff still needs to be tuned for correctness, and some analysis functions need to be added.
+![Raw](/images/fraud_analysis_raw.png)
+
+*Use of Fourier transform infrared spectroscopy and partial least squares regression for the detection of adulteration of strawberry purées. J K Holland, E K Kemsley, R H Wilson*
+
+
+```julia
+snv = StandardNormalVariate(Train);
+Train_pca = PCA(snv(Train);; Factors = 15);
+
+Enc = LabelEncoding(TrnLbl);
+Hot = ColdToHot(TrnLbl, Enc);
+
+lda = LDA(Train_pca.Scores , Hot);
+classifier = GaussianDiscriminant(lda, TrainS, Hot)
+TrainPreds = classifier(TrainS; Factors = 2);
+```
+![LDA of PCA](/images/lda_fraud_analysis.png)
+
+Cool right? Well, we can now apply the same transformations to the test set and pull some multivariate guassians over the train set classes to see how we do identifying fraudulent puree's,
+
+```julia
+TestSet = Train_pca(snv(Test));
+TestSet = lda(TestSet);
+TestPreds = classifier(TestS; Factors  = 2);
+MulticlassStats(TestPreds .- 1, TstLbl , Enc)
+```
+If you're following along you'll get ~92% F-measure. Not bad. I've gotten 100%'s with more advanced methods but this is a cute way to show off some of the tools currently available.
+
+# Clustering
+Currently K-means and basic clustering metrics are on board. Hey if you want clustering methods check out Clustering.jl! They've done an awesome job.
+
+#Time Series
+Write now we have echo state networks on board. Lot's to do there!
+
+# Specialized tools?
+You might be saying, ridge regression, least squares, KNN, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics? Right now, that's kind of true.
+
+Well, we have some specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, and there are certainly plans for a few other tools for chemical data that packages in other languages have left out. Stay tuned... Right now some bare bones stuff still needs to be tuned for correctness, and some analysis functions need to be added. This is again, an early view!
+
+
+# ToDo:
+  - Finish PCA statistics
+  - Convenience functions for Plots/Bland Altmans
+  - Peak finding algorithms
+  - Logit Transforms
+  - Logistic/Multimodal regression
+  - SIMCA
+  - Time Series/soft-sensing stuff / Recursive regression methods
+  - N-WAY PCA, and PLS
+  - ... Writing hundreds of unit tests ...
+  - ... ... Finding dozens of bugs ... ...
