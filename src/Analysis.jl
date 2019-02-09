@@ -56,6 +56,82 @@ end
 
 ExplainedVariance(PCA::PCA) = ( PCA.SingularValues .^ 2 ) ./ sum( PCA.SingularValues .^ 2 )
 
+
+
+struct LinearDiscriminantAnalysis
+    ClassSize
+    pi
+    ClassMeans
+    ProjectedClassMeans
+    ProjectedClassCovariances
+    Scores
+    Loadings
+    EigenValues
+end
+
+function LinearDiscriminantAnalysis(X, Y; Factors = 1)
+    (Obs, ClassNumber) = size( Y )
+    Variables = size( X )[ 2 ]
+    #Instantiate some variables...
+    ClassMeans = zeros( ClassNumber, Variables )
+    ClassSize = zeros( ClassNumber )
+    WithinCovariance = zeros( Variables, Variables )
+    BetweenCovariance = zeros( Variables, Variables  )
+    ClassCovariance = zeros( Variables, Variables  )
+    for class in 1 : ClassNumber
+        Members = Y[ :, class ] .== 1
+        ClassSize[class] = sum(Members)
+        ClassMeans[class,:] = StatsBase.mean(X[Members,:], dims = 1)
+    end
+    GlobalMean = StatsBase.mean(ClassMeans, dims = 1)
+
+    for class in 1 : ClassNumber
+        Members = Y[ :, class ] .== 1
+        #calculate the between class covariance matrix
+        Diff = (ClassMeans[class,:] .- GlobalMean)
+        BetweenCovariance .+= (1.0 / (ClassSize[class] - 1.0)) .* ( Diff * Diff' )
+        #calculate the within class covariance matrix
+        MeanCentered = X[Members,:] .- ClassMeans[class, : ]'
+        WithinCovariance .+= (1.0 / (ClassSize[class] - 1.0)) * ( MeanCentered' * MeanCentered  )
+    end
+    #Calculate the discriminant axis'
+    eig = LinearAlgebra.eigen(Base.inv(WithinCovariance) * BetweenCovariance)
+    if any( imag.( eig.values ) .> 1e-1)
+        println("Warning: Some eigenvalues found to have complex contributions > 0.1")
+    end
+    #Maybe reccomend to the user to do pca first or centerscale or both?
+    ReVals = real.(eig.values)
+    Sorted = sortperm( ReVals, rev = true)
+    Contributions = ReVals[Sorted] .>= 1e-9
+    ReVecs = real.(eig.vectors[:, Sorted[ Contributions] ] )
+    #Project the X data into the LDA basis
+    Projected = X * ReVecs
+    #Calculate the probability density functions for each class
+    pik = ClassSize ./ Obs
+    YPred = zeros(Obs, ClassNumber)
+    ProjClassMeans = zeros( ClassNumber, sum(Contributions))#Variables )
+    classcovariance = []
+    for class in 1 : ClassNumber
+        Members = Y[ :, class ] .== 1
+        ProjClassMeans[class, :] = StatsBase.mean(Projected[Members,:], dims = 1)
+        MeanCentered = Projected[Members,:] .- ProjClassMeans[class,:]'
+        push!(classcovariance, (1.0 / (ClassSize[class] - 1.0 )) .* ( MeanCentered' * MeanCentered  ) )
+    end
+    return LinearDiscriminantAnalysis(  ClassSize, pik,
+                                        ClassMeans, ProjClassMeans,
+                                        classcovariance,
+                                        Projected,
+                                        ReVecs,
+                                        ReVals[ Sorted[ Contributions] ] )
+end
+
+# function ( model::LinearDiscriminantAnalysis )( Z; Factors = 3, inverse = false )
+#     Projected = Z * model.Loadings[:,1:Factors]
+# end
+
+ExplainedVariance(LDA::LinearDiscriminantAnalysis) = LDA.Eigenvalues ./ sum(LDA.Eigenvalues)
+
+
 function MatrixInverseSqrt(X, threshold = 1e-6)
     eig = eigen(X)
     diagelems = 1.0 ./ sqrt.( max.( eig.values , 0.0 ) )
