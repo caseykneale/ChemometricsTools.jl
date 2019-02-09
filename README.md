@@ -65,7 +65,7 @@ PreprocessPipe(Processed; inverse = true)
 ```
 Well we get an assertion error.
 
-### Automation Example
+### Automated Pipeline Example
 We can take advantage of how pipelines are created; at their core they are tuples of transforms/functions. So if we can make an array of transforms and set some conditions they can be stored and applied to unseen data. A fun example of an automated transform pipeline is in the whimsical paper written by Willem Windig et. al's. That paper is called 'Loopy Multiplicative Scatter Transform'. Below I'll show how we can implement that algorithm here (or anything similar) with ease.
 *Loopy MSC: A Simple Way to Improve Multiplicative Scatter Correction. Willem Windig, Jeremy Shaver, Rasmus Bro. Applied Spectroscopy. 2008. Vol 62, issue: 10, 1153-1159*
 
@@ -101,7 +101,7 @@ Looks like our automation driven pipeline is equivalent to the loop it took to m
 Yes, yes we did. Pretty easy right?
 
 # Model training
-There are a few built-in's to make training models a snap. Philosophically I decided, making wrapper functions to perform Cross Validation is not fair to the end-user. There are many cases where we want specialized CV's but we don't want to write nested for-loops that run for hours then debug them... Similarly, most people don't want to spend their time hacking into rigid GridSearch code, scouring stack exchange and package documentation. Especially when it'd be easier to write an equivalent approach that's self documenting from scratch. Instead, I used Julia's iterators to make K-Fold validations convenient, below is an example Partial Least Squares Regression CV.
+There are a few built-in's to make training models a snap. Philosophically I decided, making wrapper functions to perform Cross Validation is not fair to the end-user. There are many cases where we want specialized CV's but we don't want to write nested for-loops that run for hours then debug them... Similarly, most people don't want to spend their time hacking into rigid GridSearch object, scouring stack exchange and package documentation. Especially when it'd be easier to write an equivalent approach that's self documenting from scratch. Instead, I used Julia's iterators to make K-Fold validations convenient, below is an example Partial Least Squares Regression CV.
 
 ```julia
 #Split our data
@@ -147,7 +147,7 @@ The lovely Kennard-Stone sampling algorithm is also on board,
 ![Kennard-Stone](/images/KS.png)
 
 # Classification Analysis
-There's also a bunch of tools for changes of basis such as: principal components analysis, linear discriminant analysis, orthogonal signal correction, etc. With those kinda of tools we can reduce the dimensions of our data and make classes more seperable. So seperable that trivial classification methods like gaussian discriminant can get us pretty good results. Below is an example analysis performed on mid-infrared spectra of strawberry purees and adulterated strawberry purees (yes fraudulent food items are a common concern).
+There's also a bunch of tools for changes of basis such as: principal components analysis, linear discriminant analysis, orthogonal signal correction, etc. With those kinda of tools we can reduce the dimensions of our data and make classes more separable. So separable that trivial classification methods like a gaussian discriminant can get us pretty good results. Below is an example analysis performed on mid-infrared spectra of strawberry purees and adulterated strawberry purees (yes fraudulent food items are a common concern).
 
 ![Raw](/images/fraud_analysis_raw.png)
 
@@ -177,25 +177,27 @@ MulticlassStats(TestPreds .- 1, TstLbl , Enc)
 ```
 If you're following along you'll get ~92% F-measure. Not bad. I've gotten 100%'s with more advanced methods but this is a cute way to show off some of the tools currently available.
 
-# Clustering
+## Clustering
 Currently K-means and basic clustering metrics are on board. Hey if you want clustering methods check out Clustering.jl! They've done an awesome job.
 
-#Time Series
-Write now we have echo state networks on board. Lot's to do there!
+## Time Series/Soft-Sensing
+Write now echo state networks are on board. Lot's to do there!
 
-# Specialized tools?
+## Specialized tools?
 You might be saying, ridge regression, least squares, KNN, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics? Right now, that's kind of true.
 
 Well, we have some specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, and there are certainly plans for a few other tools for chemical data that packages in other languages have left out. Stay tuned... Right now some bare bones stuff still needs to be tuned for correctness, and some analysis functions need to be added. This is again, an early view!
 
 
-# ToDo:
+## ToDo:
   - Finish PCA statistics
   - Convenience functions for Plots/Bland Altmans
   - Peak finding algorithms
   - Logit Transforms
   - Logistic/Multimodal regression
   - SIMCA
+  - MCR-ALS, NMF, BTEM, ...
+  - Fast decision trees...
   - Time Series/soft-sensing stuff / Recursive regression methods
   - N-WAY PCA, and PLS
   - ... Writing hundreds of unit tests ...
