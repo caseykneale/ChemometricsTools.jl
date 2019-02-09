@@ -10,6 +10,9 @@ module ChemometricsTools
     include("AnomalyDetection.jl")
     export KNN_OneClass, PCA_Hotelling, Q, Hotelling
 
+    include("ClassificationMetrics.jl")
+    export LabelEncoding, HotToCold, ColdToHot, MulticlassStats
+
     include("ClassificationModels.jl")
     export Threshold, MulticlassThreshold, HighestVote, KNN,
         LinearDiscriminantAnalysis, ExplainedVariance

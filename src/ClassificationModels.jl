@@ -1,6 +1,5 @@
 using StatsBase
 using LinearAlgebra
-#include("DistanceMeasures.jl")
 
 abstract type ClassificationModel end
 
@@ -123,3 +122,8 @@ function ( model::LinearDiscriminantAnalysis )( Z; Factors = 3 )
 end
 
 ExplainedVariance(LDA::LinearDiscriminantAnalysis) = LDA.Eigenvalues ./ sum(LDA.Eigenvalues)
+
+using CSV
+
+
+Raw = CSV.read(/home/caseykneale/Desktop/Spectroscopy/Data)
