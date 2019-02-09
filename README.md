@@ -66,7 +66,7 @@ PreprocessPipe(Processed; inverse = true)
 Well we get an assertion error.
 
 ### Automated Pipeline Example
-We can take advantage of how pipelines are created; at their core they are tuples of transforms/functions. So if we can make an array of transforms and set some conditions they can be stored and applied to unseen data. A fun example of an automated transform pipeline is in the whimsical paper written by Willem Windig et. al's. That paper is called 'Loopy Multiplicative Scatter Transform'. Below I'll show how we can implement that algorithm here (or anything similar) with ease.
+We can take advantage of how pipelines are created; at their core they are tuples of transforms/functions. So if we can make an array of transforms and set some conditions they can be stored and applied to unseen data. A fun example of an automated transform pipeline is in the whimsical paper written by Willem Windig et. al. That paper is called 'Loopy Multiplicative Scatter Transform'. Below I'll show how we can implement that algorithm here (or anything similar) with ease.
 *Loopy MSC: A Simple Way to Improve Multiplicative Scatter Correction. Willem Windig, Jeremy Shaver, Rasmus Bro. Applied Spectroscopy. 2008. Vol 62, issue: 10, 1153-1159*
 
 First let's look at the classic Diesel data before applying Loopy MSC
@@ -147,7 +147,7 @@ The lovely Kennard-Stone sampling algorithm is also on board,
 ![Kennard-Stone](/images/KS.png)
 
 # Classification Analysis
-There's also a bunch of tools for changes of basis such as: principal components analysis, linear discriminant analysis, orthogonal signal correction, etc. With those kinda of tools we can reduce the dimensions of our data and make classes more separable. So separable that trivial classification methods like a gaussian discriminant can get us pretty good results. Below is an example analysis performed on mid-infrared spectra of strawberry purees and adulterated strawberry purees (yes fraudulent food items are a common concern).
+There's also a bunch of tools for changes of basis such as: principal components analysis, linear discriminant analysis, orthogonal signal correction, etc. With those kinda of tools we can reduce the dimensions of our data and make classes more separable. So separable that trivial classification methods like a Gaussian discriminant can get us pretty good results. Below is an example analysis performed on mid-infrared spectra of strawberry purees and adulterated strawberry purees (yes fraudulent food items are a common concern).
 
 ![Raw](/images/fraud_analysis_raw.png)
 
@@ -167,7 +167,7 @@ TrainPreds = classifier(TrainS; Factors = 2);
 ```
 ![LDA of PCA](/images/lda_fraud_analysis.png)
 
-Cool right? Well, we can now apply the same transformations to the test set and pull some multivariate guassians over the train set classes to see how we do identifying fraudulent puree's,
+Cool right? Well, we can now apply the same transformations to the test set and pull some multivariate Gaussians over the train set classes to see how we do identifying fraudulent puree's,
 
 ```julia
 TestSet = Train_pca(snv(Test));
@@ -181,7 +181,7 @@ If you're following along you'll get ~92% F-measure. Not bad. I've gotten 100%'s
 Currently K-means and basic clustering metrics are on board. Hey if you want clustering methods check out Clustering.jl! They've done an awesome job.
 
 ## Time Series/Soft-Sensing
-Write now echo state networks are on board. Lot's to do there!
+Right now echo state networks are on board. Lot's to do there!
 
 ## Specialized tools?
 You might be saying, ridge regression, least squares, KNN, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics? Right now, that's kind of true.
