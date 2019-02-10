@@ -46,6 +46,6 @@ module ChemometricsTools
     include("Training.jl")
     export Shuffle, VenetianBlinds, Shuffle!, LeaveOneOut, KFoldsValidation, SplitByProportion
 
-#ToDo: Add tests...
+#ToDo: Add hundreds of unit tests...
 
 end # module
