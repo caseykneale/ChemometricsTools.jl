@@ -3,20 +3,19 @@ using LinearAlgebra
 
 abstract type ClassificationModel end
 
-#Untested...
 struct KNN <: ClassificationModel
     X
     Y
-    DistanceType::Symbol #Can be :euclidean, :manhattan, ...
+    DistanceType::String #Can be "euclidean", "manhattan", ...
 end
 
 function ( model::KNN )( Z; K = 1 )
     DistMat = zeros( size( model.X )[ 1 ], size( Z )[ 1 ] )
     Predictions = zeros( size( Z )[ 1 ] )
     #Apply Distance Fn
-    if model.DistanceType == :euclidean
+    if model.DistanceType == "euclidean"
         DistMat = SquareEuclideanDistance(model.X, Z)
-    elseif model.DistanceType == :manhattan
+    elseif model.DistanceType == "manhattan"
         DistMat = ManhattanDistance(model.X, Z)
     end
     #Find nearest neighbors and majority vote

@@ -15,7 +15,8 @@ module ChemometricsTools
         RangeNorm, Logit, MultiplicativeScatterCorrection
 
     include("Analysis.jl")
-    export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, BlandAltman, ExplainedVariance
+    export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance,
+        BlandAltman, QQ
 
     include("AnomalyDetection.jl")
     export KNN_OneClass, PCA_Hotelling, Q, Hotelling
@@ -35,7 +36,6 @@ module ChemometricsTools
     include("RegressionModels.jl")
     export ClassicLeastSquares, RidgeRegression, PrincipalComponentRegression,
         PartialLeastSquares, ExtremeLearningMachine, PredictFn
-
 
     include("Ensembles.jl")
     export MakeIntervals
