@@ -11,8 +11,8 @@ module ChemometricsTools
     export SquareEuclideanDistance, EuclideanDistance, ManhattanDistance
 
     include("Transformations.jl")
-    export Transform, PipelineInPlace, Pipeline, Center, Scale, StandardNormalVariate, RangeNorm,
-        MultiplicativeScatterCorrection
+    export Transform, PipelineInPlace, Pipeline, Center, Scale, StandardNormalVariate,
+        RangeNorm, Logit, MultiplicativeScatterCorrection
 
     include("Analysis.jl")
     export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, BlandAltman, ExplainedVariance
@@ -21,7 +21,7 @@ module ChemometricsTools
     export KNN_OneClass, PCA_Hotelling, Q, Hotelling
 
     include("ClassificationModels.jl")
-    export KNN, GaussianDiscriminant
+    export KNN, GaussianDiscriminant, LogisticRegression, MultinomialSoftmaxRegression
 
     include("Clustering.jl")
     export TotalClusterSS, WithinClusterSS, BetweenClusterSS,

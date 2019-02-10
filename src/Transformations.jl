@@ -90,3 +90,10 @@ function RangeNorm( Z )
 end
 
 (T::RangeNorm)(Z; inverse = false) = (inverse) ? ( (Z .* ( T.Maxes .- T.Mins ) ) .+ T.Mins) : (Z .- T.Mins) ./ ( T.Maxes .- T.Mins )
+
+struct Logit <: Transform
+     innercall
+end
+#I'll be the first to admit this is not convenient...
+#But it is the easiest way to include transforms into pipelines that have no learned parameters...
+Logit(X) = return Logit(Z; inverse = false) = (inverse) ? exp.(Z) ./ (1.0 .+ exp.(Z)) : log.( Z ./ (1.0 .- Z) )
