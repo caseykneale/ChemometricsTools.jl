@@ -1,13 +1,11 @@
 using Distributions
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# include("/home/caseykneale/Desktop/Spectroscopy/chemotools/ChemometricsTools/src/Analysis.jl")
 
 #Ideally I'd only access each column once in the K loop... Tricky...
 #Untested. Not super optimal, but should work fine, for small data...
 #Could store inter distance matrix to a struct...
 #Untested...
-function OneClassKNN( Normal, New; J = 1, K = 1, threshold = 1.0 )
+function OneClassJKNN( Normal, New; J = 1, K = 1, threshold = 1.0 )
     Obs = size( Normal )[ 1 ]
     ObsNew = size( New )[ 1 ]
     DistMat = zeros( Obs, ObsNew )

@@ -19,7 +19,7 @@ module ChemometricsTools
         BlandAltman, QQ
 
     include("AnomalyDetection.jl")
-    export KNN_OneClass, PCA_Hotelling, Q, Hotelling
+    export OneClassJKNN, Q, Hotelling, Leverage
 
     include("ClassificationModels.jl")
     export KNN, GaussianDiscriminant, LogisticRegression, MultinomialSoftmaxRegression
@@ -41,10 +41,10 @@ module ChemometricsTools
     export MakeIntervals
 
     include("Sampling.jl")
-    export KennardStone
+    export VenetianBlinds, SplitByProportion, KennardStone
 
     include("Training.jl")
-    export Shuffle, VenetianBlinds, Shuffle!, LeaveOneOut, KFoldsValidation, SplitByProportion
+    export Shuffle, Shuffle!, LeaveOneOut, KFoldsValidation
 
 #ToDo: Add hundreds of unit tests...
 

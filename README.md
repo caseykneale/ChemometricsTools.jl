@@ -125,7 +125,7 @@ RMSE( PLSR(TestX), TestY )
 ```
 ![20 fold cross validation](/images/CV.png)
 
-That's great right? but, hey that was kinda slow. Knowing what we know about ALS based models, we can do the same operation in linear time with respect to factors by computing the most latent variables first and only recomputing the regression coefficients. An example of this is below,
+That's great right? but, hey that was kind of slow. Knowing what we know about ALS based models, we can do the same operation in linear time with respect to factors by computing the most latent variables first and only recomputing the regression coefficients. An example of this is below,
 
 ```julia
 Err = repeat([0.0], 22);
@@ -147,7 +147,7 @@ The lovely Kennard-Stone sampling algorithm is also on board,
 ![Kennard-Stone](/images/KS.png)
 
 # Classification Analysis
-There's also a bunch of tools for changes of basis such as: principal components analysis, linear discriminant analysis, orthogonal signal correction, etc. With those kinda of tools we can reduce the dimensions of our data and make classes more separable. So separable that trivial classification methods like a Gaussian discriminant can get us pretty good results. Below is an example analysis performed on mid-infrared spectra of strawberry purees and adulterated strawberry purees (yes fraudulent food items are a common concern).
+There's also a bunch of tools for changes of basis such as: principal components analysis, linear discriminant analysis, orthogonal signal correction, etc. With those kinds of tools we can reduce the dimensions of our data and make classes more separable. So separable that trivial classification methods like a Gaussian discriminant can get us pretty good results. Below is an example analysis performed on mid-infrared spectra of strawberry purees and adulterated strawberry purees (yes fraudulent food items are a common concern).
 
 ![Raw](/images/fraud_analysis_raw.png)
 
@@ -190,11 +190,8 @@ Well, we have some specialized tools for chemometricians in special fields. For 
 
 
 ## ToDo:
-  - Finish PCA statistics
   - Convenience functions for Plots/Bland Altmans
   - Peak finding algorithms
-  - Logit Transforms
-  - Logistic/Multimodal regression
   - SIMCA
   - MCR-ALS, NMF, BTEM, ...
   - Fast decision trees...
