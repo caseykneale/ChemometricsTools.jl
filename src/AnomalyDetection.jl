@@ -8,12 +8,6 @@ function KNN_OneClass(X)
     println("Coming soon...")
 end
 
-struct PCA_Hotelling
-    pca
-    Lambda
-end
-
-
 #Incomplete
 #https://wis.kuleuven.be/stat/robust/papers/2013/deketelaere-review.pdf
 function Q(X, pca::PCA; Significance = 0.05, Variance = 0.99)
@@ -30,8 +24,6 @@ function Q(X, pca::PCA; Significance = 0.05, Variance = 0.99)
 end
 Q(test, pca_obj; Variance = 1.0)
 
-#Untested
-#https://wis.kuleuven.be/stat/robust/papers/2013/deketelaere-review.pdf
 function Hotelling(X, pca::PCA; Significance = 0.05, Variance = 1.0)
     (Obs,Vars) = size(X)
     CumVar = cumsum( ExplainedVariance( pca ) )

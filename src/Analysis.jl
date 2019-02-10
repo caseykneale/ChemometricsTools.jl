@@ -1,5 +1,6 @@
 using LinearAlgebra
 using StatsBase
+using Statistics
 
 struct PCA
     Scores
@@ -137,7 +138,11 @@ function CanonicalCorrelationAnalysis(A, B)
     return CanonicalCorrelationAnalysis(Aprime' * A, V = Bprime' * B, singvaldecomp.S[1 : maxrank] )
 end
 
-#Untested...
+
+function QQ(y1, y2; Quantiles = collect(1:99) ./ 100 )
+    return ( Statistics.quantile!(y1, Quantiles), Statistics.quantile!(y2, Quantiles))
+end
+
 struct BlandAltman
     means::Array{Float64, 1}
     differences::Array{Float64, 1}
