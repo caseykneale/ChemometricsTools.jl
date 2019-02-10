@@ -137,32 +137,3 @@ function CanonicalCorrelationAnalysis(A, B)
     Bprime = CAAInvSqrt * singvaldecomp.Vt[ :,1 : maxrank ]
     return CanonicalCorrelationAnalysis(Aprime' * A, V = Bprime' * B, singvaldecomp.S[1 : maxrank] )
 end
-
-
-function QQ(y1, y2; Quantiles = collect(1:99) ./ 100 )
-    return ( Statistics.quantile!(y1, Quantiles), Statistics.quantile!(y2, Quantiles))
-end
-
-struct BlandAltman
-    means::Array{Float64, 1}
-    differences::Array{Float64, 1}
-    UpperLimit::Float64
-    Center::Float64
-    LowerLimit::Float64
-    Outliers::Array{Float64}
-end
-
-function BlandAltman(Y1, Y2)
-    means = (Y1 .+ Y2) ./ 2.0
-    diffs = Y2 .- Y1
-    MeanofDiffs = StatsBase.mean( diffs )
-    StdofDiffs = StatsBase.std( diffs )
-
-    UpperLimit = MeanofDiffs + bounds * StdofDiffs
-    Center = MeanofDiffs
-    LowerLimit = MeanofDiffs - bounds * StdofDiffs
-    #To:Do Add trend-line....
-    Outliers = findall( (diffs .> MeanofDiffs + 1.96*StdofDiffs) )
-    Outliers = vcat(Outliers, findall( diffs < MeanofDiffs - 1.96*StdofDiffs ) )
-    return BlandAltman( means, diffs, UpperLimit, Center, LowerLimit, Outliers )
-end

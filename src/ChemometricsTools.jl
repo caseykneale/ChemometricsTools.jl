@@ -15,8 +15,7 @@ module ChemometricsTools
         RangeNorm, Logit, MultiplicativeScatterCorrection
 
     include("Analysis.jl")
-    export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance,
-        BlandAltman, QQ
+    export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance
 
     include("AnomalyDetection.jl")
     export OneClassJKNN, Q, Hotelling, Leverage
@@ -45,6 +44,9 @@ module ChemometricsTools
 
     include("Training.jl")
     export Shuffle, Shuffle!, LeaveOneOut, KFoldsValidation
+
+    include("PlottingTools.jl")
+    export QQ, BlandAltman, plot
 
 #ToDo: Add hundreds of unit tests...
 
