@@ -45,6 +45,9 @@ module ChemometricsTools
     include("Training.jl")
     export Shuffle, Shuffle!, LeaveOneOut, KFoldsValidation
 
+    include("CurveResolution.jl")
+    export NMF
+
     include("PlottingTools.jl")
     export QQ, BlandAltman, plot
 
