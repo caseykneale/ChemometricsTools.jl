@@ -50,8 +50,7 @@ function Hotelling(X, pca::PCA; Significance = 0.05, Variance = 1.0)
     CumVar = cumsum( ExplainedVariance( pca ) )
     PCs = sum( CumVar .<= Variance )
     #Truncate loadings & scores
-    #Loadings = pca.Loadings[1:PCs,:]
-    Scores = pca.Scores[:,1:PCs]
+    Scores = pca(X).Scores#pca.Scores[:,1:PCs]
     #Hotelling Statistic: T 2 = (X^T) W Λ − 1 W ˆ T X
     #Λ ˆ = diag ( l 1 , l 2 ,.., l l )
     Lambda = sqrt.( LinearAlgebra.Diagonal( 1.0 ./ ( pca.Values[1:PCs] ) ) )
