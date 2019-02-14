@@ -93,64 +93,67 @@ function FNNLS(A, b;
 end
 
 #Torture test...
-for i in 1:10000
-    a = rand(4,4);
-    b = rand(4);
-    x = FNNLS( a,  b)
-    if any(x .< 0.0)
-        println("ahhh")
-    end
-end
+# for i in 1:10000
+#     a = rand(4,4);
+#     b = rand(4);
+#     x = FNNLS( a,  b)
+#     if any(x .< 0.0)
+#         println("ahhh")
+#     end
+# end
 using LinearAlgebra
 #Trying to do this from memory.. X = S C
 #So that. S = (XtX)-1 C && C = S (XtX)-1
 function MCRALS(X, C, S = nothing;
                 Factors = 1, maxiters = 50,
-                nonnegative = true)
+                nonnegative = false)
     @assert all( isa.( [ C , S ], Nothing ) ) == false
-    err = Inf
-    D = X
+    err = zeros(maxiters)
+    D = copy(X)
     isC = isa(C, Nothing)
     isS = isa(S, Nothing)
-    C = isa(C, Nothing) ? zeros(size(X)[1], Factors) : C
-    S = isa(S, Nothing) ? zeros(Factors, size(X)[2]) : S
+    C = isC ? zeros(size(X)[1], Factors) : C[:, 1:Factors]
+    S = isS ? zeros(Factors, size(X)[2]) : S[1:Factors, :]
     #Let's burn in our parameter estimates...
     for iter in 1 : maxiters
         if !isS
             if nonnegative
-                println(size(D))
-                println(size(S))
-                for col in 1:Factors
-                    C[:,col] = FNNLS(D, S[col,:])
-                end
-            else
-                C = (S * LinearAlgebra.pinv(D)')'
+                # for col in 1:Factors
+                #     C[:,col] = FNNLS(D, S[col,:])
+                # end
+            else#C[o, F] = (S[F, v] * D[v, o])
+                C = (S * LinearAlgebra.pinv(D) )'
             end
-            isS = false
-            D = (C * S)'
+            isC = false
+            D = (C * S)
         end
         if !isC
             if nonnegative
-                for col in 1:size(C)[2]
-                    S[col,:] = FNNLS(D, C[:,col])
-                end
-            else
-                S = C' * LinearAlgebra.pinv(D)
+                # for col in 1:size(C)[2]
+                #     S[col,:] = FNNLS(D, C[:,col])
+                # end
+            else#S[F, V] = C'[F, o] * D'[o, v]
+                S = C' * LinearAlgebra.pinv(D)'
             end
-            isC = false
-            D = (C * S)'
+            isS = false
+            D = (C * S)
         end
-        err = sum( ( X .- D ) .^ 2 )
+        println(isC)
+        println(isS)
+        err[iter] = sum( ( X .- D ) .^ 2 )
     end
     return ( C, S, err )
 end
 
 
-vec(W[:,1])
-size(Fraud)
+( C, S, err ) = MCRALS(Fraud, nothing, H; Factors = 1)
+plot(err)
+
+plot(H')
+plot(S')
 
 
-( C, S, err ) = MCRALS(Fraud, nothing , W'; Factors = 2)
+
 size(S)
 
 
