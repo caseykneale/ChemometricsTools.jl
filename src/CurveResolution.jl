@@ -105,64 +105,60 @@ using LinearAlgebra
 #Trying to do this from memory.. X = S C
 #So that. S = (XtX)-1 C && C = S (XtX)-1
 function MCRALS(X, C, S = nothing;
-                Factors = 1, maxiters = 50,
+                Factors = 1, maxiters = 100,
                 nonnegative = false)
     @assert all( isa.( [ C , S ], Nothing ) ) == false
     err = zeros(maxiters)
-    D = copy(X)
+    D = zeros(size(X))
     isC = isa(C, Nothing)
     isS = isa(S, Nothing)
     C = isC ? zeros(size(X)[1], Factors) : C[:, 1:Factors]
     S = isS ? zeros(Factors, size(X)[2]) : S[1:Factors, :]
-    #Let's burn in our parameter estimates...
+    C = C ./ sum(C, dims = 1)
+    S = S ./ sum(S, dims = 2)
     for iter in 1 : maxiters
         if !isS
             if nonnegative
-                # for col in 1:Factors
-                #     C[:,col] = FNNLS(D, S[col,:])
+                # for f in 1:Factors
+                #     C[:,f] = FNNLS(D, S[f,:])
                 # end
             else#C[o, F] = (S[F, v] * D[v, o])
-                C = (S * LinearAlgebra.pinv(D) )'
+                C = (S * LinearAlgebra.pinv(X) )'
             end
+
             isC = false
             D = (C * S)
         end
         if !isC
             if nonnegative
-                # for col in 1:size(C)[2]
-                #     S[col,:] = FNNLS(D, C[:,col])
+                # for f in 1:size(C)[2]
+                #     S[f,:] = FNNLS(D, C[:,f])
                 # end
             else#S[F, V] = C'[F, o] * D'[o, v]
-                S = C' * LinearAlgebra.pinv(D)'
+                S = C' * LinearAlgebra.pinv(X)'
             end
+            S = S ./ sum(S, dims = 2)
             isS = false
             D = (C * S)
         end
-        println(isC)
-        println(isS)
-        err[iter] = sum( ( X .- D ) .^ 2 )
+        err[iter] = sum( ( X .- D ) .^ 2 ) / prod(size(X))
     end
     return ( C, S, err )
 end
-
-
-( C, S, err ) = MCRALS(Fraud, nothing, H; Factors = 1)
+size(Fraud)
+(C,S, vars) = SIMPLISMA(Fraud; Factors = 4, exclude = nothing)
+( C, S, err ) = MCRALS(Fraud[:,20:29]', nothing, C[:,[1,4]]'; Factors = 2)
 plot(err)
 
-plot(H')
+
 plot(S')
 
-
-
-size(S)
-
+plot(C)
 
 using CSV
 using DataFrames
-Raw = CSV.read("/home/caseykneale/Desktop/Spectroscopy/Data/MIR_Fruit_purees.csv");
-Lbls = convert.(Bool, occursin.( "NON", String.(names( Raw )) )[2:end]);
-Dump = collect(convert(Array, Raw)[:,2:end]');
-Fraud = Dump[Lbls,:];
+Raw = CSV.read("/home/caseykneale/Desktop/Spectroscopy/Data/triliq.csv");
+Fraud = collect(convert(Array, Raw)[:,1:end]');
 
 using Plots
 using LinearAlgebra
@@ -170,11 +166,7 @@ size(svd(Fraud).U)
 
 
 
-(W, H) = NMF(Fraud; Factors = 2)
-size(W)
-
-size(C)
-size(S)
+(W, H) = NMF(Fraud; Factors = 3)
 #plot(svd(Fraud).V[:,1:2])
 plot(C)
 
@@ -182,4 +174,49 @@ plot(C)
 ( W, H ) = NMF(Fraud; Factors = 3, maxiters = 200, tolerance = 1e-6)
 plot((H)')
 #
-plot(Fraud')
+plot(Fraud)
+
+using StatsBase
+
+#https://etd.ohiolink.edu/!etd.send_file?accession=ohiou1051480564&disposition=inline
+function SIMPLISMA(X; Factors = 1, alpha = 0.05, exclude = nothing)
+    (obs, vars) = size(X)
+    PurestVar = ones(Factors) .|> Int
+    Ortho = zeros(obs, Factors)
+    SSE = StatsBase.sum(X .^ 2, dims = 1)
+    e = (SSE .- StatsBase.sum(X, dims = 1).^2) / obs #RSE/SSE
+    if !isa(exclude, Nothing)
+        e[exclude] .= -Inf
+    end
+    PurestVar[1] = argmax(vec(e))
+    Intensity = X[:, PurestVar[1]]
+    Ortho[:,1] = Intensity ./ sqrt( Intensity' * Intensity )#2-norm
+    for F in 2 : Factors
+        proj = sum( (Ortho[:,1:(F-1)]' * X) .^ 2, dims = 1)
+        p = vec(e .* (1.0 .- proj ./ SSE))
+        p[PurestVar[1:F]] .= -Inf
+        if !isa(exclude, Nothing)
+            e[exclude] .= -Inf
+        end
+        PurestVar[F] = argmax( p )
+        Intensity = X[:, PurestVar[F]]
+        OrthTmp = Intensity .- sum(proj * (proj' * Intensity'))
+        Ortho[:,F] = OrthTmp ./ sqrt.(OrthTmp' * OrthTmp)
+    end
+
+    C = X[:, PurestVar]
+    S = LinearAlgebra.pinv(C) * X
+    magnitude = vec(sum(S.^2, dims = 2))
+    for F in 1:Factors
+        S[F,:] = (magnitude[F] <= 1e-8) ? (S[F,:] .* 0.0) : (S[F,:] ./ sqrt(magnitude[F]))
+    end
+    return (C, S, PurestVar)
+end
+
+(C,S, vars) = SIMPLISMA(Fraud; Factors = 5, exclude = nothing)
+vars
+
+plot(C)
+
+
+plot(S')
