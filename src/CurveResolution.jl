@@ -40,7 +40,7 @@ end
 # 6.w=AT(b−Ax)
 function FNNLS(A, b;
                 tolerance = 1e-6 * prod( size( A ) ),
-                maxiters = 150)
+                maxiters = 100)
     eps = 1e-6
     ATA = A' * A
     ATb = A' * b
@@ -104,40 +104,47 @@ end
 using LinearAlgebra
 #Trying to do this from memory.. X = S C
 #So that. S = (XtX)-1 C && C = S (XtX)-1
-function MCRALS(X, C, S = nothing;
-                Factors = 1, maxiters = 100,
-                nonnegative = false)
+
+
+
+function MCRALS(X, C, S = nothing; norm = (false, false),
+                Factors = 1, maxiters = 10,
+                nonnegative = true)
     @assert all( isa.( [ C , S ], Nothing ) ) == false
     err = zeros(maxiters)
-    D = zeros(size(X))
+    #X ./= sum(X, dims = 2)
+    D = X#zeros(size(X))
     isC = isa(C, Nothing)
     isS = isa(S, Nothing)
     C = isC ? zeros(size(X)[1], Factors) : C[:, 1:Factors]
     S = isS ? zeros(Factors, size(X)[2]) : S[1:Factors, :]
-    C = C ./ sum(C, dims = 1)
-    S = S ./ sum(S, dims = 2)
+    C ./= norm[1] ? sum(C, dims = 2) : 1.0
+    S ./= norm[2] ? sum(S, dims = 1) : 1.0
     for iter in 1 : maxiters
         if !isS
             if nonnegative
-                # for f in 1:Factors
-                #     C[:,f] = FNNLS(D, S[f,:])
-                # end
+                C = ( X * LinearAlgebra.pinv(S) )
+                for obs in 1:size(X)[1]
+                    #C[obs,:] = FNNLS(S, vec(X[obs,:]))
+                end
+                #C = ( X * LinearAlgebra.pinv(S) )
             else#C[o, F] = (S[F, v] * D[v, o])
-                C = (S * LinearAlgebra.pinv(X) )'
+                C = ( X * LinearAlgebra.pinv(S) )
             end
-
+            C ./= norm[1] ? sum(C, dims = 2) : 1.0
             isC = false
             D = (C * S)
         end
+
         if !isC
             if nonnegative
-                # for f in 1:size(C)[2]
-                #     S[f,:] = FNNLS(D, C[:,f])
-                # end
+                for var in 1:size(X)[2]
+                    S[:,var] = FNNLS(C, vec(X[:,var]))
+                end
             else#S[F, V] = C'[F, o] * D'[o, v]
-                S = C' * LinearAlgebra.pinv(X)'
+                S = LinearAlgebra.pinv(C) * X
             end
-            S = S ./ sum(S, dims = 2)
+            S ./= norm[2] ? sum(S, dims = 1) : 1.0
             isS = false
             D = (C * S)
         end
@@ -146,8 +153,11 @@ function MCRALS(X, C, S = nothing;
     return ( C, S, err )
 end
 size(Fraud)
-(C,S, vars) = SIMPLISMA(Fraud; Factors = 4, exclude = nothing)
-( C, S, err ) = MCRALS(Fraud[:,20:29]', nothing, C[:,[1,4]]'; Factors = 2)
+(C2,S2, vars) = SIMPLISMA(Fraud; Factors = 5, exclude = nothing)
+
+
+( C, S, err ) = MCRALS(Fraud', nothing, C2[:,[1,3,5]]'; Factors = 3)
+err
 plot(err)
 
 
@@ -162,19 +172,11 @@ Fraud = collect(convert(Array, Raw)[:,1:end]');
 
 using Plots
 using LinearAlgebra
-size(svd(Fraud).U)
 
-
-
-(W, H) = NMF(Fraud; Factors = 3)
-#plot(svd(Fraud).V[:,1:2])
-plot(C)
-
-
-( W, H ) = NMF(Fraud; Factors = 3, maxiters = 200, tolerance = 1e-6)
-plot((H)')
+( W, H ) = NMF(Fraud; Factors = 3, maxiters = 300, tolerance = 1e-9)
+plot(W)
 #
-plot(Fraud)
+plot(H')
 
 using StatsBase
 
@@ -214,9 +216,8 @@ function SIMPLISMA(X; Factors = 1, alpha = 0.05, exclude = nothing)
 end
 
 (C,S, vars) = SIMPLISMA(Fraud; Factors = 5, exclude = nothing)
-vars
 
-plot(C)
+plot(C[:,[1,3,5]])
 
 
 plot(S')
