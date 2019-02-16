@@ -184,13 +184,19 @@ If you're following along you'll get ~92% F-measure. Not bad. I've gotten 100%'s
 
 #Curve Resolution
 So far NMF, SIMPLISMA, and MCR-ALS are included in this package. If you aren't familiar with them, they are used to extract spectral and concentration estimates from unknown mixtures in chemical signals. Below is an example of a mixture of a 3 component spectra.
+
 ![RAW](/images/curveres.png)
 
 Now we can apply some base curve resolution methods,
+
 ![NMF](/images/NMF.png)
 ![SIMPLISMA](/images/SIMPLISMA.png)
-and, apply MCR-ALS on say the SIMPLISMA estimates,
+
+and, apply MCR-ALS on say the SIMPLISMA estimates to further refine them (non-negativity constraints and normalization are available),
+
 ![MCRALS](/images/MCRALS.png)
+
+Kind of like chromatography for samples without running chromatography. Neat right.
 
 ## Clustering
 Currently K-means and basic clustering metrics are on board. Hey if you want clustering methods check out Clustering.jl! They've done an awesome job.
