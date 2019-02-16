@@ -1,112 +1,25 @@
 # ChemometricsTools
-This is an essential collection of tools to perform Chemometric analysis' in Julia. The goals for this package are as follows: rely only on basic dependencies for longevity and stability, essential algorithms should read similar to pseudocode in papers, and the tools provided should be fast, flexible, and reliable (That's the Julia way after-all). No code will directly call R, Python, C, etc. As such it will be written in Julia from the ground up.
+This is an essential collection of tools to perform Chemometric analysis' in Julia. If you are uninformed as to what Chemometrics is, it could nonelegantly be stated as the marriage between datascience and chemistry. Traditionally it is a pile of linear algebra that is well reasoned by the physics and meaning of chemical measurements. This is some orthogonal to most fields of machine learning, but sometimes we too get desperate and break out pure machine learning methods.
+
+The goals for this package are the following: rely only on basic dependencies for longevity and stability, essential algorithms should read similar to pseudocode in papers, and the tools provided should be fast, flexible, and reliable. That's the Julia way after-all. No code will directly call R, Python, C, etc. As such it will be written in Julia from the ground up.
 
 ## Ethos
 Arrays Only: In it's current state all of the algorithms available in this package operate exclusively on 1 or 2 Arrays. To be specific, the format of input arrays should be such that the number of rows are the observations, and the number of columns are the variables. This choice was made out of convenience and my personal bias. If enough users want DataFrames, Tables, JuliaDB formats, maybe this will change.
 
-Center-Scaling: None of the methods in this package will center and scale for you unless it is implicit in the algorithm selected. For example: This package won't waste your time by centering and scaling large chunks of data every-time you do a PLS regression, do it up front, you know you need to, and it is more efficient.
+Center-Scaling: None of the methods in this package will center and scale for you. This package won't waste your time by centering and scaling large chunks of data every-time you do a regression/classification.
 
-Dependencies: Only base libraries (LinearAlgebra, StatsBase, Statistics, Plots) etc will be required. Right now one method (Savitsky-Golar) calls DigitalSignalProcessing, I'm planning on changing that. This is for longevity, and fast precompilation time of scripts. As wonderful as it is that other packages exist to do some of the internal operations this one needs, a breaking change made by an external author working on a separate package would break the code. I want this to be long-term reliable even if I go MIA for a week or two.
+Dependencies: Only base libraries (LinearAlgebra, StatsBase, Statistics, Plots) etc will be required. This is for longevity, and to provide a fast precompilation time. As wonderful as it is that other packages exist to do some of the internal operations this one needs, we won't have to worry about a breaking change made by an external author working out the kinks in a separate package. I want this to be long-term reliable even if I go MIA for a week or two.
 
 ### Package Status => Early View
-This thing is brand new (~3 weeks old). Many of the tools available can be used, and most of those are implemented correctly. Betchya anything there are bugs in the repo! So use at your own risk for now. In a week or two this should be functional and trustworthy, and at that point collaborators will be sought. I'm releasing an early preview for constructive criticism and awareness.
+This thing is brand new (~3 weeks old). Many of the tools available can already be used, and most of those are implemented correctly, but the documentation is slow coming. Betchya anything there are a few bugs hiding in the repo. So use at your own risk for now. In a week or so this should be functional and trustworthy, and at that point collaborators will be sought. This is an early preview for constructive criticism and spreading awareness.
 
 ### Transforms/Pipelines
-Two design choices introduced in this package are "Transformations" and "Pipelines". These allow for preprocessing and data transformations to be reused or chained for reliable analytic throughput. Below are some examples based on some faux data,
-```julia
-FauxSpectra1 = randn(10,200);
-FauxSpectra2 = randn(5, 200);
-```
-#### Transformations
-We can use transformations to treat data from multiple sources the same way. This helps mitigate user-error for cases where test data is scaled based on training data, calibration transfer, etc.
+Two design choices introduced in this package are "Transformations" and "Pipelines". We can use transformations to treat data from multiple sources the same way. This helps mitigate user-error for cases where test data is scaled based on training data, calibration transfer, etc.
 
-```julia
-SNV = StandardNormalVariate(FauxSpectra1);
-Transformed1 = SNV(FauxSpectra1);
-Transformed2 = SNV(FauxSpectra2);
-```
-Transformations can also be inverted(within numerical noise). For example,
-```julia
-RMSE(FauxSpectra1, SNV(Transformed1; inverse = true)) < 1e-14
-RMSE(FauxSpectra2, SNV(Transformed2; inverse = true)) < 1e-14
-```
-#### Pipelines
-Multiple transformations can be easily chained together and stored using "Pipelines". These are basically convenience functions, but are somewhat flexible and can be used for automated searches,
-```julia
-PreprocessPipe = Pipeline(FauxSpectra1, RangeNorm, Center);
-Processed = PreprocessPipe(FauxSpectra1);
-```
-Of course pipelines of transforms can also be inverted,
-```julia
-RMSE( FauxSpectra1, PreprocessPipe(Processed; inverse = true) ) < 1e-14
-```
-Pipelines can also be created and executed as an 'in place' operation for large datasets. This has the advantage that your data is transformed immediately without making copies in memory. This may be useful for large datasets and memory constrained environments.
-*WARNING:* be careful to only run the pipeline call or its inverse once! It is much safer to use the not inplace function outside of a REPL/script environment.
-
-```julia
-FauxSpectra = randn(10,200);
-OriginalCopy = copy(FauxSpectra);
-InPlacePipe = PipelineInPlace(FauxSpectra, Center, Scale);
-```
-See without returning the data or an extra function call we have transformed it according to the pipeline as it was instantiated...
-```julia
-FauxSpectra == OriginalCopy
-#Inplace transform the data back
-InPlacePipe(FauxSpectra; inverse = true)
-RMSE( OriginalCopy, FauxSpectra ) < 1e-14
-```
-Pipelines are kind of flexible. We can put nontransform (operations that cannot be inverted) preprocessing steps in them as well. In the example below the first derivative is applied to the data, this irreversibly removes a column from the data,
-```julia
-PreprocessPipe = Pipeline(FauxSpectra1, FirstDerivative, RangeNorm, Center);
-Processed = PreprocessPipe(FauxSpectra1);
-#This should be equivalent to the following...
-SpectraDeriv = FirstDerivative(FauxSpectra1);
-Alternative = Pipeline(SpectraDeriv , RangeNorm, Center);
-Processed == Alternative(SpectraDeriv)
-```
-Great right? Well what happens if we try to do the inverse of our pipeline with an irreversible function (First Derivative) in it?
-```julia
-PreprocessPipe(Processed; inverse = true)
-```
-Well we get an assertion error.
-
-### Automated Pipeline Example
-We can take advantage of how pipelines are created; at their core they are tuples of transforms/functions. So if we can make an array of transforms and set some conditions they can be stored and applied to unseen data. A fun example of an automated transform pipeline is in the whimsical paper written by Willem Windig et. al. That paper is called 'Loopy Multiplicative Scatter Transform'. Below I'll show how we can implement that algorithm here (or anything similar) with ease.
-*Loopy MSC: A Simple Way to Improve Multiplicative Scatter Correction. Willem Windig, Jeremy Shaver, Rasmus Bro. Applied Spectroscopy. 2008. Vol 62, issue: 10, 1153-1159*
-
-First let's look at the classic Diesel data before applying Loopy MSC
-![Before Loopy MSC](/images/Raw.png)
-
-Alright, there is scatter, let's go for it,
-```julia
-RealSpectra = convert(Array, CSV.read("/diesel_spectra.csv"));
-Current = RealSpectra;
-Last = zeros(size(Current));
-TransformArray = [];
-while RMSE(Last, Current) > 1e-5
-    if any(isnan.(Current))
-        break
-    else
-        push!(TransformArray, MultiplicativeScatterCorrection( Current ) )
-        Last = Current
-        Current = TransformArray[end](Last)
-    end
-end
-#Now we can make a pipeline object from the array of stored transforms
-LoopyPipe = Pipeline( Tuple( TransformArray ) );
-```
-For a sanity check we can ensure the output of the algorithm  is the same as the new pipeline so it can be applied to new data.
-```julia
-Current == LoopyPipe(RealSpectra)
-```
-Looks like our automation driven pipeline is equivalent to the loop it took to make it. More importantly did we remove scatter after 3 automated iterations of MSC?
-
-![After Loopy MSC](/images/Loopy.png)
-
-Yes, yes we did. Pretty easy right?
+Multiple transformations can be easily chained together and stored using "Pipelines". These are basically convenience functions, but are somewhat flexible. Pipelines allow for preprocessing and data transformations to be reused, chained, or automated for reliable analytic throughput.
 
 # Model training
-There are a few built-in's to make training models a snap. Philosophically I decided, making wrapper functions to perform Cross Validation is not fair to the end-user. There are many cases where we want specialized CV's but we don't want to write nested for-loops that run for hours then debug them... Similarly, most people don't want to spend their time hacking into rigid GridSearch object, scouring stack exchange and package documentation. Especially when it'd be easier to write an equivalent approach that's self documenting from scratch. Instead, I used Julia's iterators to make K-Fold validations convenient, below is an example Partial Least Squares Regression CV.
+There are a few built-in's to make training models a snap. Philosophically I decided, that making wrapper functions to perform Cross Validation is not fair to the end-user. There are many cases where we want specialized CV's but we don't want to write nested for-loops that run for hours then debug them... Similarly, most people don't want to spend their time hacking into rigid GridSearch objects, or scouring stack exchange / package documentation. Especially when it'd be easier to write an equivalent approach that's self documenting from scratch. Instead, I used Julia's iterators to make K-Fold validations convenient, below is an example Partial Least Squares Regression CV.
 
 ```julia
 #Split our data
@@ -130,7 +43,7 @@ RMSE( PLSR(TestX), TestY )
 ```
 ![20 fold cross validation](/images/CV.png)
 
-That's great right? but, hey that was kind of slow. Knowing what we know about ALS based models, we can do the same operation in linear time with respect to factors by computing the most latent variables first and only recomputing the regression coefficients. An example of this is below,
+That's great right? but, hey that was kind of slow. Knowing what we know about ALS based models, we can do the same operation in linear time with respect to latent factors by computing the most latent variables first and only recomputing the regression coefficients. An example of this is below,
 
 ```julia
 Err = repeat([0.0], 22);
@@ -180,11 +93,11 @@ TestSet = lda(TestSet);
 TestPreds = classifier(TestS; Factors  = 2);
 MulticlassStats(TestPreds .- 1, TstLbl , Enc)
 ```
-If you're following along you'll get ~92% F-measure. Not bad. I've gotten 100%'s with more advanced methods but this is a cute way to show off some of the tools currently available.
+If you're following along you'll get ~92% F-measure. Not bad. You may also notice this package has a nice collection of performance metrics for classification, regression, and clustering. Anyways, I've gotten 100%'s with more advanced methods but this is a cute way to show off some of the tools currently available.
 
 # Curve Resolution
 
-So far NMF, SIMPLISMA, and MCR-ALS are included in this package. If you aren't familiar with them, they are used to extract spectral and concentration estimates from unknown mixtures in chemical signals. Below is an example of a mixture of a 3 component spectra.
+So far NMF, SIMPLISMA, and MCR-ALS are included in this package. If you aren't familiar with them, they are used to extract spectral and concentration estimates from unknown mixtures in chemical signals. Below is an example of spectra which are composed of signals from a mixture of a 3 components.
 
 ![RAW](/images/curveres.png)
 
@@ -203,19 +116,23 @@ Kind of like chromatography without waiting by a column all day. Neat right. Iro
 Currently K-means and basic clustering metrics are on board. Hey if you want clustering methods check out Clustering.jl! They've done an awesome job.
 
 ## Time Series/Soft-Sensing
-Right now echo state networks are on board. Lot's to do there!
+Right now Echo State Networks are on board. Lot's to do there!
 
 ## Specialized tools?
-You might be saying, ridge regression, least squares, logistic regression, KNN, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics? If that's what you wanna use it for be my guest. Seems kinda wrong/inefficient to pycall scikit learn to do basic machine learning/analysis anyways...
+You might be saying, ridge regression, least squares, logistic regression, K-NN, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics? If that's what you wanna use it for be my guest. Seems kinda wrong and inefficient to PyCall scikit learn to do basic machine learning/analysis anyways... I'll be buffing up the machine learning methods available as time allows.
 
-But, we have some specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, curve resolution, bland-altman plots, and there are certainly plans for a few other tools for chemical data that packages in other languages have left out. More to come. Stay tuned.
+But, the package does have some specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, curve resolution for forensics, bland-altman plots, etc. There are certainly plans for a few other tools for analyzing chemical data that packages in other languages have seemingly left out. More to come. Stay tuned.
 
 ## ToDo:
   - Peak finding algorithms
-  - BTEM, ...
+  - BTEM / from scratch Simulated Annealing Optimizer, ...
   - Fast decision trees...
   - Time Series / soft-sensing stuff / Recursive regression methods
+  - Generic interval based ensemble model code.
   - SIMCA, N-WAY PCA, and N-WAY PLS
+  - Hyperspectral data preprocessing
   - ... Writing the Docs for all the code...
   - ... Writing hundreds of unit tests ...
   - ... ... Finding dozens of bugs ... ...
+  - Maybe add Design of Experiment tools (Partial Factorial design, simplex, etc...)
+  - Maybe add electrochemical simulations and optical simulations?

@@ -12,7 +12,7 @@ module ChemometricsTools
 
     include("Transformations.jl")
     export Transform, PipelineInPlace, Pipeline, Center, Scale, StandardNormalVariate,
-        RangeNorm, Logit, MultiplicativeScatterCorrection
+        RangeNorm, Logit
 
     include("Analysis.jl")
     export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance
@@ -29,7 +29,7 @@ module ChemometricsTools
 
     include("Preprocess.jl")
     export FirstDerivative, SecondDerivative, FractionalDerivative, SavitzkyGolay,
-        DirectStandardization, OrthogonalSignalCorrection
+        DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection
         #,TransferByOrthogonalProjection
 
     include("RegressionModels.jl")
