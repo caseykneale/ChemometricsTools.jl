@@ -1,3 +1,14 @@
+using CSV
+using DataFrames
+using Plots
+using LinearAlgebra
+using StatsBase
+
+Raw = CSV.read("/home/caseykneale/Desktop/Spectroscopy/Data/triliq.csv");
+Fraud = collect(convert(Array, Raw)[:,1:end]');
+
+
+
 #Simplest NMF algorithm ever...
 #Algorithms for non-negative matrix factorization. Daniel D. Lee. H. Sebastian Seung.
 #NIPS'00 Proceedings of the 13th International Conference on Neural Information Processing Systems. 535-54
@@ -38,12 +49,17 @@ end
 #     4.6.  sR=0
 # 5.x=s
 # 6.w=AT(b−Ax)
-function FNNLS(A, b;
-                tolerance = 1e-6 * prod( size( A ) ),
-                maxiters = 100)
-    eps = 1e-6
-    ATA = A' * A
-    ATb = A' * b
+
+function FNNLS(A, b; LHS = false,
+                maxiters = 520)
+    if LHS
+        ATA = A * A'
+        ATb = A * b'
+    else
+        ATA = A' * A
+        ATb = A' * b
+    end
+    tolerance = 1e-12*sum(abs.(ATA))*size(ATA)[1]
     P = zeros( size( ATA )[ 2 ] ) .|> Int
     R = collect( 1 : length( ATb ) ) .|> Int
     r = zeros( size( ATA )[ 2 ] )
@@ -51,65 +67,59 @@ function FNNLS(A, b;
     Inds = collect( 1 : length( ATb ) ) .|> Int
     Rinds = collect( 1 : length( ATb ) ) .|> Int
 
-    W = ATb .- (ATA * X')
+    W = ATb
     inneriters = 0
-    iter = 0
-    breakcond = any( R .> 0 ) && any(W[Rinds .> 0] .> tolerance)
-
-    while breakcond
-        Rinds = Inds[ R .> 0 ]
+    zeroint = 0 |> Int
+    while any( R .> zeroint ) && any(W[Rinds] .> tolerance)
+        Rinds = Inds[ R .> zeroint ]
         j = Rinds[argmax( W[Rinds] )]
-        P[j] = j ; R[j] = 0
-
-        Pinds = Inds[ P .> 0 ] ; Rinds = Inds[ R .> 0 ]
+        P[j] = j ; R[j] = zeroint
+        Pinds = Inds[ P .> zeroint ] ; Rinds = Inds[ R .> zeroint ]
         #Update R & P
-        r[Pinds] = ATA[ Pinds, Pinds ] / ATb[ Pinds ]'
+        r[Pinds] = Base.inv( ATA[ Pinds, Pinds ]) * ATb[ Pinds ]
         r[Rinds] .= 0.0
         while any(r[Pinds] .<= tolerance) && (inneriters < maxiters)
-            Select = (r .<= tolerance) .& (P .> 0)
+            Select = (r .<= tolerance) .& (P .> zeroint)
             alpha = reduce( min, X[Select] ./ ( X[Select] .- r[Select] ) )
             X .+= alpha .* ( r .- X )
-            Select = (abs.(X) .< tolerance) .& ( P .== 0 )
-            R[Select] .= Inds[Select]
-            P[Select] .= 0
-            Pinds = Inds[ P .> 0 ] ; Rinds = Inds[ R .> 0 ]
-            if length(Pinds) > 0
-                r[Pinds] = ATA[ Pinds, Pinds ] / ATb[ Pinds ]'
-            end
+            Select = Inds[(abs.(X) .< tolerance) .& ( P .!= zeroint )]
+            R[Select] .= Select
+            P[Select] .= zeroint
+            Pinds = Inds[ P .> 0 ] ; Rinds = Inds[ R .> zeroint ]
+            r[Pinds] = Base.inv( ATA[ Pinds, Pinds ]) * ATb[ Pinds ]
             r[Rinds] .= 0.0
             inneriters += 1
         end
-
         X = r
         W = ATb .- (ATA * X)
-
-        breakcond = false
-        if any( R .> 0 )
-            breakcond = any(W[Rinds] .> tolerance)
-        end
     end
 
     return X
 end
 
+# a = reshape( [73,111,52,87, 7,4, 46,72,27,80,89 , 71], 4,3)
+# b = [96,7, 68,10]
+# FNNLS(a, b)
+
+a = randn(4,4);
+b = randn(4);
+x = FNNLS( a,  b)
+
 #Torture test...
-# for i in 1:10000
-#     a = rand(4,4);
-#     b = rand(4);
-#     x = FNNLS( a,  b)
-#     if any(x .< 0.0)
-#         println("ahhh")
-#     end
-# end
-using LinearAlgebra
-#Trying to do this from memory.. X = S C
-#So that. S = (XtX)-1 C && C = S (XtX)-1
-
-
+counterrs = 0
+for i in 1:10000
+    a = randn(4,4);
+    b = randn(4);
+    x = FNNLS( a,  b)
+    if any(x .< -1e-2)
+        counterrs += 1
+    end
+end
+counterrs
 
 function MCRALS(X, C, S = nothing; norm = (false, false),
-                Factors = 1, maxiters = 10,
-                nonnegative = true)
+                Factors = 1, maxiters = 20,
+                nonnegative = (true, true) )
     @assert all( isa.( [ C , S ], Nothing ) ) == false
     err = zeros(maxiters)
     #X ./= sum(X, dims = 2)
@@ -122,42 +132,38 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
     S ./= norm[2] ? sum(S, dims = 1) : 1.0
     for iter in 1 : maxiters
         if !isS
-            if nonnegative
-                C = ( X * LinearAlgebra.pinv(S) )
-                for obs in 1:size(X)[1]
-                    #C[obs,:] = FNNLS(S, vec(X[obs,:]))
+            if nonnegative[2]
+                for obs in 1 : size( X )[ 1 ]
+                    C[obs,:] = FNNLS(S, X[obs,:]'; LHS = true)
                 end
-                #C = ( X * LinearAlgebra.pinv(S) )
-            else#C[o, F] = (S[F, v] * D[v, o])
-                C = ( X * LinearAlgebra.pinv(S) )
+            else
+                C = X * LinearAlgebra.pinv(S)
             end
             C ./= norm[1] ? sum(C, dims = 2) : 1.0
             isC = false
-            D = (C * S)
+            D = C * S
         end
-
         if !isC
-            if nonnegative
+            if nonnegative[1]
                 for var in 1:size(X)[2]
                     S[:,var] = FNNLS(C, vec(X[:,var]))
                 end
-            else#S[F, V] = C'[F, o] * D'[o, v]
+            else
                 S = LinearAlgebra.pinv(C) * X
             end
             S ./= norm[2] ? sum(S, dims = 1) : 1.0
             isS = false
-            D = (C * S)
+            D = C * S
         end
         err[iter] = sum( ( X .- D ) .^ 2 ) / prod(size(X))
     end
     return ( C, S, err )
 end
-size(Fraud)
-(C2,S2, vars) = SIMPLISMA(Fraud; Factors = 5, exclude = nothing)
 
+( C2, S2, vars ) = SIMPLISMA(Fraud; Factors = 5, exclude = nothing)
 
 ( C, S, err ) = MCRALS(Fraud', nothing, C2[:,[1,3,5]]'; Factors = 3)
-err
+err;
 plot(err)
 
 
@@ -165,20 +171,11 @@ plot(S')
 
 plot(C)
 
-using CSV
-using DataFrames
-Raw = CSV.read("/home/caseykneale/Desktop/Spectroscopy/Data/triliq.csv");
-Fraud = collect(convert(Array, Raw)[:,1:end]');
-
-using Plots
-using LinearAlgebra
-
 ( W, H ) = NMF(Fraud; Factors = 3, maxiters = 300, tolerance = 1e-9)
 plot(W)
 #
 plot(H')
 
-using StatsBase
 
 #https://etd.ohiolink.edu/!etd.send_file?accession=ohiou1051480564&disposition=inline
 function SIMPLISMA(X; Factors = 1, alpha = 0.05, exclude = nothing)
