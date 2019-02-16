@@ -147,6 +147,7 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
                 Factors = 1, maxiters = 20,
                 nonnegative = (false, false) )
     @assert all( isa.( [ C , S ], Nothing ) ) == false
+    lowestErr = Inf
     err = zeros(maxiters)
     D = X
     isC = isa(C, Nothing)
@@ -155,6 +156,7 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
     S = isS ? zeros(Factors, size(X)[2]) : S[1:Factors, :]
     C ./= norm[1] ? sum(C, dims = 2) : 1.0
     S ./= norm[2] ? sum(S, dims = 1) : 1.0
+    output = (C, S, err)
     for iter in 1 : maxiters
         if !isS
             if nonnegative[2]
@@ -181,6 +183,10 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
             D = C * S
         end
         err[iter] = sum( ( X .- D ) .^ 2 ) / prod(size(X))
+        if err[iter] < lowestErr
+            lowestErr = err[iter]
+            output = (C, S, err)
+        end
     end
-    return ( C, S, err )
+    return output
 end
