@@ -10,7 +10,7 @@ function QQ( y1, y2; Quantiles = collect( 1 : 99 ) ./ 100 )
     return QQ( (Statistics.quantile!(y1, Quantiles), Statistics.quantile!(y2, Quantiles) ))
 end
 
-function plot(QQ; title = "Quantile-Quantile Plot" )
+function plotchem(QQ; title = "Quantile-Quantile Plot" )
     a = scatter( QQ.StoredTuple, title = title, xlabel = "Quantile 1", ylabel = "Quantile 2",
                     label = "QQ")
     diff(arr) = [ arr[d] - arr[d+1] for d in collect(1 : ( length( arr ) - 1 ))  ]
@@ -45,7 +45,7 @@ function BlandAltman(Y1, Y2; Confidence = 1.96)
 end
 
 
-function plot(BA::BlandAltman; title = "Bland Altman")
+function plotchem(BA::BlandAltman; title = "Bland Altman")
     a = scatter( ( BA.means, BA.differences ), title = title, xlabel = "Means",
                     ylabel = "Differences", label = "B.A.")
     Plots.abline!(a, 0, BA.UpperLimit, color = :red )

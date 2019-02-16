@@ -46,10 +46,10 @@ module ChemometricsTools
     export Shuffle, Shuffle!, LeaveOneOut, KFoldsValidation
 
     include("CurveResolution.jl")
-    export NMF
+    export NMF, SIMPLISMA, MCRALS, FNNLS
 
     include("PlottingTools.jl")
-    export QQ, BlandAltman, plot
+    export QQ, BlandAltman, plotchem
 
 #ToDo: Add hundreds of unit tests...
 

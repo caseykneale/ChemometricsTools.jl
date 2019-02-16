@@ -102,7 +102,7 @@ function MultinomialSoftmaxRegression(X, Y; LearnRate = 1e-3, maxit = 1000, L2 =
         for o in 1:Obs
             Output[o,:] = softmax( ( X[o,:]' * W ) .+ B )
             #Calculate the cost function - Not MSE. We are doing cross entropy loss
-            CostPerIt[it] += -sum( Y[o,:] .* log.( Output[o,:] .+ 1e-6 ) ) + L2* sum(W .^ 2))
+            CostPerIt[it] += -sum( Y[o,:] .* log.( Output[o,:] .+ 1e-6 ) ) + (L2* sum(W .^ 2))
             residualsOutput = Y[o,:] .- Output[o,:]
             #calculate changes to be applied to the weights by these gradients and update them...
             B .+= LearnRate * B * sum(residualsOutput)

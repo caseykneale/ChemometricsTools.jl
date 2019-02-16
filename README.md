@@ -1,10 +1,15 @@
 # ChemometricsTools
-This is an essential collection of tools to perform Chemometric analysis' in Julia. The goals for this package are as follows: rely only on basic dependencies for longevity and stability, essential algorithms should read similar to pseudocode in papers, and the tools provided should be fast, flexible, and reliable (That's the Julia way after-all). No code will directly call R, Python, C, etc, it will be written in Julia from the ground up.
+This is an essential collection of tools to perform Chemometric analysis' in Julia. The goals for this package are as follows: rely only on basic dependencies for longevity and stability, essential algorithms should read similar to pseudocode in papers, and the tools provided should be fast, flexible, and reliable (That's the Julia way after-all). No code will directly call R, Python, C, etc. As such it will be written in Julia from the ground up.
 
-In it's current state all of the algorithms available in this package operate exclusively on 1 or 2 Arrays. To be specific, the format of input arrays should be such that the number of rows are the observations, and the number of columns are the variables. This choice was made out of convenience and my personal bias. If enough users want DataFrames, Tables, JuliaDB formats, maybe this will change. For now the package is best suited to the treatment and analysis of continuous data. Surely there's plans to broaden the scope.
+## Ethos
+Arrays Only: In it's current state all of the algorithms available in this package operate exclusively on 1 or 2 Arrays. To be specific, the format of input arrays should be such that the number of rows are the observations, and the number of columns are the variables. This choice was made out of convenience and my personal bias. If enough users want DataFrames, Tables, JuliaDB formats, maybe this will change.
+
+Center-Scaling: None of the methods in this package will center and scale for you unless it is implicit in the algorithm selected. For example: This package won't waste your time by centering and scaling large chunks of data every-time you do a PLS regression, do it up front, you know you need to, and it is more efficient.
+
+Dependencies: Only base libraries (LinearAlgebra, StatsBase, Statistics, Plots) etc will be required. Right now one method called DSP, I'm planning on changing that. This is for longevity, and fast precompilation time of scripts. As wonderful as it is that other packages exist to do some of the internal operations this one needs, a breaking change made by an external author working on a seperate package would break this. I want this to be long-term reliable.
 
 ### Package Status => Early View
-This thing is brand new (~2 weeks old). Many of the tools available can be used, and most of those are implemented correctly. Betchya anything there are bugs in the repo! So use at your own risk for now. In a week or two this should be functional and trustworthy, and at that point collaborators will be sought. I'm releasing an early preview for constructive criticism and awareness.
+This thing is brand new (~3 weeks old). Many of the tools available can be used, and most of those are implemented correctly. Betchya anything there are bugs in the repo! So use at your own risk for now. In a week or two this should be functional and trustworthy, and at that point collaborators will be sought. I'm releasing an early preview for constructive criticism and awareness.
 
 ### Transforms/Pipelines
 Two design choices introduced in this package are "Transformations" and "Pipelines". These allow for preprocessing and data transformations to be reused or chained for reliable analytic throughput. Below are some examples based on some faux data,
@@ -177,6 +182,16 @@ MulticlassStats(TestPreds .- 1, TstLbl , Enc)
 ```
 If you're following along you'll get ~92% F-measure. Not bad. I've gotten 100%'s with more advanced methods but this is a cute way to show off some of the tools currently available.
 
+#Curve Resolution
+So far NMF, SIMPLISMA, and MCR-ALS are included in this package. If you aren't familiar with them, they are used to extract spectral and concentration estimates from unknown mixtures in chemical signals. Below is an example of a mixture of a 3 component spectra.
+![RAW](/images/curveres.png)
+
+Now we can apply some base curve resolution methods,
+![NMF](/images/NMF.png)
+![SIMPLISMA](/images/SIMPLISMA.png)
+and, apply MCR-ALS on say the SIMPLISMA estimates,
+![MCRALS](/images/MCRALS.png)
+
 ## Clustering
 Currently K-means and basic clustering metrics are on board. Hey if you want clustering methods check out Clustering.jl! They've done an awesome job.
 
@@ -184,14 +199,13 @@ Currently K-means and basic clustering metrics are on board. Hey if you want clu
 Right now echo state networks are on board. Lot's to do there!
 
 ## Specialized tools?
-You might be saying, ridge regression, least squares, KNN, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics? Right now, that's kind of true.
+You might be saying, ridge regression, least squares, logistic regression, KNN, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics? If that's what you wanna use it for be my guest. Seems kinda wrong/inefficient to pycall scikit learn to do basic machine learning/analysis anyways...
 
-Well, we have some specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, and there are certainly plans for a few other tools for chemical data that packages in other languages have left out. Stay tuned... Right now some bare bones stuff still needs to be tuned for correctness, and some analysis functions need to be added. This is again, an early view!
-
+But, we have some specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, curve resolution, bland-altman plots, and there are certainly plans for a few other tools for chemical data that packages in other languages have left out. More to come. Stay tuned.
 
 ## ToDo:
   - Peak finding algorithms
-  - MCR-ALS, BTEM, ...
+  - BTEM, ...
   - Fast decision trees...
   - Time Series/soft-sensing stuff / Recursive regression methods
   - SIMCA, N-WAY PCA, and PLS

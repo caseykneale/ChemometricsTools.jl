@@ -1,17 +1,8 @@
-using CSV
-using DataFrames
-using Plots
-using LinearAlgebra
-using StatsBase
-
-Raw = CSV.read("/home/caseykneale/Desktop/Spectroscopy/Data/triliq.csv");
-Fraud = collect(convert(Array, Raw)[:,1:end]');
-
-
-
 #Simplest NMF algorithm ever...
 #Algorithms for non-negative matrix factorization. Daniel D. Lee. H. Sebastian Seung.
 #NIPS'00 Proceedings of the 13th International Conference on Neural Information Processing Systems. 535-54
+#Super fast and reasonable for chemometric applications...If you want a generic NMF(impution etc)
+#Look into coordinate descent....
 function NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
     (Obs, Vars) = size(X)
     W = abs.( randn( Obs , Factors ) )
@@ -30,25 +21,56 @@ function NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
     return (W, H)
 end
 
+
+#I really like this SIMPLISMA algorithm it uses grahm-shmidt. It's fast,
+#has fewer manual operations and is pretty clean.
+#I think there's some factors to include here, like don't let pure Vars
+#neighbor within a given radius(spectral resolution argument), and
+#drop vars that are 95 percentile noise or 95 percentile baseline...
+#But with some end user knowledge it's cake.
+#REAL-TIME WAVELET COMPRESSION AND SELF-MODELING CURVE RESOLUTION FOR ION MOBILITY SPECTROMETRY
+#PhD. Dissertation. 2003. Guoxiang Chen.
+function SIMPLISMA(X; Factors = 1, alpha = 0.05, exclude = nothing)
+    (obs, vars) = size(X)
+    PurestVar = ones(Factors) .|> Int
+    Ortho = zeros(obs, Factors)
+    SSE = StatsBase.sum(X .^ 2, dims = 1)
+    e = (SSE .- StatsBase.sum(X, dims = 1).^2) / obs #RSE/SSE
+    if !isa(exclude, Nothing)
+        e[exclude] .= -Inf
+    end
+    PurestVar[1] = argmax(vec(e))
+    Intensity = X[:, PurestVar[1]]
+    Ortho[:,1] = Intensity ./ sqrt( Intensity' * Intensity )#2-norm
+    for F in 2 : Factors
+        proj = sum( (Ortho[:,1:(F-1)]' * X) .^ 2, dims = 1)
+        p = vec(e .* (1.0 .- proj ./ SSE))
+        p[PurestVar[1:F]] .= -Inf
+        if !isa(exclude, Nothing)
+            e[exclude] .= -Inf
+        end
+        PurestVar[F] = argmax( p )
+        Intensity = X[:, PurestVar[F]]
+        OrthTmp = Intensity .- sum(proj * (proj' * Intensity'))
+        Ortho[:,F] = OrthTmp ./ sqrt.(OrthTmp' * OrthTmp)
+    end
+
+    C = X[:, PurestVar]
+    S = LinearAlgebra.pinv(C) * X
+    magnitude = vec(sum(S.^2, dims = 2))
+    for F in 1:Factors
+        S[F,:] = (magnitude[F] <= 1e-8) ? (S[F,:] .* 0.0) : (S[F,:] ./ sqrt(magnitude[F]))
+    end
+    return (C, S, PurestVar)
+end
+
+
 #This needs some pretty serious cleaning, and was really tricky to write...
+#I am actually quite sure a bug still persists in it... roughly 7% of random regressions
+#afford a weight that has a negative component... doubtful its due to singular solns too....
+#Hasn't effected my MCR-ALS results yet...
 # Fast Non-Negative Least Squares algorithm based on Bro, R., & de Jong, S. (1997) A fast
 #non-negativity-constrained least squares algorithm. Journal of Chemometrics, 11, 393-401.
-# Input: A∈R m×n, b∈R mxOutput:
-# x∗≥0 such thatx∗= arg min‖Ax−b‖2.
-# Initialization:P=∅,R={1,2,···,n},x=0,w=ATb−(ATA)x
-#repeat
-# 1.  Proceed if R=/=∅ ∧ [maxi∈R(wi)> tolerance]
-# 2.  j= arg maxi∈R(wi)
-# 3.  Include the index j in P and remove it from R
-# 4.  sP= [(ATA)P]−1(ATb)P
-#     4.1.  Proceed if min(sP)≤0
-#     4.2.  α=−mini∈P[xi/(xi−si)]
-#     4.3.  x:=x+α(s−x)
-#     4.4.  Update R and P
-#     4.5.  sP= [(ATA)P]−1(ATb)P
-#     4.6.  sR=0
-# 5.x=s
-# 6.w=AT(b−Ax)
 
 function FNNLS(A, b; LHS = false,
                 maxiters = 520)
@@ -101,29 +123,32 @@ end
 # b = [96,7, 68,10]
 # FNNLS(a, b)
 
-a = randn(4,4);
-b = randn(4);
-x = FNNLS( a,  b)
+# a = randn(4,4);
+# b = randn(4);
+# x = FNNLS( a,  b)
+#
+# #Torture test...
+# counterrs = 0
+# for i in 1:10000
+#     a = randn(4,4);
+#     b = randn(4);
+#     x = FNNLS( a,  b)
+#     if any(x .< -1e-2)
+#         counterrs += 1
+#     end
+# end
+# counterrs
 
-#Torture test...
-counterrs = 0
-for i in 1:10000
-    a = randn(4,4);
-    b = randn(4);
-    x = FNNLS( a,  b)
-    if any(x .< -1e-2)
-        counterrs += 1
-    end
-end
-counterrs
 
+#Not super fond of the arguments here. There should be something pragmatic
+# ideally generic to other curve resolution methods? Eh, then again,
+#it's mcr-als...
 function MCRALS(X, C, S = nothing; norm = (false, false),
                 Factors = 1, maxiters = 20,
-                nonnegative = (true, true) )
+                nonnegative = (false, false) )
     @assert all( isa.( [ C , S ], Nothing ) ) == false
     err = zeros(maxiters)
-    #X ./= sum(X, dims = 2)
-    D = X#zeros(size(X))
+    D = X
     isC = isa(C, Nothing)
     isS = isa(S, Nothing)
     C = isC ? zeros(size(X)[1], Factors) : C[:, 1:Factors]
@@ -159,62 +184,3 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
     end
     return ( C, S, err )
 end
-
-( C2, S2, vars ) = SIMPLISMA(Fraud; Factors = 5, exclude = nothing)
-
-( C, S, err ) = MCRALS(Fraud', nothing, C2[:,[1,3,5]]'; Factors = 3)
-err;
-plot(err)
-
-
-plot(S')
-
-plot(C)
-
-( W, H ) = NMF(Fraud; Factors = 3, maxiters = 300, tolerance = 1e-9)
-plot(W)
-#
-plot(H')
-
-
-#https://etd.ohiolink.edu/!etd.send_file?accession=ohiou1051480564&disposition=inline
-function SIMPLISMA(X; Factors = 1, alpha = 0.05, exclude = nothing)
-    (obs, vars) = size(X)
-    PurestVar = ones(Factors) .|> Int
-    Ortho = zeros(obs, Factors)
-    SSE = StatsBase.sum(X .^ 2, dims = 1)
-    e = (SSE .- StatsBase.sum(X, dims = 1).^2) / obs #RSE/SSE
-    if !isa(exclude, Nothing)
-        e[exclude] .= -Inf
-    end
-    PurestVar[1] = argmax(vec(e))
-    Intensity = X[:, PurestVar[1]]
-    Ortho[:,1] = Intensity ./ sqrt( Intensity' * Intensity )#2-norm
-    for F in 2 : Factors
-        proj = sum( (Ortho[:,1:(F-1)]' * X) .^ 2, dims = 1)
-        p = vec(e .* (1.0 .- proj ./ SSE))
-        p[PurestVar[1:F]] .= -Inf
-        if !isa(exclude, Nothing)
-            e[exclude] .= -Inf
-        end
-        PurestVar[F] = argmax( p )
-        Intensity = X[:, PurestVar[F]]
-        OrthTmp = Intensity .- sum(proj * (proj' * Intensity'))
-        Ortho[:,F] = OrthTmp ./ sqrt.(OrthTmp' * OrthTmp)
-    end
-
-    C = X[:, PurestVar]
-    S = LinearAlgebra.pinv(C) * X
-    magnitude = vec(sum(S.^2, dims = 2))
-    for F in 1:Factors
-        S[F,:] = (magnitude[F] <= 1e-8) ? (S[F,:] .* 0.0) : (S[F,:] ./ sqrt(magnitude[F]))
-    end
-    return (C, S, PurestVar)
-end
-
-(C,S, vars) = SIMPLISMA(Fraud; Factors = 5, exclude = nothing)
-
-plot(C[:,[1,3,5]])
-
-
-plot(S')
