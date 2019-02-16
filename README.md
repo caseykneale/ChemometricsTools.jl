@@ -183,6 +183,7 @@ MulticlassStats(TestPreds .- 1, TstLbl , Enc)
 If you're following along you'll get ~92% F-measure. Not bad. I've gotten 100%'s with more advanced methods but this is a cute way to show off some of the tools currently available.
 
 #Curve Resolution
+
 So far NMF, SIMPLISMA, and MCR-ALS are included in this package. If you aren't familiar with them, they are used to extract spectral and concentration estimates from unknown mixtures in chemical signals. Below is an example of a mixture of a 3 component spectra.
 
 ![RAW](/images/curveres.png)
@@ -196,7 +197,7 @@ and, apply MCR-ALS on say the SIMPLISMA estimates to further refine them (non-ne
 
 ![MCRALS](/images/MCRALS.png)
 
-Kind of like chromatography for samples without running chromatography. Neat right.
+Kind of like chromatography for samples without running chromatography. Neat right. Ironically MCR-ALS spectra look less representative of the actual pure spectral components known to be in the mixture. However, their concentration profiles derived from MCR-ALS are far superior to that of those from SIMPLISMA. You'll have to play with the code yourself to see.
 
 ## Clustering
 Currently K-means and basic clustering metrics are on board. Hey if you want clustering methods check out Clustering.jl! They've done an awesome job.
