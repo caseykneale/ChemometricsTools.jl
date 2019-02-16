@@ -6,7 +6,7 @@ Arrays Only: In it's current state all of the algorithms available in this packa
 
 Center-Scaling: None of the methods in this package will center and scale for you unless it is implicit in the algorithm selected. For example: This package won't waste your time by centering and scaling large chunks of data every-time you do a PLS regression, do it up front, you know you need to, and it is more efficient.
 
-Dependencies: Only base libraries (LinearAlgebra, StatsBase, Statistics, Plots) etc will be required. Right now one method called DSP, I'm planning on changing that. This is for longevity, and fast precompilation time of scripts. As wonderful as it is that other packages exist to do some of the internal operations this one needs, a breaking change made by an external author working on a seperate package would break this. I want this to be long-term reliable.
+Dependencies: Only base libraries (LinearAlgebra, StatsBase, Statistics, Plots) etc will be required. Right now one method (Savitsky-Golar) calls DigitalSignalProcessing, I'm planning on changing that. This is for longevity, and fast precompilation time of scripts. As wonderful as it is that other packages exist to do some of the internal operations this one needs, a breaking change made by an external author working on a separate package would break the code. I want this to be long-term reliable even if I go MIA for a week or two.
 
 ### Package Status => Early View
 This thing is brand new (~3 weeks old). Many of the tools available can be used, and most of those are implemented correctly. Betchya anything there are bugs in the repo! So use at your own risk for now. In a week or two this should be functional and trustworthy, and at that point collaborators will be sought. I'm releasing an early preview for constructive criticism and awareness.
@@ -182,7 +182,7 @@ MulticlassStats(TestPreds .- 1, TstLbl , Enc)
 ```
 If you're following along you'll get ~92% F-measure. Not bad. I've gotten 100%'s with more advanced methods but this is a cute way to show off some of the tools currently available.
 
-#Curve Resolution
+# Curve Resolution
 
 So far NMF, SIMPLISMA, and MCR-ALS are included in this package. If you aren't familiar with them, they are used to extract spectral and concentration estimates from unknown mixtures in chemical signals. Below is an example of a mixture of a 3 component spectra.
 
@@ -197,7 +197,7 @@ and, apply MCR-ALS on say the SIMPLISMA estimates to further refine them (non-ne
 
 ![MCRALS](/images/MCRALS.png)
 
-Kind of like chromatography for samples without running chromatography. Neat right. Ironically MCR-ALS spectra look less representative of the actual pure spectral components known to be in the mixture. However, their concentration profiles derived from MCR-ALS are far superior to that of those from SIMPLISMA. You'll have to play with the code yourself to see.
+Kind of like chromatography without waiting by a column all day. Neat right. Ironically MCR-ALS spectra look less representative of the actual pure spectral components known to be in the mixture. However, their concentration profiles derived from MCR-ALS are far superior to that of those from SIMPLISMA. You'll have to play with the code yourself to see.
 
 ## Clustering
 Currently K-means and basic clustering metrics are on board. Hey if you want clustering methods check out Clustering.jl! They've done an awesome job.
@@ -214,7 +214,8 @@ But, we have some specialized tools for chemometricians in special fields. For i
   - Peak finding algorithms
   - BTEM, ...
   - Fast decision trees...
-  - Time Series/soft-sensing stuff / Recursive regression methods
-  - SIMCA, N-WAY PCA, and PLS
+  - Time Series / soft-sensing stuff / Recursive regression methods
+  - SIMCA, N-WAY PCA, and N-WAY PLS
+  - ... Writing the Docs for all the code...
   - ... Writing hundreds of unit tests ...
   - ... ... Finding dozens of bugs ... ...
