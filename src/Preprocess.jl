@@ -95,8 +95,12 @@ function DirectStandardization(InstrumentX1, InstrumentX2; Factors = minimum(col
 end
 
 #Get the new samples in the Master instrument space...
-function (DSX::DirectStandardizationXform)(X; Factors = length(DSX.pca.SingularValues))
-    return X * DSX.pca.Loadings[1:Factors,:]' * DSX.TransferMatrix[1:Factors,1:Factors]  * DSX.pca.Loadings[1:Factors,:]
+function (DSX::DirectStandardizationXform)(X; Factors = length(DSX.pca.Values))
+    #Transform data into PCA
+    Into = DSX.pca(X; Factors = Factors)
+    Bridge = Into * DSX.TransferMatrix[1:Factors,1:Factors]
+    return DSX.pca(Bridge; Factors = Factors, inverse = true) #Out of
+    #return X * DSX.pca.Loadings[1:Factors,:]' * DSX.TransferMatrix[1:Factors,1:Factors]  * DSX.pca.Loadings[1:Factors,:]
 end
 
 struct OrthogonalSignalCorrection
