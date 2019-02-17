@@ -9,7 +9,7 @@ module ChemometricsTools
 
     include("DistanceMeasures.jl")
     export SquareEuclideanDistance, EuclideanDistance, ManhattanDistance,
-        GaussianKernel
+        GaussianKernel, LinearKernel, Kernel
 
     include("Transformations.jl")
     export Transform, PipelineInPlace, Pipeline, Center, Scale, StandardNormalVariate,

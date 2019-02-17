@@ -23,12 +23,31 @@ function ManhattanDistance(X, Y)
 end
 
 #Kernels
+struct Kernel
+    params::Union{Float64, Tuple}
+    ktype::String
+    original::Array
+end
+Kernel( X ) = Kernel(0.0, "linear", X)
+
+#This is just a wrapper so we can apply kernels willy nilly in one line
+function (K::Kernel)(X)
+    if K.ktype == "linear"
+        return LinearKernel(K.original, X, K.params)
+    elseif K.ktype == "gaussian" || K.ktype == "rbf"
+        return GaussianKernel(K.original , X, K.params)
+    end
+end
+
+LinearKernel(X, c) =  (X * X') .+ c
+LinearKernel(X, Y, c) = (Y * X') .+ c
+
 function GaussianKernel(X, sigma)
-    Gamma = 1.0 / (2.0 * sigma^2)
-    return exp.( SquareEuclideanDistance(X) * Gamma  )
+    Gamma = -1.0 / (2.0 * sigma^2)
+    return exp.( SquareEuclideanDistance(X) .* Gamma  )
 end
 
 function GaussianKernel(X, Y, sigma)
-    Gamma = 1.0 / (2.0 * sigma^2)
-    return exp.( SquareEuclideanDistance(X, Y) * Gamma  )
+    Gamma = -1.0 / (2.0 * sigma^2)
+    return exp.( SquareEuclideanDistance(Y, X) .* Gamma  )
 end

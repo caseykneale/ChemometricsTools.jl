@@ -38,6 +38,40 @@ end
 # Wrapper for CLS predict function...
 (M::RidgeRegression)(X) = PredictFn(X, M.CLS)
 
+struct KRR
+    kernel::Kernel
+    RR::RidgeRegression
+end
+
+function KernelRidgeRegression( X, Y, Penalty; KernelParameter = 0.0, KernelType = "linear" )
+    Kern = Kernel( KernelParameter, KernelType, X )
+    return KRR(Kern, RidgeRegression( Kern(X), Y, Penalty ) )
+end
+#Hahaha, wrap a kernel ridge object to ridge which wraps to CLS...
+(M::KRR)(X) = PredictFn(M.kernel(X), M.RR.CLS)
+
+struct LSSVM
+    kernel::Kernel
+    RR::RidgeRegression
+end
+
+function formatlssvminput(X)
+    Y = zeros(size(X) .+ 1)
+    Y[1,1] = 1.0
+    Y[2:end,2:end] .= X
+    return Y
+end
+#Literally the only difference between KRR and LSSVM is adding a bias term...
+function LSSVM( X, Y, Penalty; KernelParameter = 0.0, KernelType = "linear" )
+    Kern = Kernel( KernelParameter, KernelType, X )
+    return KRR(Kern, RidgeRegression( formatlssvminput(Kern(X)), Y, Penalty ) )
+end
+#Hahaha, wrap a kernel ridge object to ridge which wraps to CLS...
+(M::LSSVM)(X) = PredictFn(formatlssvminput(M.kernel(X)), M.RR.CLS)[2:end,:]
+
+
+
+
 struct PrincipalComponentRegression <: RegressionModels
     PCA::PCA
     CLS::ClassicLeastSquares
