@@ -21,6 +21,19 @@ function NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
     return (W, H)
 end
 
+
+
+# using CSV
+# using DataFrames
+# using Plots
+# using StatsBase
+# Raw = CSV.read("/home/caseykneale/Desktop/Spectroscopy/Data/triliq.csv");
+# Fraud = collect(convert(Array, Raw)[:,1:end]);
+# pure = [10,11,20,21,28,29];
+# impure = [collect(1:9); collect(12:19);collect(22:27)];
+# Fraud = Fraud[impure,:];
+
+
 #I really like this SIMPLISMA algorithm it uses grahm-shmidt. It's fast,
 #has fewer manual operations and is pretty clean.
 #I think there's some factors to include here, like don't let pure Vars
@@ -29,25 +42,19 @@ end
 #But with some end user knowledge it's cake.
 #REAL-TIME WAVELET COMPRESSION AND SELF-MODELING CURVE RESOLUTION FOR ION MOBILITY SPECTROMETRY
 #PhD. Dissertation. 2003. Guoxiang Chen.
-function SIMPLISMA(X; Factors = 1, exclude = nothing)
+function SIMPLISMA(X; Factors = 1)
     (obs, vars) = size(X)
     PurestVar = ones(Factors) .|> Int
     Ortho = zeros(obs, Factors)
     SSE = StatsBase.sum(X .^ 2, dims = 1)
     e = (SSE .- StatsBase.sum(X, dims = 1).^2) / obs #RSE/SSE
-    if !isa(exclude, Nothing)
-        e[exclude] .= -Inf
-    end
     PurestVar[1] = argmax(vec(e))
     Intensity = X[:, PurestVar[1]]
     Ortho[:,1] = Intensity ./ sqrt( Intensity' * Intensity )#2-norm
     for F in 2 : Factors
         proj = sum( (Ortho[:,1:(F-1)]' * X) .^ 2, dims = 1)
-        p = vec(e .* (1.0 .- proj ./ SSE))
+        p = vec(e .* (1.0 .- (proj ./ SSE)))
         p[PurestVar[1:F]] .= -Inf
-        if !isa(exclude, Nothing)
-            e[exclude] .= -Inf
-        end
         PurestVar[F] = argmax( p )
         Intensity = X[:, PurestVar[F]]
         OrthTmp = Intensity .- sum(proj * (proj' * Intensity'))
@@ -60,8 +67,16 @@ function SIMPLISMA(X; Factors = 1, exclude = nothing)
     for F in 1:Factors
         S[F,:] = (magnitude[F] <= 1e-8) ? (S[F,:] .* 0.0) : (S[F,:] ./ sqrt(magnitude[F]))
     end
+    S .+= StatsBase.mean(X, dims = 1)
     return (C, S, PurestVar)
 end
+
+
+
+#(C_Simplisma,S_Simplisma, vars) = SIMPLISMA(Fraud; Factors = 18)
+#vars;
+
+#plot(S_Simplisma[[1,3,18],:]', title = "SIMPLISMA Resolved Spectra", xlabel = "bins", ylabel = "Intensity", legend = false)
 
 
 #This needs some pretty serious cleaning, and was really tricky to write...

@@ -15,22 +15,9 @@ Dependencies: Only base libraries (LinearAlgebra, StatsBase, Statistics, Plots) 
 ### Package Status => Early View
 This thing is brand new (~3 weeks old). Many of the tools available can already be used, and most of those are implemented correctly, but the documentation is slow coming. Betchya anything there are a few bugs hiding in the repo. So use at your own risk for now. In a week or so this should be functional and trustworthy, and at that point collaborators will be sought. This is an early preview for constructive criticism and spreading awareness.
 
-
-## Latest Addition: Curve Resolution
-So far NMF, SIMPLISMA, and MCR-ALS are included in this package. If you aren't familiar with them, they are used to extract spectral and concentration estimates from unknown mixtures in chemical signals. Below is an example of spectra which are composed of signals from a mixture of a 3 components.
-
-![RAW](/images/curveres.png)
-
-Now we can apply some base curve resolution methods,
-
-![NMF](/images/NMF.png)
-![SIMPLISMA](/images/SIMPLISMA.png)
-
-and, apply MCR-ALS on say the SIMPLISMA estimates to further refine them (non-negativity constraints and normalization are available),
-
-![MCRALS](/images/MCRALS.png)
-
-Kind of like chromatography without waiting by a column/instrument all day. Neat right. Ironically MCR-ALS spectra look less representative of the actual pure spectral components known to be in the mixture. However, their concentration profiles derived from MCR-ALS are far superior to that of those from SIMPLISMA. You'll have to play with the code yourself to see.
+## Demonstrations:
+  Calibration Transfer: Direct Standardization
+  Curve Resolution
 
 # Package Highlights
 ### Transforms/Pipelines

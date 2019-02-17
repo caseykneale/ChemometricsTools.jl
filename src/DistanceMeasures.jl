@@ -22,7 +22,6 @@ function ManhattanDistance(X, Y)
     return Result
 end
 
-
 #Kernels
 function GaussianKernel(X, sigma)
     Gamma = 1.0 / (2.0 * sigma^2)
