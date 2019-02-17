@@ -1,3 +1,5 @@
+No official doc's yet, but the [wiki](https://github.com/caseykneale/ChemometricsTools/wiki) has the majority of the API and a few tutorials in it now!
+
 # ChemometricsTools
 This is an essential collection of tools to perform Chemometric analysis' in Julia. If you are uninformed as to what Chemometrics is, it could nonelegantly be stated as the marriage between datascience and chemistry. Traditionally it is a pile of linear algebra that is well reasoned by the physics and meaning of chemical measurements. This is some orthogonal to most fields of machine learning, but sometimes we too get desperate and break out pure machine learning methods.
 
@@ -13,90 +15,8 @@ Dependencies: Only base libraries (LinearAlgebra, StatsBase, Statistics, Plots) 
 ### Package Status => Early View
 This thing is brand new (~3 weeks old). Many of the tools available can already be used, and most of those are implemented correctly, but the documentation is slow coming. Betchya anything there are a few bugs hiding in the repo. So use at your own risk for now. In a week or so this should be functional and trustworthy, and at that point collaborators will be sought. This is an early preview for constructive criticism and spreading awareness.
 
-### Transforms/Pipelines
-Two design choices introduced in this package are "Transformations" and "Pipelines". We can use transformations to treat data from multiple sources the same way. This helps mitigate user-error for cases where test data is scaled based on training data, calibration transfer, etc.
 
-Multiple transformations can be easily chained together and stored using "Pipelines". These are basically convenience functions, but are somewhat flexible. Pipelines allow for preprocessing and data transformations to be reused, chained, or automated for reliable analytic throughput.
-
-# Model training
-There are a few built-in's to make training models a snap. Philosophically I decided, that making wrapper functions to perform Cross Validation is not fair to the end-user. There are many cases where we want specialized CV's but we don't want to write nested for-loops that run for hours then debug them... Similarly, most people don't want to spend their time hacking into rigid GridSearch objects, or scouring stack exchange / package documentation. Especially when it'd be easier to write an equivalent approach that's self documenting from scratch. Instead, I used Julia's iterators to make K-Fold validations convenient, below is an example Partial Least Squares Regression CV.
-
-```julia
-#Split our data
-((TrainX,TrainY),(TestX, TestY)) = SplitByProportion(x, yprop, 0.7);
-#Preprocess it
-MSC_Obj = MultiplicativeScatterCorrection(TrainX);
-TrainX = MSC_Obj(TrainX);
-TestX = MSC_Obj(TestX);
-#Begin CV!
-LatentVariables = 22
-Err = repeat([0.0], LatentVariables);
-#Note this is the Julian way to nest two loops
-for Lv in 1:LatentVariables, (Fold, HoldOut) in KFoldsValidation(20, TrainX, TrainY)
-    PLSR = PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv)
-    Err[Lv] += SSE( PLSR(HoldOut[1]), HoldOut[2] )
-end
-scatter(Err, xlabel = "Latent Variables", ylabel = "Cumulative SSE", labels = ["Error"])
-BestLV = argmin(Err)
-PLSR = PartialLeastSquares(TrainX, TrainY; Factors = BestLV)
-RMSE( PLSR(TestX), TestY )
-```
-![20 fold cross validation](/images/CV.png)
-
-That's great right? but, hey that was kind of slow. Knowing what we know about ALS based models, we can do the same operation in linear time with respect to latent factors by computing the most latent variables first and only recomputing the regression coefficients. An example of this is below,
-
-```julia
-Err = repeat([0.0], 22);
-Models = []
-for Lv in 22:-1:1
-    for ( i, ( Fold, HoldOut ) ) in enumerate(KFoldsValidation(20, TrainX, TrainY))
-        if Lv == 22
-            push!( Models, PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv) )
-        end
-        Err[Lv] += SSE( Models[i]( HoldOut[1]; Factors = Lv), HoldOut[2] )
-    end
-end
-```
-This approach is ~5 times faster on a single core( < 2 seconds), pours through 7Gb less data, and makes 1/5th the allocations. If you wanted you could distribute the inner loop (using Distributed.jl) and see drastic speed ups!
-
-*Aside:* there are quite a few other functions that make model training convenient for end-users. Such as Shuffle, Shuffle!, LeaveOneOut, Venetian Blinds, etc.
-
-The lovely Kennard-Stone sampling algorithm is also on board,
-![Kennard-Stone](/images/KS.png)
-
-# Classification Analysis
-There's also a bunch of tools for changes of basis such as: principal components analysis, linear discriminant analysis, orthogonal signal correction, etc. With those kinds of tools we can reduce the dimensions of our data and make classes more separable. So separable that trivial classification methods like a Gaussian discriminant can get us pretty good results. Below is an example analysis performed on mid-infrared spectra of strawberry purees and adulterated strawberry purees (yes fraudulent food items are a common concern).
-
-![Raw](/images/fraud_analysis_raw.png)
-
-*Use of Fourier transform infrared spectroscopy and partial least squares regression for the detection of adulteration of strawberry purées. J K Holland, E K Kemsley, R H Wilson*
-
-
-```julia
-snv = StandardNormalVariate(Train);
-Train_pca = PCA(snv(Train);; Factors = 15);
-
-Enc = LabelEncoding(TrnLbl);
-Hot = ColdToHot(TrnLbl, Enc);
-
-lda = LDA(Train_pca.Scores , Hot);
-classifier = GaussianDiscriminant(lda, TrainS, Hot)
-TrainPreds = classifier(TrainS; Factors = 2);
-```
-![LDA of PCA](/images/lda_fraud_analysis.png)
-
-Cool right? Well, we can now apply the same transformations to the test set and pull some multivariate Gaussians over the train set classes to see how we do identifying fraudulent puree's,
-
-```julia
-TestSet = Train_pca(snv(Test));
-TestSet = lda(TestSet);
-TestPreds = classifier(TestS; Factors  = 2);
-MulticlassStats(TestPreds .- 1, TstLbl , Enc)
-```
-If you're following along you'll get ~92% F-measure. Not bad. You may also notice this package has a nice collection of performance metrics for classification, regression, and clustering. Anyways, I've gotten 100%'s with more advanced methods but this is a cute way to show off some of the tools currently available.
-
-# Curve Resolution
-
+## Latest Addition: Curve Resolution
 So far NMF, SIMPLISMA, and MCR-ALS are included in this package. If you aren't familiar with them, they are used to extract spectral and concentration estimates from unknown mixtures in chemical signals. Below is an example of spectra which are composed of signals from a mixture of a 3 components.
 
 ![RAW](/images/curveres.png)
@@ -112,11 +32,17 @@ and, apply MCR-ALS on say the SIMPLISMA estimates to further refine them (non-ne
 
 Kind of like chromatography without waiting by a column all day. Neat right. Ironically MCR-ALS spectra look less representative of the actual pure spectral components known to be in the mixture. However, their concentration profiles derived from MCR-ALS are far superior to that of those from SIMPLISMA. You'll have to play with the code yourself to see.
 
-## Clustering
-Currently K-means and basic clustering metrics are on board. Hey if you want clustering methods check out Clustering.jl! They've done an awesome job.
+# Package Highlights
+### Transforms/Pipelines
+Two design choices introduced in this package are "Transformations" and "Pipelines". We can use transformations to treat data from multiple sources the same way. This helps mitigate user-error for cases where test data is scaled based on training data, calibration transfer, etc.
 
-## Time Series/Soft-Sensing
-Right now Echo State Networks are on board. Lot's to do there!
+Multiple transformations can be easily chained together and stored using "Pipelines". These are basically convenience functions, but are somewhat flexible. Pipelines allow for preprocessing and data transformations to be reused, chained, or automated for reliable analytic throughput.
+
+### Model training
+Easy to use iterators for KFoldsValidation's! Sampling methods like Kennard Stone, and resampling methods are ready to use in one line. Tons of error measure for regression. Standards like CLS, Ridge, PCR, PLSR(1/2). Oddities like extreme learning machines, more to come...
+
+### Classification Analysis
+Inhouse classification encodings(one cold/one hot), multiclass performance statistics. Can do LDA with guassian discriminants, logistic regression, PLS-DA, K-NN, and more to come.  
 
 ## Specialized tools?
 You might be saying, ridge regression, least squares, logistic regression, K-NN, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics? If that's what you wanna use it for be my guest. Seems kinda wrong and inefficient to PyCall scikit learn to do basic machine learning/analysis anyways... I'll be buffing up the machine learning methods available as time allows.

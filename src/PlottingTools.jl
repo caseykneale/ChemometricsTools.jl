@@ -6,8 +6,8 @@ struct QQ
     StoredTuple::Tuple
 end
 
-function QQ( y1, y2; Quantiles = collect( 1 : 99 ) ./ 100 )
-    return QQ( (Statistics.quantile!(y1, Quantiles), Statistics.quantile!(y2, Quantiles) ))
+function QQ( Y1, Y2; Quantiles = collect( 1 : 99 ) ./ 100 )
+    return QQ( (Statistics.quantile!(Y1, Quantiles), Statistics.quantile!(Y2, Quantiles) ))
 end
 
 function plotchem(QQ; title = "Quantile-Quantile Plot" )

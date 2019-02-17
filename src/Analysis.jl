@@ -103,7 +103,7 @@ function LDA(X, Y; Factors = 1)
     return LDA( Scores, Loadings, ReVals[ Sorted[ Contributions] ] )
 end
 
-function ( model::LDA )( Z; Factors = length(model.Values), inverse = false )
+function ( model::LDA )( Z; Factors = length(model.Values) )
      Projected = Z * model.Loadings[:,1:Factors]
 end
 

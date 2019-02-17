@@ -1,8 +1,8 @@
 #Simplest NMF algorithm ever...
-#Algorithms for non-negative matrix factorization. Daniel D. Lee. H. Sebastian Seung.
-#NIPS'00 Proceedings of the 13th International Conference on Neural Information Processing Systems. 535-54
 #Super fast and reasonable for chemometric applications...If you want a generic NMF(impution etc)
 #Look into coordinate descent....
+#Algorithms for non-negative matrix factorization. Daniel D. Lee. H. Sebastian Seung.
+#NIPS'00 Proceedings of the 13th International Conference on Neural Information Processing Systems. 535-54
 function NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
     (Obs, Vars) = size(X)
     W = abs.( randn( Obs , Factors ) )
@@ -21,7 +21,6 @@ function NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
     return (W, H)
 end
 
-
 #I really like this SIMPLISMA algorithm it uses grahm-shmidt. It's fast,
 #has fewer manual operations and is pretty clean.
 #I think there's some factors to include here, like don't let pure Vars
@@ -30,7 +29,7 @@ end
 #But with some end user knowledge it's cake.
 #REAL-TIME WAVELET COMPRESSION AND SELF-MODELING CURVE RESOLUTION FOR ION MOBILITY SPECTROMETRY
 #PhD. Dissertation. 2003. Guoxiang Chen.
-function SIMPLISMA(X; Factors = 1, alpha = 0.05, exclude = nothing)
+function SIMPLISMA(X; Factors = 1, exclude = nothing)
     (obs, vars) = size(X)
     PurestVar = ones(Factors) .|> Int
     Ortho = zeros(obs, Factors)

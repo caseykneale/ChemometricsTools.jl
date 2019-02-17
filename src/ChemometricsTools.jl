@@ -1,7 +1,7 @@
 module ChemometricsTools
     include("ClassificationMetrics.jl")
-    export LabelEncoding, HotToCold, ColdToHot, MulticlassStats,
-        Threshold, MulticlassThreshold, HighestVote
+    export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
+        Threshold, MulticlassThreshold, HighestVote 
 
     include("RegressionMetrics.jl")
     export ME, MAE, MAPE, SSE, MSE, RMSE, SSTotal, SSReg, SSRes, RSquare,

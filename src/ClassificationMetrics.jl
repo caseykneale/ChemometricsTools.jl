@@ -25,7 +25,6 @@ function LabelEncoding(HotOrCold)
                                 length(Lbls) )
 end
 
-
 function ColdToHot(Y, Schema::ClassificationLabel)
     lenY = length( Y )
     Output = zeros( lenY, Schema.LabelCount )
