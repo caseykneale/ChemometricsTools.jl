@@ -19,7 +19,7 @@ This thing is brand new (~3 weeks old). Many of the tools available can already 
   - [Calibration Transfer: Direct Standardization](https://github.com/caseykneale/ChemometricsTools/wiki/Calibration-Transfer:-Direct-Standardization-Demo)
   - [Curve Resolution](https://github.com/caseykneale/ChemometricsTools/wiki/Curve-Resolution:-Demo)
 
-##API's with Tutorials
+## API's with Tutorials
   - [Classification](https://github.com/caseykneale/ChemometricsTools/wiki/Classification-Methods)
   - [Training](https://github.com/caseykneale/ChemometricsTools/wiki/Training-Methods)
   - [Transforms](https://github.com/caseykneale/ChemometricsTools/wiki/Transformations)
