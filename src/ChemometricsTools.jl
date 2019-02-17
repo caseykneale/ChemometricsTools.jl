@@ -1,14 +1,15 @@
 module ChemometricsTools
     include("ClassificationMetrics.jl")
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
-        Threshold, MulticlassThreshold, HighestVote 
+        Threshold, MulticlassThreshold, HighestVote
 
     include("RegressionMetrics.jl")
     export ME, MAE, MAPE, SSE, MSE, RMSE, SSTotal, SSReg, SSRes, RSquare,
         PearsonCorrelationCoefficient, PercentRMSE
 
     include("DistanceMeasures.jl")
-    export SquareEuclideanDistance, EuclideanDistance, ManhattanDistance
+    export SquareEuclideanDistance, EuclideanDistance, ManhattanDistance,
+        GaussianKernel
 
     include("Transformations.jl")
     export Transform, PipelineInPlace, Pipeline, Center, Scale, StandardNormalVariate,

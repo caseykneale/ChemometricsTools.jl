@@ -21,3 +21,15 @@ function ManhattanDistance(X, Y)
     end
     return Result
 end
+
+
+#Kernels
+function GaussianKernel(X, sigma)
+    Gamma = 1.0 / (2.0 * sigma^2)
+    return exp.( SquareEuclideanDistance(X) * Gamma  )
+end
+
+function GaussianKernel(X, Y, sigma)
+    Gamma = 1.0 / (2.0 * sigma^2)
+    return exp.( SquareEuclideanDistance(X, Y) * Gamma  )
+end
