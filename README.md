@@ -30,7 +30,7 @@ and, apply MCR-ALS on say the SIMPLISMA estimates to further refine them (non-ne
 
 ![MCRALS](/images/MCRALS.png)
 
-Kind of like chromatography without waiting by a column all day. Neat right. Ironically MCR-ALS spectra look less representative of the actual pure spectral components known to be in the mixture. However, their concentration profiles derived from MCR-ALS are far superior to that of those from SIMPLISMA. You'll have to play with the code yourself to see.
+Kind of like chromatography without waiting by a column/instrument all day. Neat right. Ironically MCR-ALS spectra look less representative of the actual pure spectral components known to be in the mixture. However, their concentration profiles derived from MCR-ALS are far superior to that of those from SIMPLISMA. You'll have to play with the code yourself to see.
 
 # Package Highlights
 ### Transforms/Pipelines
@@ -39,10 +39,10 @@ Two design choices introduced in this package are "Transformations" and "Pipelin
 Multiple transformations can be easily chained together and stored using "Pipelines". These are basically convenience functions, but are somewhat flexible. Pipelines allow for preprocessing and data transformations to be reused, chained, or automated for reliable analytic throughput.
 
 ### Model training
-Easy to use iterators for KFoldsValidation's! Sampling methods like Kennard Stone, and resampling methods are ready to use in one line. Tons of error measure for regression. Standards like CLS, Ridge, PCR, PLSR(1/2). Oddities like extreme learning machines, more to come...
+Easy to use iterators for KFoldsValidation's! Sampling methods like Kennard Stone, and resampling methods are ready to use in one line. Tons of error measure for regression. Standards like CLS, Ridge, PCR, PLSR(1/2) are built-in. Oddities like extreme learning machines, are available, more to come...
 
 ### Classification Analysis
-Inhouse classification encodings(one cold/one hot), multiclass performance statistics. Can do LDA with guassian discriminants, logistic regression, PLS-DA, K-NN, and more to come.  
+Inhouse classification encodings(one cold/one hot), multiclass performance statistics. Package includes: LDA with guassian discriminants, logistic regression, PLS-DA, K-NN, and more to come.  
 
 ## Specialized tools?
 You might be saying, ridge regression, least squares, logistic regression, K-NN, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics? If that's what you wanna use it for be my guest. Seems kinda wrong and inefficient to PyCall scikit learn to do basic machine learning/analysis anyways... I'll be buffing up the machine learning methods available as time allows.
