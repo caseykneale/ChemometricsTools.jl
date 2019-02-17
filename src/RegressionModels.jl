@@ -64,12 +64,10 @@ end
 #Literally the only difference between KRR and LSSVM is adding a bias term...
 function LSSVM( X, Y, Penalty; KernelParameter = 0.0, KernelType = "linear" )
     Kern = Kernel( KernelParameter, KernelType, X )
-    return KRR(Kern, RidgeRegression( formatlssvminput(Kern(X)), Y, Penalty ) )
+    return LSSVM(Kern, RidgeRegression( formatlssvminput( Kern( X ) ), vcat( 0.0, Y ), Penalty ) )
 end
 #Hahaha, wrap a kernel ridge object to ridge which wraps to CLS...
-(M::LSSVM)(X) = PredictFn(formatlssvminput(M.kernel(X)), M.RR.CLS)[2:end,:]
-
-
+(M::LSSVM)(X) = PredictFn( formatlssvminput( M.kernel(X)), M.RR.CLS )[2:end,:]
 
 
 struct PrincipalComponentRegression <: RegressionModels

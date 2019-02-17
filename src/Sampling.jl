@@ -7,7 +7,6 @@ end
 VenetianBlinds(X) = ( X[1:2:end], X[2:2:end] )
 VenetianBlinds(X,Y) = (( X[1:2:end], Y[1:2:end] ), ( X[2:2:end], Y[2:2:end] ) )
 
-
 CICol(a::CartesianIndex) = collect(Tuple(a))[2]
 CIRow(a::CartesianIndex) = collect(Tuple(a))[1]
 

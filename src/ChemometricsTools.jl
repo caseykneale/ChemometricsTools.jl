@@ -35,7 +35,7 @@ module ChemometricsTools
 
     include("RegressionModels.jl")
     export ClassicLeastSquares, RidgeRegression, PrincipalComponentRegression,
-        PartialLeastSquares, ExtremeLearningMachine, PredictFn
+        PartialLeastSquares, KernelRidgeRegression, LSSVM, ExtremeLearningMachine, PredictFn
 
     include("Ensembles.jl")
     export MakeIntervals
