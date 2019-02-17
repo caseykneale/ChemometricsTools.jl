@@ -16,8 +16,14 @@ Dependencies: Only base libraries (LinearAlgebra, StatsBase, Statistics, Plots) 
 This thing is brand new (~3 weeks old). Many of the tools available can already be used, and most of those are implemented correctly, but the documentation is slow coming. Betchya anything there are a few bugs hiding in the repo. So use at your own risk for now. In a week or so this should be functional and trustworthy, and at that point collaborators will be sought. This is an early preview for constructive criticism and spreading awareness.
 
 ## Demonstrations:
-  Calibration Transfer: Direct Standardization
-  Curve Resolution
+  - [Calibration Transfer: Direct Standardization](https://github.com/caseykneale/ChemometricsTools/wiki/Calibration-Transfer:-Direct-Standardization-Demo)
+  - [Curve Resolution](https://github.com/caseykneale/ChemometricsTools/wiki/Curve-Resolution:-Demo)
+
+##API's with Tutorials
+  - [Classification](https://github.com/caseykneale/ChemometricsTools/wiki/Classification-Methods)
+  - [Training](https://github.com/caseykneale/ChemometricsTools/wiki/Training-Methods)
+  - [Transforms](https://github.com/caseykneale/ChemometricsTools/wiki/Transformations)
+  - [Pipelines](https://github.com/caseykneale/ChemometricsTools/wiki/Pipelines)
 
 # Package Highlights
 ### Transforms/Pipelines
