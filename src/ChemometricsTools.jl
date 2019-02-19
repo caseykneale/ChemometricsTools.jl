@@ -16,7 +16,8 @@ module ChemometricsTools
         RangeNorm, Logit
 
     include("Analysis.jl")
-    export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance
+    export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance,
+        findpeaks
 
     include("AnomalyDetection.jl")
     export OneClassJKNN, Q, Hotelling, Leverage

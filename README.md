@@ -1,7 +1,7 @@
-No official doc's yet, but the [wiki](https://github.com/caseykneale/ChemometricsTools/wiki) has the majority of the API and a few tutorials in it now!
+No official doc's yet, but the [wiki](https://github.com/caseykneale/ChemometricsTools/wiki) has the majority of the API and a few tutorials. Feel free to check the code-base, good place to start would be the [module source](https://github.com/caseykneale/ChemometricsTools/blob/master/src/ChemometricsTools.jl).
 
 # ChemometricsTools
-This is an essential collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is a pile of applied linear algebra that is well reasoned by the physics and meaning of chemical measurements. This is somewhat orthogonal to most fields of machine learning, but sometimes chemometricians also get desperate and break out pure machine learning methods.
+This is an essential collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is a pile of applied linear algebra that is well reasoned by the physics and meaning of chemical measurements. This is somewhat orthogonal to most fields of machine learning(aka "add more layers?"), but sometimes chemometricians also get desperate and break out pure machine learning methods. So some of those are in here, but if you want neural networks [Flux.jl](https://github.com/FluxML/Flux.jl) is super easy and fast to use.
 
 The goals for this package are the following: rely only on basic dependencies for longevity and stability, essential algorithms should read similar to pseudocode in papers, and the tools provided should be fast, flexible, and reliable. That's the Julia way after-all. No code will directly call R, Python, C, etc. As such it is currently and will be written in Julia from the ground up.
 
@@ -45,15 +45,19 @@ You might be saying, ridge regression, logistic regression, K-NN, PCA, etc, isn'
 
 The package does have some specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, curve resolution for forensics, etc. There are certainly plans for a few other tools for analyzing chemical data that packages in other languages have seemingly left out. More to come. Stay tuned.
 
+## Why Julia?
+In Julia we can do mathematics like R or Matlab (no installations/imports), but write glue code as easily as python, with the expressiveness of scala, with (often) the performance of C/C++. Multidispatch makes recycling code painless, and broadcasting allows for intuitive application of operations in collections. I'm not a soft-ware engineer, but, these things have made Julia a dream-boat for me.
+
 ## ToDo:
-  - Peak finding algorithms
+  - Update the Docs for: LSSVM, KRR, peakfinding, ensemble wrappers...
+  - Naive Bayes
   - BTEM / from scratch Simulated Annealing Optimizer, ...
-  - Fast decision trees...
+  - Fast CART trees...
   - Time Series / soft-sensing stuff / Recursive regression methods
   - SIMCA, N-WAY PCA, and N-WAY PLS
   - Hyperspectral data preprocessing
-  - ... Writing the Docs for all the code...
   - ... Writing hundreds of unit tests ...
   - ... ... Finding dozens of bugs ... ...
+  - Maybe add convenience fns for standard addition, propagation of error, multiequilibria, kinetics?
   - Maybe add Design of Experiment tools (Partial Factorial design, simplex, etc...)
   - Maybe add electrochemical simulations and optical simulations?

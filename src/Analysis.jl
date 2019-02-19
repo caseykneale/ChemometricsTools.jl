@@ -137,3 +137,34 @@ function CanonicalCorrelationAnalysis(A, B)
     Bprime = CAAInvSqrt * singvaldecomp.Vt[ :,1 : maxrank ]
     return CanonicalCorrelationAnalysis(Aprime' * A, V = Bprime' * B, singvaldecomp.S[1 : maxrank] )
 end
+
+#Currently only for vectors...
+#Original R function by Stas_G:
+#https://stats.stackexchange.com/questions/22974/how-to-find-local-peaks-valleys-in-a-series-of-data
+function findpeaks( vY; m = 3)
+    @assert length(size(vY)) == 1
+    sze = size(vY)[1];
+    (i,q) = (0,0);#generic iterator, second generic iterator
+    (lb,rb) = (0,0);#left bound, right bound
+    ret = [];
+
+    for i in 1:(sze-2)
+        #Find all regions with negative laplacian between neighbors
+        if (sign( vY[ i + 2]  - vY[ i + 1 ] ) - sign( vY[ i + 1 ]  - vY[ i ] ) ) < 0
+            #Now assess all regions with negative laplacian between neighbors...
+            lb = i - m - 1;# define left bound of vector
+            lb = (lb < 1) ? 1 : lb
+            rb = i + m + 1# define right bound of vector
+            rb = (rb >= (sze-2)) ? rb = (sze-3) : rb
+            #We have found a peak by our criterion
+            if !any(vY[lb:rb] .> vY[i+1])
+                push!( ret, i + 1 );
+            end #End if found peak
+        end #End if laplace condition
+    end #End loop
+    return ret
+end
+
+# y = sin.( collect(1:720) .* (pi/180) );
+# findpeaks(y)
+# y[findpeaks(y)]
