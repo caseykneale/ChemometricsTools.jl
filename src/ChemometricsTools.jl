@@ -38,7 +38,7 @@ module ChemometricsTools
         PartialLeastSquares, KernelRidgeRegression, LSSVM, ExtremeLearningMachine, PredictFn
 
     include("Ensembles.jl")
-    export MakeIntervals
+    export MakeInterval, MakeIntervals, stackedweights
 
     include("Sampling.jl")
     export VenetianBlinds, SplitByProportion, KennardStone
@@ -50,7 +50,7 @@ module ChemometricsTools
     export NMF, SIMPLISMA, MCRALS, FNNLS
 
     include("PlottingTools.jl")
-    export QQ, BlandAltman, plotchem
+    export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay
 
 #ToDo: Add hundreds of unit tests...
 

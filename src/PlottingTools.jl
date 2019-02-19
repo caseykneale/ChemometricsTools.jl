@@ -52,3 +52,19 @@ function plotchem(BA::BlandAltman; title = "Bland Altman")
     Plots.abline!(a, 0, BA.Center, color = :red )
     Plots.abline!(a, 0, BA.LowerLimit, color = :red )
 end
+
+
+rectangle(w, h, x, y) = Shape(x .+ [0,w,w,0], y .+ [0,0,h,h])
+
+function IntervalOverlay(Spectra, Intervals, Err)
+    RelativeErr = Err ./ sum(Err);
+    a = plot(Spectra', xlabel = "bins", ylabel = "Absorbance / Relative CV Error", ylim = (0,7), legend = false);
+    for (i, line) in enumerate( Intervals )
+        scalethis = reduce(max, Spectra)  / reduce(max, RelativeErr)
+        w = line[end] - line[1]
+        h = RelativeErr[i] * scalethis
+        xloc = line[1]
+        plot!(rectangle(w,h,xloc,0), opacity=.5)
+    end
+    return a
+end
