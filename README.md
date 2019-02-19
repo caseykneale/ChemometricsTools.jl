@@ -32,7 +32,7 @@ Two design choices introduced in this package are "Transformations" and "Pipelin
 Multiple transformations can be easily chained together and stored using "Pipelines". Pipelines aren't "pipes" like are present in R and base Julia. They are basically convenience functions, but are somewhat flexible. Pipelines allow for preprocessing and data transformations to be reused, chained, or automated for reliable analytic throughput.
 
 ### Model training
-Easy to use iterators for K-Folds calidation's! Sampling methods like Kennard Stone, and resampling methods are ready to use in one line. Convenience functions for interval selections, weighting regression ensembles, etc.
+Easy to use iterators for K-Folds validation's! Sampling methods like Kennard Stone, and resampling methods are eache one function call away from use. Convenience functions for interval selections, weighting regression ensembles, etc are also available.
 
 ### Regression Modeling
 Dozens of performance metrics, a few built in plots (Bland Altman, QQ, etc). CLS, Ridge, Kernel Ridge, LS-SVM, PCR, PLS(1/2), ELM's, ... More to come. Chemometricians love regressions!
