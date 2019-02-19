@@ -1,7 +1,7 @@
 No official doc's yet, but the [wiki](https://github.com/caseykneale/ChemometricsTools/wiki) has the majority of the API and a few tutorials in it now!
 
 # ChemometricsTools
-This is an essential collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is a pile of applied linear algebra that is well reasoned by the physics and meaning of chemical measurements. This is some orthogonal to most fields of machine learning, but sometimes chemometricians also get desperate and break out pure machine learning methods. 
+This is an essential collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is a pile of applied linear algebra that is well reasoned by the physics and meaning of chemical measurements. This is somewhat orthogonal to most fields of machine learning, but sometimes chemometricians also get desperate and break out pure machine learning methods.
 
 The goals for this package are the following: rely only on basic dependencies for longevity and stability, essential algorithms should read similar to pseudocode in papers, and the tools provided should be fast, flexible, and reliable. That's the Julia way after-all. No code will directly call R, Python, C, etc. As such it is currently and will be written in Julia from the ground up.
 
@@ -29,10 +29,10 @@ This thing is brand new (< 3 weeks old). Many of the tools available can already
 ### Transforms/Pipelines
 Two design choices introduced in this package are "Transformations" and "Pipelines". We can use transformations to treat data from multiple sources the same way. This helps mitigate user-error for cases where test data is scaled based on training data, calibration transfer, etc.
 
-Multiple transformations can be easily chained together and stored using "Pipelines". These are basically convenience functions, but are somewhat flexible. Pipelines allow for preprocessing and data transformations to be reused, chained, or automated for reliable analytic throughput.
+Multiple transformations can be easily chained together and stored using "Pipelines". Pipelines aren't "pipes" like are present in R and base Julia. They are basically convenience functions, but are somewhat flexible. Pipelines allow for preprocessing and data transformations to be reused, chained, or automated for reliable analytic throughput.
 
 ### Model training
-Easy to use iterators for KFoldsValidation's! Sampling methods like Kennard Stone, and resampling methods are ready to use in one line. Convenience functions for interval selections, weighting regression ensembles, etc.
+Easy to use iterators for K-Folds calidation's! Sampling methods like Kennard Stone, and resampling methods are ready to use in one line. Convenience functions for interval selections, weighting regression ensembles, etc.
 
 ### Regression Modeling
 Dozens of performance metrics, a few built in plots (Bland Altman, QQ, etc). CLS, Ridge, Kernel Ridge, LS-SVM, PCR, PLS(1/2), ELM's, ... More to come. Chemometricians love regressions!
