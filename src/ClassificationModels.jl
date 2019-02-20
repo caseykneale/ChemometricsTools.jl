@@ -119,3 +119,44 @@ end
 function ( model::LogisticRegression )( X )
   return softmax( (X * model.Coefficients) .+ model.Biases )
 end
+
+
+using Statistics
+
+mutable struct GaussianNaiveBayes
+    TotalSamples::Int
+    classcount::Int
+    Priors
+    Means
+    Vars
+    SDs
+end
+
+function GaussianNaiveBayes(X,Y)
+    (obs, vars) = size(X)
+    classes = size(Y)[2]
+    ClasswisePrior = sum(Y, dims = 1) ./ obs
+    ClasswiseMeans = zeroes(classes, vars)
+    ClasswiseVars = zeroes(classes, vars)
+    #Update dictionary of classes
+    for c in classes
+        ClassIndices = Y[:,c] .== 1
+        ClasswiseMeans[c,:] = mean(X[ClassIndices,:], dims = 1)
+        ClasswiseVars[c,:] = Statistics.var(X[ClassIndices,:], dims = 1)
+    end
+    return GaussianNaiveBayes(TotalSamples, classes, ClasswisePrior, ClasswiseMeans, ClasswiseVars, sqrt.(ClasswiseVars))
+end
+
+Likelihood( x, mean, var, sd ) = (1.0 ./ sqrt.(2.0 * pi * sd) .* exp.(-0.5 .* ( (x .- mean).^2.0 ./ var) )
+
+function (gnb::GuassianNaiveBayes)(X)
+    (obs, vars) = size(X)
+    Predictions = zeros(obs, gnb.classcount)
+    for c in 1 : gnb.classcount #Save on some log computations...
+        Predictions[:,c] .= log(1.0 + gnb.Priors[c])
+    end
+    for o in 1 : obs, c in 1 : gnb.classcount
+        Predictions[o,c] += sum( log.(1.0 .+ Likelihood( X[o,:], gnb.Means[c,:], gnb.Vars[c,:], gnb.SDs[c,:] ) ) )
+    end
+    return Predictions
+end

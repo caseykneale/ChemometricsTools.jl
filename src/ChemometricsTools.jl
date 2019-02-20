@@ -23,7 +23,8 @@ module ChemometricsTools
     export OneClassJKNN, Q, Hotelling, Leverage
 
     include("ClassificationModels.jl")
-    export KNN, GaussianDiscriminant, LogisticRegression, MultinomialSoftmaxRegression
+    export KNN, GaussianDiscriminant, LogisticRegression, MultinomialSoftmaxRegression,
+        GaussianNaiveBayes
 
     include("Clustering.jl")
     export TotalClusterSS, WithinClusterSS, BetweenClusterSS,
