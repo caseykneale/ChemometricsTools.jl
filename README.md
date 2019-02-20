@@ -38,7 +38,7 @@ Easy to use iterators for K-Folds validation's! Sampling methods like Kennard St
 Dozens of performance metrics, a few built in plots (Bland Altman, QQ, etc). CLS, Ridge, Kernel Ridge, LS-SVM, PCR, PLS(1/2), ELM's, ... More to come. Chemometricians love regressions!
 
 ### Classification Analysis
-Inhouse classification encodings(one cold/one hot), multiclass performance statistics. Package includes: LDA with guassian discriminants, logistic regression, PLS-DA, K-NN, and more to come.  
+Inhouse classification encodings(one cold/one hot), multiclass performance statistics. Package includes: LDA with guassian discriminants, logistic regression, PLS-DA, K-NN, naive bayes, and more to come.  
 
 ## Specialized tools?
 You might be saying, ridge regression, logistic regression, K-NN, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics? If that's what you wanna use it for be my guest. Seems kinda wrong and inefficient to PyCall scikit learn to do basic machine learning/analysis anyways... I'll be buffing up the machine learning methods available as time allows. But, no, this is slowly becoming chock-full of chemometric methods.
@@ -46,10 +46,10 @@ You might be saying, ridge regression, logistic regression, K-NN, PCA, etc, isn'
 The package does have some specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, curve resolution for forensics, etc. There are certainly plans for a few other tools for analyzing chemical data that packages in other languages have seemingly left out. More to come. Stay tuned.
 
 ## Why Julia?
-In Julia we can do mathematics like R or Matlab (no installations/imports), but write glue code as easily as python, with the expressiveness of scala, with (often) the performance of C/C++. Multidispatch makes recycling code painless, and broadcasting allows for intuitive application of operations in collections. I'm not a soft-ware engineer, but, these things have made Julia a dream-boat for me.
+In Julia we can do mathematics like R or Matlab (no installations/imports), but write glue code as easily as python, with the expressiveness of scala, with (often) the performance of C/C++. Multidispatch makes recycling code painless, and broadcasting allows for intuitive application of operations across collections. I'm not a soft-ware engineer, but, these things have made Julia my language of choice.
 
 ## ToDo:
-  - Update the Docs for: Peakfinding...
+  - Update the Docs for: Peakfinding, NB...
   - BTEM / from scratch Simulated Annealing Optimizer, ...
   - Fast CART trees...
   - Time Series / soft-sensing stuff / Recursive regression methods

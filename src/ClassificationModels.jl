@@ -123,7 +123,7 @@ end
 
 using Statistics
 
-mutable struct GaussianNaiveBayes
+struct GaussianNaiveBayes
     TotalSamples::Int
     classcount::Int
     Priors
@@ -147,9 +147,9 @@ function GaussianNaiveBayes(X,Y)
     return GaussianNaiveBayes(TotalSamples, classes, ClasswisePrior, ClasswiseMeans, ClasswiseVars, sqrt.(ClasswiseVars))
 end
 
-Likelihood( x, mean, var, sd ) = (1.0 ./ sqrt.(2.0 * pi * sd) .* exp.(-0.5 .* ( (x .- mean).^2.0 ./ var) )
+Likelihood( x, mean, var, sd ) = (1.0 ./ sqrt.(2.0 * pi * sd)) .* exp.(-0.5 .* ( (x .- mean).^2.0 ./ var) )
 
-function (gnb::GuassianNaiveBayes)(X)
+function (gnb::GaussianNaiveBayes)(X)
     (obs, vars) = size(X)
     Predictions = zeros(obs, gnb.classcount)
     for c in 1 : gnb.classcount #Save on some log computations...
