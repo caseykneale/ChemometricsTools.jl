@@ -50,13 +50,11 @@ function StumpOrNodeRegress( x, y ; gainfn = ssd )
     sortedinds = 1:Obs
     for var in 1 : Vars
         sortedinds = sortperm(  x[ : , var ]  )
-        y = y[sortedinds,:]
+        y = y[sortedinds]
         x = x[sortedinds,:]
-        lhsprops = sum( y[1,:]')
-        rhsprops = sum( y[2:end,:])
         for obs in 2 : ( Obs - 1 )
-            lhsprops .+= y[obs,:]'
-            rhsprops .-= y[obs,:]'
+            lhsprops = y[1:obs]
+            rhsprops = y[(obs + 1):end]
             LHS = gainfn( lhsprops )
             RHS = gainfn( rhsprops )
             curgain = beforeinfo - ( (obs/Obs) * LHS + ((Obs - obs)/Obs) * RHS)
@@ -125,7 +123,7 @@ end
 function RegressionTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize = 3)
     curdepth = 1 #Place holder for power of 2 depth of the binary tree
     cursky = 1 #Holds a 1 if branch can grow, 0 if it cannot
-    Obs = size(y)
+    Obs = size(y)[1]
     curmap = [1 : Obs] #Holds indices available to the next split decision
     dt = []#Stores alllll of the decisions we make
     while (curdepth <= maxdepth) && (cursky >= 1 )

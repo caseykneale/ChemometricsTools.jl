@@ -55,7 +55,7 @@ module ChemometricsTools
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay
 
     include("Trees.jl")
-    export OneHotOdds, entropy, gini,sse, StumpOrNode, ClassificationTree, RegressionTree, CART
+    export OneHotOdds, entropy, gini, ssd, StumpOrNode, ClassificationTree, RegressionTree, CART
 
 #ToDo: Add hundreds of unit tests...
 
