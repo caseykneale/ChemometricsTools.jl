@@ -54,6 +54,9 @@ module ChemometricsTools
     include("PlottingTools.jl")
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay
 
+    include("Trees.jl")
+    export OneHotOdds, entropy, gini, StumpOrNode, ClassificationTree
+
 #ToDo: Add hundreds of unit tests...
 
 end # module
