@@ -133,3 +133,12 @@ end
 function HighestVote(yhat)
     return [ findmax( yhat[obs,:] )[2] for obs in 1 : size(yhat)[1]  ]
 end
+
+function HighestVoteOneHot(yhat)
+    (Obs, Classes) = size(yhat)
+    ret = zeros((Obs, Classes))
+    for o in 1:Obs
+        ret[o, argmax(yhat[o,:])] = 1
+    end
+    return ret
+end

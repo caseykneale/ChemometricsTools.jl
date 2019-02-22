@@ -1,5 +1,6 @@
 using StatsBase
 using LinearAlgebra
+using Statistics
 
 abstract type ClassificationModel end
 
@@ -121,7 +122,6 @@ function ( model::LogisticRegression )( X )
 end
 
 
-using Statistics
 
 struct GaussianNaiveBayes
     TotalSamples::Int
