@@ -18,20 +18,22 @@ function StumpOrNode( x, y ; gainfn = entropy )
     (decisionbound, decisionvar) = (0.0, 0)
     (Obs, Vars) = size( x )
     beforeinfo = gainfn( sum( y, dims = 1 ) ./ Obs )
+    sortedinds = 1:Obs
     for var in 1 : Vars
         sortedinds = sortperm(  x[ : , var ]  )
-        y = y[sortedinds]
-        lhsprops = sum( y[1,:], dims = 1 )
+        y = y[sortedinds,:]
+        x = x[sortedinds,:]
+        lhsprops = sum( y[1,:]', dims = 1 )
         rhsprops = sum( y[2:end,:], dims = 1 )
         for obs in 2 : ( Obs - 1 )
-            lhsprops += y[obs,:]
-            rhsprops -= y[obs,:]
+            lhsprops .+= y[obs,:]'
+            rhsprops .-= y[obs,:]'
             LHS = gainfn( lhsprops ./ obs )
             RHS = gainfn( rhsprops ./ (Obs - obs) )
             curgain = beforeinfo - ( (obs/Obs) * LHS + ((Obs - obs)/Obs) * RHS)
             if curgain > maxgain
                 maxgain         = curgain
-                decisionbound   = (x[obs,var] + x[obs + 1, var]) / 2.0
+                decisionbound   = (x[sortedinds[obs],var] + x[sortedinds[obs + 1], var]) / 2.0
                 decisionvar     = var
             end
         end
@@ -40,9 +42,9 @@ function StumpOrNode( x, y ; gainfn = entropy )
 end
 
 x2 = reshape([1,2, 1.2,1.4, 2.2, 1,2,3,4,5], 5,2)
-y = [1,1 ,2,2, 3];
-tenc = LabelEncoding(y)
-hot = ColdToHot(y, tenc);
+yt = [1,1 ,2,2, 3];
+tenc = LabelEncoding(yt)
+hot = ColdToHot(yt, tenc);
 hot
 StumpOrNode(x2, hot)
 tree(x2, hot; gainfn = entropy, maxdepth = 9, minbranchsize = 2 )
@@ -71,7 +73,7 @@ function tree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize = 3)
                 (bound, var) = StumpOrNode( x[cmap,:], y[cmap,:] ; gainfn = entropy )
                 LHS = cmap[findall(x[cmap, var] .< bound)]
                 RHS = cmap[findall(x[cmap, var] .>= bound)]
-                if length(LHS) >= minbranchsize && length(RHS) >= minbranchsize
+                if (length(LHS) >= 0) && (length(RHS) >= 0)
                     push!(nextmap, LHS, RHS)
                     nextsky += 2
                     curdt[sky] = (var => bound)
@@ -128,9 +130,6 @@ function predict(x, dt, classes = 3)
     end
     return output
 end
-dt
-
-
 
 Raw = CSV.read("/home/caseykneale/Desktop/Spectroscopy/Data/iris.data");
 Lbls = convert(Array, Raw[1:(end-1),end]);
@@ -142,7 +141,7 @@ Hot = ColdToHot(Lbls, Enc);
 Shuffle!(X, Hot);
 ((TX,TY), (X,Y)) = SplitByProportion(X,Hot, 0.9)
 
-@time dt = tree(TX,TY; gainfn = entropy, maxdepth = 6, minbranchsize = 5 )
+@time dt = tree(TX,TY; gainfn = entropy, maxdepth = 9, minbranchsize = 5 )
 
 
 @time q = predict(TX, dt, 3);
