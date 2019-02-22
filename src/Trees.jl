@@ -6,7 +6,8 @@ function OneHotOdds(Y)
 end
 
 entropy(v) = -sum( map( x -> x * (x == 1.0 ? 0.0 : log( x , 2 )), v ) )
-gini(p) = -sum( p .* (1.0 .- p) )
+gini(p) = 1.0 - sum( p .^ 2 )
+ssd(split) = sum( ( split .- mean( split ) ) .^ 2 )
 
 #I have concerns about some of the performance here...
 #Ideas:
@@ -40,9 +41,40 @@ function StumpOrNode( x, y ; gainfn = entropy )
     return (decisionbound, decisionvar)
 end
 
-struct classificationtree
+
+function StumpOrNodeRegress( x, y ; gainfn = ssd )
+    maxgain = -Inf
+    (decisionbound, decisionvar) = (0.0, 0)
+    (Obs, Vars) = size( x )
+    beforeinfo = gainfn( y )
+    sortedinds = 1:Obs
+    for var in 1 : Vars
+        sortedinds = sortperm(  x[ : , var ]  )
+        y = y[sortedinds,:]
+        x = x[sortedinds,:]
+        lhsprops = sum( y[1,:]')
+        rhsprops = sum( y[2:end,:])
+        for obs in 2 : ( Obs - 1 )
+            lhsprops .+= y[obs,:]'
+            rhsprops .-= y[obs,:]'
+            LHS = gainfn( lhsprops )
+            RHS = gainfn( rhsprops )
+            curgain = beforeinfo - ( (obs/Obs) * LHS + ((Obs - obs)/Obs) * RHS)
+            if curgain > maxgain
+                maxgain         = curgain
+                decisionbound   = (x[sortedinds[obs],var] + x[sortedinds[obs + 1], var]) / 2.0
+                decisionvar     = var
+            end
+        end
+    end
+    return (decisionbound, decisionvar)
+end
+
+
+struct CART
     Tree::Array
     MaxClasses::Int64
+    Classification::Bool
 end
 
 #this is a purely nonrecursive decision tree.
@@ -64,7 +96,7 @@ function ClassificationTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize 
             if (curdepth == maxdepth) || (length(cmap) <= minbranchsize)#Truncate tree we are at our depth limit
                 curdt[sky] = OneHotOdds( y[ cmap, : ] )
             elseif length(cmap) > minbranchsize
-                (bound, var) = StumpOrNode( x[cmap,:], y[cmap,:] ; gainfn = entropy )
+                (bound, var) = StumpOrNode( x[cmap,:], y[cmap,:] ; gainfn = gainfn )
                 LHS = cmap[findall(x[cmap, var] .< bound)]
                 RHS = cmap[findall(x[cmap, var] .>= bound)]
                 if (length(LHS) >= 0) && (length(RHS) >= 0)
@@ -86,13 +118,56 @@ function ClassificationTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize 
             break
         end
     end
-    return classificationtree(dt, Classes)
+    return CART(dt, Classes, true)
 end
 
-#This is a classification tree predict function
+
+function RegressionTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize = 3)
+    curdepth = 1 #Place holder for power of 2 depth of the binary tree
+    cursky = 1 #Holds a 1 if branch can grow, 0 if it cannot
+    Obs = size(y)
+    curmap = [1 : Obs] #Holds indices available to the next split decision
+    dt = []#Stores alllll of the decisions we make
+    while (curdepth <= maxdepth) && (cursky >= 1 )
+        nextmap = []
+        nextsky = 0
+        curdt = Dict()
+        for sky in 1:cursky
+            cmap = curmap[sky]#Get indices from last split for this partition
+            if (curdepth == maxdepth) || (length(cmap) <= minbranchsize)#Truncate tree we are at our depth limit
+                curdt[sky] = mean( y[ cmap ] )
+            elseif length(cmap) > minbranchsize
+                (bound, var) = StumpOrNodeRegress( x[cmap,:], y[cmap,:] ; gainfn = gainfn )
+                LHS = cmap[findall(x[cmap, var] .< bound)]
+                RHS = cmap[findall(x[cmap, var] .>= bound)]
+                if (length(LHS) >= 0) && (length(RHS) >= 0)
+                    push!(nextmap, LHS, RHS)
+                    nextsky += 2
+                    curdt[sky] = (var => bound)
+                else
+                    curdt[sky] = mean( y[ cmap ] )
+                end
+            end
+        end
+
+        if length(curdt) > 0
+            push!(dt, curdt) #update decision tree
+            curmap = nextmap #update our mapped observations
+            cursky = nextsky
+            curdepth += 1
+        else
+            break
+        end
+    end
+    return CART(dt, 1, false)
+end
+
+
+
+#This is a universal CART predict function
 #This finds ways to interpret the minimal storage used in the tree dictionary.
 #Took me a little bit to see the pattern here, but I think this is pretty expedient.
-function (M::classificationtree)(x)
+function (M::CART)(x)
     (Obs, Vars) = size(x) .|> Int
     output = zeros(Obs, M.MaxClasses)
     for obs in 1 : Obs
