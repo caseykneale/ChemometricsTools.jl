@@ -52,7 +52,6 @@ In Julia we can do mathematics like R or Matlab (no installations/imports), but 
 Right now I don't have rights to any data. I'd love for a collaborator to contribute some high-quality: spectra, mass spectrums, chromatograms, etc. Please reach out to me if you wish to collaborate with proper credit. There's a good chance in a week or so I'll be reaching out to the community for these sorts of things.
 
 ## ToDo:
-  - Docs (Update): BTEM, Peakfinding, NB, tree methods, MaxVoteOneHot, boxcar, boxcox, norms, snv, RandomForest, PSO...
   - Docs (Make): Method shoot-out for regression/classification/etc...
   - Time Series / soft-sensing stuff / Recursive regression methods
   - SIMCA, N-WAY PCA, and N-WAY PLS

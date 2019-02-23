@@ -73,8 +73,6 @@ function ( model::GaussianDiscriminant )( Z; Factors = length(model.Basis.Values
     return YHat
 end
 
-
-
 struct LogisticRegression
     Coefficients
     Biases
