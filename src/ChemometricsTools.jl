@@ -33,7 +33,7 @@ module ChemometricsTools
     include("Preprocess.jl")
     export FirstDerivative, SecondDerivative, FractionalDerivative, SavitzkyGolay,
         DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection,
-        StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm
+        StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, boxcar
         #,TransferByOrthogonalProjection
 
     include("RegressionModels.jl")

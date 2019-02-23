@@ -10,6 +10,15 @@ Scale1Norm(X) = X ./ sum(abs.(X), dims = 2)
 Scale2Norm(X) = X ./ sqrt.(sum(X .^ 2, dims = 2))
 ScaleInfNorm(X) = X ./ reduce(max, X, dims = 2)
 
+function boxcar(X; windowsize = 3, fn = mean)
+    (obs, vars) = size(X)
+    @assert windowsize <= vars
+    result = zeros(obs, vars - windowsize + 1)
+    for v in 1 : (vars - windowsize + 1 )
+        result[:, v] = fn(X[:, v : (v + windowsize - 1) ], dims = 2)
+    end
+    return result
+end
 
 #Pretty sure this is reversible like a transform, but don't have time to solve it
 #in reverse yet...
