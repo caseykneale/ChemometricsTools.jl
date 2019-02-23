@@ -35,10 +35,10 @@ Multiple transformations can easily be chained together and stored using "Pipeli
 Easy to use iterators for K-Folds validation's! Sampling methods like Kennard Stone, and resampling methods are each one function call away from use. Convenience functions for interval selections, weighting regression ensembles, etc are also available. This allows for building models like SIPLS, P-DS, P-OSC, etc to be made quickly.
 
 ### Regression Modeling
-Dozens of regression performance metrics, and a few built in plots (Bland Altman, QQ, Interval Overlays etc) are included. ChemometricsTools currently includes: CLS, Ridge, Kernel Ridge, LS-SVM, PCR, PLS(1/2), ELM's, ... More to come. Chemometricians love regressions!
+Dozens of regression performance metrics, and a few built in plots (Bland Altman, QQ, Interval Overlays etc) are included. ChemometricsTools currently includes: CLS, Ridge, Kernel Ridge, LS-SVM, PCR, PLS(1/2), ELM's, regression trees, Random Forest... More to come. Chemometricians love regressions!
 
-### Classification Analysis
-In-house classification encodings(one cold/one hot), multiclass performance statistics. ChemometricsTools currently includes: LDA with guassian discriminants, logistic regression, PLS-DA, K-NN, naive bayes, classification trees, and more to come.
+### Classification Modeling
+In-house classification encodings(one cold/one hot), multiclass performance statistics. ChemometricsTools currently includes: LDA with guassian discriminants, logistic regression, PLS-DA, K-NN, naive bayes, classification trees, Random Forest, and more to come.
 
 ## Specialized tools?
 You might be saying, classification trees, ridge regression, logistic regression, K-NN, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics? If that's what you wanna use it for be my guest. Seems kinda wrong and inefficient to PyCall scikit learn (which calls on C, fortran, etc) to do basic machine learning/analysis in Julia anyways... I'll be buffing up the machine learning methods available as time allows. But, no, this is slowly becoming chock-full of pure chemometric methods.

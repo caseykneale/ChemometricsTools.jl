@@ -62,7 +62,6 @@ module ChemometricsTools
     include("PlottingTools.jl")
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay
 
-
-#ToDo: Add hundreds of unit tests...
+    #ToDo: Add hundreds of unit tests...
 
 end # module
