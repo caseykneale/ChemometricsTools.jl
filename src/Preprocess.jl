@@ -4,6 +4,12 @@ using Statistics
 
 StandardNormalVariate(X) = ( X .- Statistics.mean(X, dims = 2) ) ./ Statistics.std(X, dims = 2)
 
+reduce(min, randn(3,3), dims = 2)
+
+Scale1Norm(X) = X ./ sum(abs.(X), dims = 2)
+Scale2Norm(X) = X ./ sqrt.(sum(X .^ 2, dims = 2))
+ScaleInfNorm(X) = X ./ reduce(max, X, dims = 2)
+
 
 #Pretty sure this is reversible like a transform, but don't have time to solve it
 #in reverse yet...
