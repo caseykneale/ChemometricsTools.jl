@@ -1,6 +1,3 @@
-using LinearAlgebra
-using Statistics
-
 forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
 
 function IsColdEncoded(Y)

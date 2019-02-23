@@ -1,4 +1,11 @@
 module ChemometricsTools
+    using LinearAlgebra
+    using Distributions
+    using Statistics
+    using StatsBase
+    using Plots
+    using DSP #Ew I wanna get rid of this dependency...
+
     include("ClassificationMetrics.jl")
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
         Threshold, MulticlassThreshold, HighestVote

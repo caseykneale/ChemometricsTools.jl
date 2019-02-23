@@ -1,6 +1,3 @@
-using StatsBase
-using LinearAlgebra
-using Statistics
 
 abstract type ClassificationModel end
 

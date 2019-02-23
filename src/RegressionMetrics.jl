@@ -1,4 +1,3 @@
-using StatsBase
 #Regression Statistics
 ME( y, yhat ) = ( 1.0 / size(Y)[1] ) * sum( ( y - yhat ) )
 MAE( y, yhat ) = ( 1.0 / size(Y)[1] ) * sum( abs.( ( y - yhat ) ) )

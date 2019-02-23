@@ -1,5 +1,3 @@
-using StatsBase
-
 abstract type ClusterModel end
 
 #Clustering Statistics

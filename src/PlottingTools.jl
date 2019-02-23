@@ -1,7 +1,3 @@
-using Statistics
-using StatsBase
-using Plots
-
 struct QQ
     StoredTuple::Tuple
 end

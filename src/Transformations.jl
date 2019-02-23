@@ -1,6 +1,3 @@
-using StatsBase
-using LinearAlgebra
-
 abstract type Transform end
 
 struct Pipeline

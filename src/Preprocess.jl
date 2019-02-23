@@ -1,7 +1,3 @@
-using LinearAlgebra
-using DSP
-using Statistics
-
 StandardNormalVariate(X) = ( X .- Statistics.mean(X, dims = 2) ) ./ Statistics.std(X, dims = 2)
 
 Scale1Norm(X) = X ./ sum(abs.(X), dims = 2)

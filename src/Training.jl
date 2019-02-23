@@ -1,7 +1,3 @@
-using StatsBase
-
-#forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
-
 function Shuffle( X, Y )
     Inds = StatsBase.sample( collect(1 : size(X)[1] ), size(X)[1], replace = false )
     return( X[Inds,:], Y[Inds,:] )

@@ -1,7 +1,3 @@
-using LinearAlgebra
-using StatsBase
-using Statistics
-
 struct PCA
     Scores
     Loadings
