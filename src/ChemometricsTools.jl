@@ -1,10 +1,10 @@
 module ChemometricsTools
     using LinearAlgebra
-    using Distributions
+    using Distributions#Could probably also get rid of this one...
     using Statistics
     using StatsBase
     using Plots
-    using DSP #Ew I wanna get rid of this dependency...
+    using DSP #Ew I wanna get rid of this dependency... One function uses it...
 
     include("ClassificationMetrics.jl")
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
@@ -20,7 +20,7 @@ module ChemometricsTools
 
     include("Transformations.jl")
     export Transform, PipelineInPlace, Pipeline, Center, Scale, CenterScale,
-        RangeNorm, Logit, boxcox
+        RangeNorm, Logit, BoxCox
 
     include("Analysis.jl")
     export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance,

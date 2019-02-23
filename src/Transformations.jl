@@ -1,32 +1,33 @@
 abstract type Transform end
 
-struct Pipeline
+struct pipeline
     transforms
     inplace::Bool
 end
 
 #Naive Constructor...
-Pipeline(Transforms) = Pipeline(Transforms, false)
+Pipeline(Transforms) = pipeline(Transforms, false)
 
 function PipelineInPlace( X, FnStack...)
-    pipeline = Array{Any,1}(undef, length(FnStack))
+    pipe = Array{Any,1}(undef, length(FnStack))
     for (i, fn) in enumerate( FnStack )
-        pipeline[i] = fn(X)
-        X .= pipeline[i]( X )
+        pipe[i] = fn(X)
+        X .= pipe[i]( X )
     end
-    return Pipeline(Tuple(pipeline), true)
+    return pipeline(Tuple(pipe), true)
 end
 
 function Pipeline( X, FnStack...)
-    pipeline = Array{Any,1}(undef, length(FnStack))
+    pipe = Array{Any,1}(undef, length(FnStack))
     for (i, fn) in enumerate( FnStack )
-        pipeline[i] = isa(fn, Function) ? fn : fn(X)
-        X = pipeline[i]( X )
+        pipe[i] = isa(fn, Function) ? fn : fn(X)
+        X = pipe[i]( X )
     end
-    return Pipeline(Tuple(pipeline), false)
+    return pipeline(Tuple(pipe), false)
 end
 
-function (P::Pipeline)(X; inverse = false)
+
+function (P::pipeline)(X; inverse = false)
     if inverse
         @assert any( isa.(P.transforms, Function) ) == false
         println(!any( isa.(P.transforms, Function) ))
@@ -65,12 +66,13 @@ Scale(Z) = Scale( StatsBase.std(Z, dims = 1),  true )
 struct CenterScale{B,C} <: Transform
     Mean::B
     StdDev::C
+    invertible::Bool
 end
 
 function CenterScale(Z)
     mu = StatsBase.mean(Z, dims = 1)
     stdev = StatsBase.std(Z, dims = 1)
-    CenterScale( mu, stdev)
+    CenterScale( mu, stdev, true)
 end
 #Call with new data transforms the new data, or inverts it
 (T::CenterScale)(Z; inverse = false) = (inverse) ? ((Z .* T.StdDev) .+ T.Mean) : ((Z .- T.Mean) ./ T.StdDev)
