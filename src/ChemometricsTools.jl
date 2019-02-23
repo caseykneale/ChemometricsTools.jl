@@ -12,7 +12,7 @@ module ChemometricsTools
         GaussianKernel, LinearKernel, Kernel
 
     include("Transformations.jl")
-    export Transform, PipelineInPlace, Pipeline, Center, Scale, StandardNormalVariate,
+    export Transform, PipelineInPlace, Pipeline, Center, Scale, CenterScale,
         RangeNorm, Logit
 
     include("Analysis.jl")
@@ -32,7 +32,8 @@ module ChemometricsTools
 
     include("Preprocess.jl")
     export FirstDerivative, SecondDerivative, FractionalDerivative, SavitzkyGolay,
-        DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection
+        DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection,
+        StandardNormalVariate
         #,TransferByOrthogonalProjection
 
     include("RegressionModels.jl")

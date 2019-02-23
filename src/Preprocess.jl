@@ -1,5 +1,9 @@
 using LinearAlgebra
 using DSP
+using Statistics
+
+StandardNormalVariate(X) = ( X .- Statistics.mean(X, dims = 2) ) ./ Statistics.std(X, dims = 2)
+
 
 #Pretty sure this is reversible like a transform, but don't have time to solve it
 #in reverse yet...

@@ -65,18 +65,18 @@ end
 Scale(Z) = Scale( StatsBase.std(Z, dims = 1),  true )
 (T::Scale)(Z; inverse = false) = (inverse) ? (Z .* T.StdDev) : (Z ./ T.StdDev)
 
-struct StandardNormalVariate{B,C} <: Transform
+struct CenterScale{B,C} <: Transform
     Mean::B
     StdDev::C
 end
 
-function StandardNormalVariate(Z)
+function CenterScale(Z)
     mu = StatsBase.mean(Z, dims = 1)
     stdev = StatsBase.std(Z, dims = 1)
-    StandardNormalVariate( mu, stdev)
+    CenterScale( mu, stdev)
 end
 #Call with new data transforms the new data, or inverts it
-(T::StandardNormalVariate)(Z; inverse = false) = (inverse) ? ((Z .* T.StdDev) .+ T.Mean) : ((Z .- T.Mean) ./ T.StdDev)
+(T::CenterScale)(Z; inverse = false) = (inverse) ? ((Z .* T.StdDev) .+ T.Mean) : ((Z .- T.Mean) ./ T.StdDev)
 
 struct RangeNorm{B,C} <: Transform
     Mins::B
@@ -91,9 +91,9 @@ end
 
 (T::RangeNorm)(Z; inverse = false) = (inverse) ? ( (Z .* ( T.Maxes .- T.Mins ) ) .+ T.Mins) : (Z .- T.Mins) ./ ( T.Maxes .- T.Mins )
 
+#I'll be the first to admit the methods below are not convenient...
+#But it is the easiest way to include transforms into pipelines that have no learned parameters...
 struct Logit <: Transform
      innercall
 end
-#I'll be the first to admit this is not convenient...
-#But it is the easiest way to include transforms into pipelines that have no learned parameters...
 Logit(X) = return Logit(Z; inverse = false) = (inverse) ? (exp.(Z) ./ (1.0 .+ exp.(Z))) : log.( Z ./ (1.0 .- Z) )
