@@ -91,28 +91,9 @@ end
 
 (T::RangeNorm)(Z; inverse = false) = (inverse) ? ( (Z .* ( T.Maxes .- T.Mins ) ) .+ T.Mins) : (Z .- T.Mins) ./ ( T.Maxes .- T.Mins )
 
-struct BoxCox
+struct BoxCox <: Transform
     innercall
 end
-
-# function (T::BoxCox)(X; inverse = false)
-#     X = zeros(X)
-#     if inverse
-#         if T.param != 0.0
-#             Z = (X.^T.param .- 1.0) / T.param
-#         else
-#             Z = exp.(X)
-#         end
-#     else
-#         if T.param != 0.0
-#             log.(X * T.param .+ 1, T.Param) = F(X)
-#             Z = log.(X, T.param ).- 1.0) /. T.param
-#         else
-#             Z = log.(X)
-#         end
-#     end
-#     return Z
-# end
 
 BoxCox(lambda) = return BoxCox(X; inverse = false) = begin
     Z = zeros(size(X))

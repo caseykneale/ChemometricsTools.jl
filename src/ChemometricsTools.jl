@@ -52,6 +52,9 @@ module ChemometricsTools
     include("Training.jl")
     export Shuffle, Shuffle!, LeaveOneOut, KFoldsValidation
 
+    include("PSO.jl")
+    export PSO, Particle, Bounds
+
     include("CurveResolution.jl")
     export NMF, SIMPLISMA, MCRALS, FNNLS
 
