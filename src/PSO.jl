@@ -27,7 +27,7 @@ end
 #This is a vanilla PSO minimizer... make your fn negative to maximize...
 function PSO(fn, Bounds, VelRange, Particles;
                 tolerance = 1e-6, maxiters = 1000,
-                InertialDecay = 0.5, PersonalWeight = 0.5, GlobalWeight = 0.5)
+                InertialDecay = 0.5, PersonalWeight = 0.5, GlobalWeight = 0.5, InternalParams = nothing)
     P = [ Particle(Bounds, VelRange) for x in 1 : Particles ]
     Dimen = length(Bounds.upper)
     GlobalBestPos = P[1].Pos
@@ -52,7 +52,7 @@ function PSO(fn, Bounds, VelRange, Particles;
                 P[ p ].Pos[ outbndshigh ] .= Bounds.upper[ outbndshigh ]
             end
             #Evaluate Fn to Obtain Score
-            Score = fn(P[p].Pos)
+            Score = isa(InternalParams, Nothing) ? fn(P[p].Pos) : fn(P[p].Pos, InternalParams)
             #Evaluate Scores
             if Score < P[p].BestScore
                 P[p].BestPos .= P[p].Pos; P[p].BestScore = Score

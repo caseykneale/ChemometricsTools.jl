@@ -1,7 +1,7 @@
 using LinearAlgebra
 
 rbinomial(p, size...) = map( x -> (x < p) ? 1 : 0, rand(size...) )
-forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
+#forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
 
 struct EchoStateNetwork
     Winput
@@ -86,4 +86,3 @@ function PredictFn(model::EchoStateNetwork, X; UseLastState = true, burnin = 0)
 
     return Prediction
 end
-

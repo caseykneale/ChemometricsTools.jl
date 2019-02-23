@@ -33,7 +33,8 @@ module ChemometricsTools
     include("Preprocess.jl")
     export FirstDerivative, SecondDerivative, FractionalDerivative, SavitzkyGolay,
         DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection,
-        StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, boxcar
+        StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, boxcarScaleMinMax,
+        offsetToZero
         #,TransferByOrthogonalProjection
 
     include("RegressionModels.jl")
@@ -56,7 +57,7 @@ module ChemometricsTools
     export PSO, Particle, Bounds
 
     include("CurveResolution.jl")
-    export NMF, SIMPLISMA, MCRALS, FNNLS
+    export BTEMobjective, BTEM, NMF, SIMPLISMA, MCRALS, FNNLS
 
     include("PlottingTools.jl")
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay

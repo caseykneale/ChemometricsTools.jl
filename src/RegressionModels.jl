@@ -2,7 +2,7 @@ using StatsBase
 using LinearAlgebra
 
 #Forces Array1's to Array2s of the same shape...
-forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
+#forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
 
 abstract type RegressionModels end
 #If only we could add methods to abstract types...

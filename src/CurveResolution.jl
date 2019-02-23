@@ -1,3 +1,30 @@
+function BTEMobjective( a, X )
+    LinComb = a' * X
+    Deriv = Scale1Norm( ScaleMinMax( FirstDerivative( LinComb ) ) )
+    H = entropy( Deriv )
+    #These aren't the penalties used in the original method. I don't have the paper handy...
+    Negatives = LinComb .< 1e-6
+    Penalty = sum( abs.( LinComb[ Negatives ] ) )
+    return H + Penalty
+end
+
+
+function BTEM(X, bands = nothing; Factors = 3, particles = 50, maxiters = 1000)
+    ( Obs, Vars ) = size( X )
+    if isa( bands, Nothing ); bands = 1 : Vars; end
+    pca = PCA( X )
+    (Obs, Vars) = size(Mixture)
+    if isa( bands, Nothing ); bands = 1 : Vars; end
+    pca = PCA(Mixture; Factors = Factors);
+
+    (a, score, otherparticles) = PSO(objective, Bounds(-10, 10, Factors), Bounds(-0.1, 0.1, Factors), particles;
+                    tolerance = 1e-6, maxiters = maxiters,
+                    InertialDecay = 0.25, PersonalWeight = 0.5, GlobalWeight = 0.5, InternalParams = pca.Loadings[:,bands]  )
+    #PSO is pretty nice... It returns N other particles,
+    #But whatever... Let's just return the main one... It's also a lot faster then MO-SA and easier to write...
+    return a
+end
+
 #Simplest NMF algorithm ever...
 #Super fast and reasonable for chemometric applications...If you want a generic NMF(impution etc)
 #Look into coordinate descent....
@@ -20,8 +47,6 @@ function NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
     end
     return (W, H)
 end
-
-
 
 # using CSV
 # using DataFrames

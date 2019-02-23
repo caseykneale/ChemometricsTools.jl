@@ -11,7 +11,6 @@ function MakeIntervals( columns::Int, intervalsize::Int = 20 )
     return Intervals
 end
 #Intervals = MakeInterval( 20, 3 );
-
 function MakeIntervals( columns::Int, intervalsizes::Union{Array, Tuple} = [20, 50, 100] )
     Intervals = Dict()
     for interval in intervalsizes

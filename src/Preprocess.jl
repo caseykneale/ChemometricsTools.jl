@@ -7,6 +7,14 @@ StandardNormalVariate(X) = ( X .- Statistics.mean(X, dims = 2) ) ./ Statistics.s
 Scale1Norm(X) = X ./ sum(abs.(X), dims = 2)
 Scale2Norm(X) = X ./ sqrt.(sum(X .^ 2, dims = 2))
 ScaleInfNorm(X) = X ./ reduce(max, X, dims = 2)
+function ScaleMinMax(X)
+    mini = reduce(min, X, dims = 2)
+    maxi = reduce(max, X, dims = 2)
+    return (X .- mini) ./ (maxi .- mini)
+end
+
+offsetToZero(X) = X .+ reduce(min, X, dims = 2)
+
 
 function boxcar(X; windowsize = 3, fn = mean)
     (obs, vars) = size(X)
@@ -37,11 +45,9 @@ function (T::MultiplicativeScatterCorrection)(Z)
     return (Z .- Coeffs[1,:]) ./ Coeffs[2,:]
 end
 
-function FirstDerivative(X::Array)
-    Xsize = (length(size( X )) > 1) ? size( X ) : (1,length(X))
-    if Xsize[1] == 1 #Sorry but if you put in the wrong dim array its gonna transpose...
-        X = X'
-    end
+function FirstDerivative(X)
+    X = (length(size(X)) == 1) ? reshape( X, 1,length(a) ) : X
+    Xsize = size(X)
     XNew = zeros( Xsize[ 1 ] , Xsize[ 2 ] - 1)
     for c in 1 : ( Xsize[ 2 ] - 1 )
         XNew[ :, c ] = X[ :, c + 1 ] .- X[ :, c ]
@@ -50,11 +56,8 @@ function FirstDerivative(X::Array)
 end
 
 function SecondDerivative(X)
-    Xsize = (length(size( X )) > 1) ? size( X ) : (1,length(X))
-    if Xsize[1] == 1 #Sorry but if you put in the wrong dim array its gonna transpose...
-        X = X'
-    end
-    #Xsize = (length(size( X )) > 1) ? size( X ) : (length(X),1)
+    X = (length(size(X)) == 1) ? reshape( X, 1,length(a) ) : X
+    Xsize = size(X)
     XNew = zeros( Xsize[ 1 ], Xsize[ 2 ] - 2 )
     for c in 1 : ( Xsize[ 2 ] - 2 )
         XNew[ :, c ] = (X[ :, c + 2 ] .- X[ :, c + 1 ]) - (X[ :, c + 1 ] .- X[ : , c ] )
