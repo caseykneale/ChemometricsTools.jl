@@ -13,7 +13,7 @@ module ChemometricsTools
 
     include("Transformations.jl")
     export Transform, PipelineInPlace, Pipeline, Center, Scale, CenterScale,
-        RangeNorm, Logit
+        RangeNorm, Logit, boxcox
 
     include("Analysis.jl")
     export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance,
@@ -40,8 +40,11 @@ module ChemometricsTools
     export ClassicLeastSquares, RidgeRegression, PrincipalComponentRegression,
         PartialLeastSquares, KernelRidgeRegression, LSSVM, ExtremeLearningMachine, PredictFn
 
+    include("Trees.jl")
+    export OneHotOdds, entropy, gini, ssd, StumpOrNode, ClassificationTree, RegressionTree, CART
+
     include("Ensembles.jl")
-    export MakeInterval, MakeIntervals, stackedweights
+    export MakeInterval, MakeIntervals, stackedweights, RandomForest
 
     include("Sampling.jl")
     export VenetianBlinds, SplitByProportion, KennardStone
@@ -55,8 +58,6 @@ module ChemometricsTools
     include("PlottingTools.jl")
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay
 
-    include("Trees.jl")
-    export OneHotOdds, entropy, gini, ssd, StumpOrNode, ClassificationTree, RegressionTree, CART
 
 #ToDo: Add hundreds of unit tests...
 

@@ -31,3 +31,42 @@ function stackedweights(ErrVec; power = 2)
     SqErr = (1.0 ./ ErrVec) .^ power
     return SqErr / sum(SqErr)
 end
+
+struct RandomForest
+    ensemble::Array{CART, 1}
+end
+
+function RandomForest(x, y, classification = true; gainfn = entropy, trees = 50,
+                        maxdepth = 10,  minbranchsize = 5,
+                        samples = 0.7, maxvars = nothing)
+    (obs, vars) = size(x)
+    bag = floor(obs * samples) |> Int
+    if isa(maxvars, Nothing)
+        maxvars = floor( (classification) ? sqrt(vars) : (vars / 3.0) ) |> Int
+    end
+
+    Forest = []
+
+    for tree in 1:trees
+        grabbag = unique( rand( 1:obs, bag ) )
+
+        if classification
+            push!(Forest, ClassificationTree(x[grabbag,:], y[grabbag,:]; gainfn = entropy,
+                        maxdepth = maxdepth, minbranchsize = minbranchsize, varsmpl = maxvars))
+        else
+            println("cookies")
+        end
+    end
+    return RandomForest(Forest)
+end
+
+function (RF::RandomForest)(X)
+    (Obs, Vars) = size(X)
+    Predictions = zeros(Obs, RF.ensemble[1].MaxClasses)
+    Trees = length(RF.ensemble)
+    #Make good use of a running mean for leaner memory consumption and minimual fn calls...
+    for tree in 1 : Trees
+        Predictions .+= RF.ensemble[tree](X)
+    end
+    return Predictions ./ Trees
+end

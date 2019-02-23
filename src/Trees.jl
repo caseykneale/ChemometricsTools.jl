@@ -79,12 +79,15 @@ end
 #The julia compiler doesn't like storing structs of nested things.
 #I wrote it the recursive way in the past and it was quite slow :/, I think this is true also
 #of interpretted languages like R/Python...So here it is, nonrecursive tree's!
-function ClassificationTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize = 3)
+function ClassificationTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize = 3, varsmpl = 0)
     curdepth = 1 #Place holder for power of 2 depth of the binary tree
     cursky = 1 #Holds a 1 if branch can grow, 0 if it cannot
-    (Obs,Classes) = size(y)
+    (Obs, Classes) = size(y)
     curmap = [1 : Obs] #Holds indices available to the next split decision
     dt = []#Stores alllll of the decisions we make
+    (Obs, Vars) = size(x)
+    varsavail = 1 : Vars
+    (bound, var) = (1.0,1)
     while (curdepth <= maxdepth) && (cursky >= 1 )
         nextmap = []
         nextsky = 0
@@ -94,7 +97,13 @@ function ClassificationTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize 
             if (curdepth == maxdepth) || (length(cmap) <= minbranchsize)#Truncate tree we are at our depth limit
                 curdt[sky] = OneHotOdds( y[ cmap, : ] )
             elseif length(cmap) > minbranchsize
-                (bound, var) = StumpOrNode( x[cmap,:], y[cmap,:] ; gainfn = gainfn )
+                if varsmpl > 0
+                    varsavail = unique( rand(1:Vars, varsmpl))
+                end
+                (bound, var) = StumpOrNode( x[cmap,varsavail], y[cmap,:] ; gainfn = gainfn )
+                if varsmpl > 0
+                    var = varsavail[var]
+                end
                 LHS = cmap[findall(x[cmap, var] .< bound)]
                 RHS = cmap[findall(x[cmap, var] .>= bound)]
                 if (length(LHS) >= 0) && (length(RHS) >= 0)
