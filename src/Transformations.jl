@@ -91,6 +91,47 @@ end
 
 (T::RangeNorm)(Z; inverse = false) = (inverse) ? ( (Z .* ( T.Maxes .- T.Mins ) ) .+ T.Mins) : (Z .- T.Mins) ./ ( T.Maxes .- T.Mins )
 
+struct BoxCox
+    innercall
+end
+
+# function (T::BoxCox)(X; inverse = false)
+#     X = zeros(X)
+#     if inverse
+#         if T.param != 0.0
+#             Z = (X.^T.param .- 1.0) / T.param
+#         else
+#             Z = exp.(X)
+#         end
+#     else
+#         if T.param != 0.0
+#             log.(X * T.param .+ 1, T.Param) = F(X)
+#             Z = log.(X, T.param ).- 1.0) /. T.param
+#         else
+#             Z = log.(X)
+#         end
+#     end
+#     return Z
+# end
+
+BoxCox(lambda) = return BoxCox(X; inverse = false) = begin
+    Z = zeros(size(X))
+    if inverse
+        if lambda != 0.0
+            Z =  ((X .* lambda).+ 1.0) .^ (1/lambda)
+        else
+            Z = exp.(X)
+        end
+    else
+        if lambda != 0.0
+            Z = ((X .^ lambda) .- 1.0) ./ lambda
+        else
+            Z = log.(X)
+        end
+    end
+    return Z
+end
+
 #I'll be the first to admit the methods below are not convenient...
 #But it is the easiest way to include transforms into pipelines that have no learned parameters...
 struct Logit <: Transform
