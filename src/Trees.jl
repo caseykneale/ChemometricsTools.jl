@@ -129,12 +129,15 @@ function ClassificationTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize 
 end
 
 
-function RegressionTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize = 3)
+function RegressionTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize = 3, varsmpl = 0)
     curdepth = 1 #Place holder for power of 2 depth of the binary tree
     cursky = 1 #Holds a 1 if branch can grow, 0 if it cannot
     Obs = size(y)[1]
     curmap = [1 : Obs] #Holds indices available to the next split decision
     dt = []#Stores alllll of the decisions we make
+    (Obs, Vars) = size(x)
+    varsavail = 1 : Vars
+    (bound, var) = (1.0,1)
     while (curdepth <= maxdepth) && (cursky >= 1 )
         nextmap = []
         nextsky = 0
@@ -144,7 +147,13 @@ function RegressionTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize = 3)
             if (curdepth == maxdepth) || (length(cmap) <= minbranchsize)#Truncate tree we are at our depth limit
                 curdt[sky] = mean( y[ cmap ] )
             elseif length(cmap) > minbranchsize
+                if varsmpl > 0
+                    varsavail = unique( rand(1:Vars, varsmpl))
+                end
                 (bound, var) = StumpOrNodeRegress( x[cmap,:], y[cmap,:] ; gainfn = gainfn )
+                if varsmpl > 0
+                    var = varsavail[var]
+                end
                 LHS = cmap[findall(x[cmap, var] .< bound)]
                 RHS = cmap[findall(x[cmap, var] .>= bound)]
                 if (length(LHS) >= 0) && (length(RHS) >= 0)

@@ -24,7 +24,6 @@ end
 #     println(first(Interval))
 # end
 
-
 #Weights regression outputs by their relative error
 #Square error has mathematical gaurantees - so it's default..
 function stackedweights(ErrVec; power = 2)
@@ -36,7 +35,7 @@ struct RandomForest
     ensemble::Array{CART, 1}
 end
 
-function RandomForest(x, y, classification = true; gainfn = entropy, trees = 50,
+function RandomForest(x, y, mode = :classification; gainfn = entropy, trees = 50,
                         maxdepth = 10,  minbranchsize = 5,
                         samples = 0.7, maxvars = nothing)
     (obs, vars) = size(x)
@@ -46,15 +45,14 @@ function RandomForest(x, y, classification = true; gainfn = entropy, trees = 50,
     end
 
     Forest = []
-
     for tree in 1:trees
         grabbag = unique( rand( 1:obs, bag ) )
-
-        if classification
+        if mode == :classification
             push!(Forest, ClassificationTree(x[grabbag,:], y[grabbag,:]; gainfn = entropy,
                         maxdepth = maxdepth, minbranchsize = minbranchsize, varsmpl = maxvars))
         else
-            println("cookies")
+            push!(Forest, RegressionTree(x[grabbag,:], y[grabbag]; gainfn = entropy,
+                        maxdepth = maxdepth, minbranchsize = minbranchsize, varsmpl = maxvars))
         end
     end
     return RandomForest(Forest)
