@@ -1,4 +1,5 @@
 module ChemometricsTools
+    using CSV
     using LinearAlgebra
     using Distributions#Could probably also get rid of this one...
     using Statistics
@@ -72,6 +73,16 @@ module ChemometricsTools
     include("PlottingTools.jl")
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay
 
-    #ToDo: Add hundreds of unit tests...
+    #Generic function for pulling data from within this package.
+    #If enough datasets are provided then the data/dataloading could be a seperate package...
+    datapath = joinpath(@__DIR__, "..", "data")
+    ChemometricsToolsDatasets() = begin
+        dircontents = readdir(datapath)
+        return Dict( (1:length(dircontents)) .=> dircontents )
+    end
+    ChemometricsToolsDataset(filename::String) = CSV.read( Base.joinpath( datapath, filename ) )
+    ChemometricsToolsDataset(file::Int) = CSV.read( Base.joinpath( datapath, readdir(datapath)[file] ) )
+    export ChemometricsToolsDataset, ChemometricsToolsDatasets
+    #ToDo: Add more unit tests to test/runtests.jl...
 
 end # module

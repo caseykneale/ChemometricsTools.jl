@@ -17,7 +17,6 @@ struct KFoldsValidation
     X
     Y
 end
-forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
 
 function KFoldsValidation(K::Int, x, y)
     observations = size( x )[ 1 ]
