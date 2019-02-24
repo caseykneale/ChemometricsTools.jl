@@ -1,6 +1,4 @@
-function IsColdEncoded(Y)
-    return size( forceMatrix( Y ) )[2] == 1
-end
+IsColdEncoded(Y) = size( forceMatrix( Y ) )[2] == 1
 
 struct ClassificationLabel
     ToHot::Dict

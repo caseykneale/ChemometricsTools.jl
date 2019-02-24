@@ -1,7 +1,7 @@
 struct PCA
-    Scores
-    Loadings
-    Values
+    Scores::Array{Float64,2}
+    Loadings::Array{Float64,2}
+    Values::Array
     algorithm::String
 end
 
@@ -54,9 +54,9 @@ end
 ExplainedVariance(PCA::PCA) = ( PCA.Values .^ 2 ) ./ sum( PCA.Values .^ 2 )
 
 struct LDA
-    Scores
-    Loadings
-    Values
+    Scores::Array{Float64,2}
+    Loadings::Array{Float64,2}
+    Values::Array
 end
 
 function LDA(X, Y; Factors = 1)

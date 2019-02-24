@@ -1,8 +1,8 @@
 abstract type ClassificationModel end
 
 struct KNN <: ClassificationModel
-    X
-    Y
+    X::Array{Float64,2}
+    Y::Array{Float64,2}
     DistanceType::String #Can be "euclidean", "manhattan", ...
 end
 
@@ -36,10 +36,10 @@ end
 #Generalized Gaussian Discriminant Analysis
 struct GaussianDiscriminant
     Basis::Union{PCA, LDA}
-    ClassSize
-    pi
-    ProjectedClassMeans
-    ProjectedClassCovariances
+    ClassSize::Array
+    pi::Array
+    ProjectedClassMeans::Array{Float64,2}
+    ProjectedClassCovariances::Array
 end
 
 function GaussianDiscriminant(M, X, Y; Factors = nothing)
@@ -133,8 +133,8 @@ struct GaussianNaiveBayes
     TotalSamples::Int
     classcount::Int
     Priors
-    Means
-    Vars
+    Means::Array{Float64,2}
+    Vars::Array{Float64,2}
 end
 
 function GaussianNaiveBayes(X,Y)
