@@ -93,10 +93,10 @@ function LDA(X, Y; Factors = 1)
     ReVals = real.(eig.values)
     Sorted = sortperm( ReVals, rev = true)
     Contributions = ReVals[Sorted] .>= 1e-9
-    Loadings = real.(eig.vectors[:, Sorted[ Contributions] ] )
+    Loadings = real.(eig.vectors[:, Sorted[ Contributions][1:Factors] ] )
     #Project the X data into the LDA basis
     Scores = X * Loadings
-    return LDA( Scores, Loadings, ReVals[ Sorted[ Contributions] ] )
+    return LDA( Scores, Loadings, ReVals[ Sorted[ Contributions][1:Factors] ] )
 end
 
 function ( model::LDA )( Z; Factors = length(model.Values) )

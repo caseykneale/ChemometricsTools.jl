@@ -62,12 +62,15 @@ function GaussianDiscriminant(M, X, Y; Factors = nothing)
     return GaussianDiscriminant(M, ClassSize, ClassSize ./ Obs, ProjClassMeans, ClassCovariances )
 end
 
-function ( model::GaussianDiscriminant )( Z; Factors = length(model.Basis.Values) )
+function ( model::GaussianDiscriminant )( Z; Factors = size(model.ProjectedClassMeans)[2] )
+    MaximumLatentFactors = size(model.ProjectedClassMeans)[2]
+    @assert Factors <= MaximumLatentFactors
     ClassNumber = length(model.ClassSize)
     YHat = zeros( size(Z)[1] , ClassNumber )
     Projected = model.Basis(Z; Factors = Factors)
+
     for class in 1 : ClassNumber
-        MeanCentered = Projected .- model.ProjectedClassMeans[class,1:Factors]'
+        MeanCentered = Projected .- model.ProjectedClassMeans[class, 1:Factors]'
         ProjClassCov = model.ProjectedClassCovariances[ class ][1:Factors, 1:Factors]
         scalar = 1.0 / sqrt( ( 2.0 * pi )^Factors * LinearAlgebra.det( ProjClassCov ) )
         for obs in 1 : size(Z)[1]
