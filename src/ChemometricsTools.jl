@@ -80,8 +80,8 @@ module ChemometricsTools
         dircontents = readdir(datapath)
         return Dict( (1:length(dircontents)) .=> dircontents )
     end
-    ChemometricsToolsDataset(filename::String) = CSV.read( Base.joinpath( datapath, filename ) )
-    ChemometricsToolsDataset(file::Int) = CSV.read( Base.joinpath( datapath, readdir(datapath)[file] ) )
+    ChemometricsToolsDataset(filename::String) = read( Base.joinpath( datapath, filename ) )
+    ChemometricsToolsDataset(file::Int) = read( Base.joinpath( datapath, readdir(datapath)[file] ) )
     export ChemometricsToolsDataset, ChemometricsToolsDatasets
     #ToDo: Add more unit tests to test/runtests.jl...
 

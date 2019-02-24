@@ -85,7 +85,7 @@ end
 #BFGS might be better.. but I can add some bells and whistles here...
 #IE L1 and L2 Norms. Could call Flux, but huge over-head for a 1 line inference algorithm...
 #Bias term may be broken...
-function MultinomialSoftmaxRegression(X, Y; LearnRate = 1e-3, maxit = 1000, L2 = 0.0)
+function MultinomialSoftmaxRegression(X, Y; LearnRate = 1e-3, maxiters = 1000, L2 = 0.0)
     (Obs, ClassNumber) = size(Y)
     Vars = size(X)[2]
     Output = zeros( size( Y ) )
@@ -93,12 +93,12 @@ function MultinomialSoftmaxRegression(X, Y; LearnRate = 1e-3, maxit = 1000, L2 =
     W = randn(Vars, ClassNumber)
     B = zeros(1, 1)
     #For observing training error
-    CostPerIt = zeros( maxit )
-    for it in 1 : maxit
+    CostPerIt = zeros( maxiters )
+    for it in 1 : maxiters
         for o in 1:Obs
             Output[o,:] = softmax( ( X[o,:]' * W ) .+ B )
             #Calculate the cost function - Not MSE. We are doing cross entropy loss
-            CostPerIt[it] += -sum( Y[o,:] .* log.( Output[o,:] .+ 1e-6 ) ) + (L2* sum(W .^ 2))
+            CostPerIt[it] += -sum( Y[o,:] .* log.( Output[o,:] .+ 1e-6 ) ) + (L2 * sum(W .^ 2))
             residualsOutput = Y[o,:] .- Output[o,:]
             #calculate changes to be applied to the weights by these gradients and update them...
             B .+= LearnRate * B * sum(residualsOutput)
@@ -131,15 +131,15 @@ function GaussianNaiveBayes(X,Y)
     (obs, vars) = size(X)
     classes = size(Y)[2]
     ClasswisePrior = sum(Y, dims = 1) ./ obs
-    ClasswiseMeans = zeroes(classes, vars)
-    ClasswiseVars = zeroes(classes, vars)
+    ClasswiseMeans = zeros(classes, vars)
+    ClasswiseVars = zeros(classes, vars)
     #Update dictionary of classes
     for c in classes
         ClassIndices = Y[:,c] .== 1
         ClasswiseMeans[c,:] = mean(X[ClassIndices,:], dims = 1)
         ClasswiseVars[c,:] = Statistics.var(X[ClassIndices,:], dims = 1)
     end
-    return GaussianNaiveBayes(TotalSamples, classes, ClasswisePrior, ClasswiseMeans, ClasswiseVars, sqrt.(ClasswiseVars))
+    return GaussianNaiveBayes(obs, classes, ClasswisePrior, ClasswiseMeans, ClasswiseVars, sqrt.(ClasswiseVars))
 end
 
 Likelihood( x, mean, var, sd ) = (1.0 ./ sqrt.(2.0 * pi * sd)) .* exp.(-0.5 .* ( (x .- mean).^2.0 ./ var) )

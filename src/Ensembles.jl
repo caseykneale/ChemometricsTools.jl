@@ -36,7 +36,7 @@ function RandomForest(x, y, mode = :classification; gainfn = entropy, trees = 50
     (obs, vars) = size(x)
     bag = floor(obs * samples) |> Int
     if isa(maxvars, Nothing)
-        maxvars = floor( (classification) ? sqrt(vars) : (vars / 3.0) ) |> Int
+        maxvars = floor( (mode == :classification) ? sqrt(vars) : (vars / 3.0) ) |> Int
     end
 
     Forest = []

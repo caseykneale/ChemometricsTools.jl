@@ -116,7 +116,3 @@ function Logit(Z; inverse = false)
         return log.( (Z ./ (1.0 .- Z)))
     end
 end
-# using StatsBase
-# FauxData2 = [1,1,2,3,4,5,6,7] ./ 10.0;
-# Pipe1 = Pipeline(FauxData2,  Logit);
-# RMSE( FauxData2, Pipe1(Pipe1(FauxData2); inverse = true) ) < 1e-14
