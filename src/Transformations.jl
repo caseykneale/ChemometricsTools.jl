@@ -11,7 +11,8 @@ Pipeline(Transforms) = pipeline(Transforms, false)
 function PipelineInPlace( X, FnStack...)
     pipe = Array{Any,1}(undef, length(FnStack))
     for (i, fn) in enumerate( FnStack )
-        pipe[i] = fn(X)
+        #pipe[i] = fn(X)
+        pipe[i] = isa(fn, Function) ? fn : fn(X)
         X .= pipe[i]( X )
     end
     return pipeline(Tuple(pipe), true)
@@ -26,11 +27,8 @@ function Pipeline( X, FnStack...)
     return pipeline(Tuple(pipe), false)
 end
 
-
 function (P::pipeline)(X; inverse = false)
     if inverse
-        @assert any( isa.(P.transforms, Function) ) == false
-        println(!any( isa.(P.transforms, Function) ))
         if P.inplace
             for fn in reverse( P.transforms ); X .= fn( X; inverse = true ) ; end
         else
@@ -93,6 +91,7 @@ end
 struct BoxCox <: Transform
     innercall
 end
+Logit(Z) = Logit(true,true)
 
 BoxCox(lambda) = return BoxCox(X; inverse = false) = begin
     Z = zeros(size(X))
@@ -112,9 +111,14 @@ BoxCox(lambda) = return BoxCox(X; inverse = false) = begin
     return Z
 end
 
-#I'll be the first to admit the methods below are not convenient...
-#But it is the easiest way to include transforms into pipelines that have no learned parameters...
-struct Logit <: Transform
-     innercall
+function Logit(Z; inverse = false)
+    if inverse
+        return (exp.(Z) ./ (1.0 .+ exp.(Z)))
+    else
+        return log.( (Z ./ (1.0 .- Z)))
+    end
 end
-Logit(X) = return Logit(Z; inverse = false) = (inverse) ? (exp.(Z) ./ (1.0 .+ exp.(Z))) : log.( Z ./ (1.0 .- Z) )
+# using StatsBase
+# FauxData2 = [1,1,2,3,4,5,6,7] ./ 10.0;
+# Pipe1 = Pipeline(FauxData2,  Logit);
+# RMSE( FauxData2, Pipe1(Pipe1(FauxData2); inverse = true) ) < 1e-14

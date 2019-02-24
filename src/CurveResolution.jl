@@ -48,16 +48,6 @@ function NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
     return (W, H)
 end
 
-# using CSV
-# using DataFrames
-# using Plots
-# using StatsBase
-# Raw = CSV.read("/home/caseykneale/Desktop/Spectroscopy/Data/triliq.csv");
-# Fraud = collect(convert(Array, Raw)[:,1:end]);
-# pure = [10,11,20,21,28,29];
-# impure = [collect(1:9); collect(12:19);collect(22:27)];
-# Fraud = Fraud[impure,:];
-
 
 #I really like this SIMPLISMA algorithm it uses grahm-shmidt. It's fast,
 #has fewer manual operations and is pretty clean.
@@ -95,14 +85,6 @@ function SIMPLISMA(X; Factors = 1)
     S .+= StatsBase.mean(X, dims = 1)
     return (C, S, PurestVar)
 end
-
-
-
-#(C_Simplisma,S_Simplisma, vars) = SIMPLISMA(Fraud; Factors = 18)
-#vars;
-
-#plot(S_Simplisma[[1,3,18],:]', title = "SIMPLISMA Resolved Spectra", xlabel = "bins", ylabel = "Intensity", legend = false)
-
 
 #This needs some pretty serious cleaning, and was really tricky to write...
 #I am actually quite sure a bug still persists in it... roughly 7% of random regressions
@@ -157,27 +139,6 @@ function FNNLS(A, b; LHS = false,
 
     return X
 end
-
-# a = reshape( [73,111,52,87, 7,4, 46,72,27,80,89 , 71], 4,3)
-# b = [96,7, 68,10]
-# FNNLS(a, b)
-
-# a = randn(4,4);
-# b = randn(4);
-# x = FNNLS( a,  b)
-#
-# #Torture test...
-# counterrs = 0
-# for i in 1:10000
-#     a = randn(4,4);
-#     b = randn(4);
-#     x = FNNLS( a,  b)
-#     if any(x .< -1e-2)
-#         counterrs += 1
-#     end
-# end
-# counterrs
-
 
 #Not super fond of the arguments here. There should be something pragmatic
 # ideally generic to other curve resolution methods? Eh, then again,
