@@ -1,0 +1,45 @@
+LastDir = pwd()
+cd("/ChemometricsTools/")
+using Pkg
+Pkg.activate(".")
+using ChemometricsTools
+ChemometricsToolsDatasets()
+#Load the data from package-space
+
+Iris = convert(Matrix, ChemometricsToolsDataset("iris.csv") ) ;
+#Seperate data from labels
+X = convert( Array{Float64,2}, Iris[:, 1 : ( end - 1 ) ] );
+Y = Iris[:, end ];
+#One hot encode the class vector
+Encoding = LabelEncoding(Y);
+YHot = ColdToHot(Y, Encoding);
+#Shuffle the set, because the classes are ordered
+Shuffle!( X, YHot );
+( (TrainX, TrainY), (TestX, TestY) ) = SplitByProportion( X, YHot, 0.7);
+
+#Let the shoot out begin!
+@time knn = KNN(TrainX, TrainY, "euclidean")
+@time lda = LDA(TrainX, TrainY; Factors = 2)
+@time ldagd = GaussianDiscriminant( lda, TrainX, TrainY; Factors = 2 )
+@time mnsr = MultinomialSoftmaxRegression(TrainX, TrainY; maxiters = 2000, LearnRate = 1e-3, L2 = 1e4)
+@time gnb = GaussianNaiveBayes(TrainX, TrainY)
+@time ct = ClassificationTree(TrainX, TrainY;gainfn = entropy, maxdepth = 8, minbranchsize = 5)
+@time rf = RandomForest(TrainX, TrainY, :classification; gainfn = entropy, trees = 100,
+                        maxdepth = 10,  minbranchsize = 5,
+                        samples = 0.7, maxvars = nothing)
+
+#Let's evaluate them on the hold out set and see how they do!
+models = ( knn, ldagd, mnsr, gnb, ct, rf );
+modelnames = ( :knn, :ldagd, :mnsr, :gnb, :ct, :rf );#:ldagd,
+TrainingF1s = Dict()
+for ( name, model ) in zip(modelnames, models)
+    TrainingF1s[name] = MulticlassStats( model(TrainX), TrainY, Encoding )["FMeasure"]
+end
+TrainingF1s
+
+HoldOutF1s = Dict()
+for ( name, model ) in zip(modelnames, models)
+    HoldOutF1s[name] = MulticlassStats( model(TestX), TestY, Encoding )["FMeasure"]
+end
+
+HoldOutF1s
