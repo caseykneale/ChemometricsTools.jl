@@ -1,11 +1,11 @@
 module ChemometricsTools
-    using CSV
+    using CSV: read
     using LinearAlgebra
     using Distributions#Could probably also get rid of this one...
     using Statistics
     using StatsBase
     using Plots
-    using DSP #Ew I wanna get rid of this dependency... One function uses it...
+    using DSP: conv #Ew I wanna get rid of this dependency... One function uses it...
 
     #A generic function that I use everywhere...
     forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a

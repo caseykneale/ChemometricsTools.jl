@@ -91,8 +91,6 @@ end
 struct BoxCox <: Transform
     innercall
 end
-Logit(Z) = Logit(true,true)
-
 BoxCox(lambda) = return BoxCox(X; inverse = false) = begin
     Z = zeros(size(X))
     if inverse
