@@ -1,11 +1,16 @@
-function SplitByProportion(X,Y, Proportion = 0.5)
+function SplitByProportion(X::Array, Proportion::Float64 = 0.5)
+    FirstChunk = Int(floor(size(X)[1] * Proportion))
+    return ( (X[ 1:FirstChunk, : ] ), (X[ ( FirstChunk + 1 ):end, : ] ) )
+end
+
+function SplitByProportion(X::Array, Y::Array, Proportion::Float64 = 0.5)
     Y = forceMatrix(Y)
     FirstChunk = Int(floor(size(X)[1] * Proportion))
     return ((X[1:FirstChunk,:], Y[1:FirstChunk,:]), (X[(FirstChunk+1):end,:], Y[(FirstChunk+1):end,:])   )
 end
 
-VenetianBlinds(X) = ( X[1:2:end], X[2:2:end] )
-VenetianBlinds(X,Y) = (( X[1:2:end], Y[1:2:end] ), ( X[2:2:end], Y[2:2:end] ) )
+VenetianBlinds(X) = ( X[1:2:end,:], X[2:2:end,:] )
+VenetianBlinds(X,Y) = (( X[1:2:end,:], Y[1:2:end,:] ), ( X[2:2:end,:], Y[2:2:end,:] ) )
 
 CICol(a::CartesianIndex) = collect(Tuple(a))[2]
 CIRow(a::CartesianIndex) = collect(Tuple(a))[1]

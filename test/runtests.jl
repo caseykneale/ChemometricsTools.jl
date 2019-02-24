@@ -81,5 +81,4 @@ end
     @test A == MulticlassStats(HOT, CE, LEnc)
     @test A == MulticlassStats(HOT, HOT, LEnc)
     @test A == MulticlassStats(CE, HOT, LEnc)
-    #MulticlassStats(Y, GT, schema; Microaverage = true)
 end
