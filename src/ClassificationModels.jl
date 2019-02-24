@@ -135,7 +135,6 @@ struct GaussianNaiveBayes
     Priors
     Means
     Vars
-    SDs
 end
 
 function GaussianNaiveBayes(X,Y)
@@ -144,25 +143,21 @@ function GaussianNaiveBayes(X,Y)
     ClasswisePrior = sum(Y, dims = 1) ./ obs
     ClasswiseMeans = zeros(classes, vars)
     ClasswiseVars = zeros(classes, vars)
-    #Update dictionary of classes
-    for c in classes
+    for c in 1 : classes
         ClassIndices = Y[:,c] .== 1
         ClasswiseMeans[c,:] = mean(X[ClassIndices,:], dims = 1)
         ClasswiseVars[c,:] = Statistics.var(X[ClassIndices,:], dims = 1)
     end
-    return GaussianNaiveBayes(obs, classes, ClasswisePrior, ClasswiseMeans, ClasswiseVars, sqrt.(ClasswiseVars))
+    return GaussianNaiveBayes(obs, classes, ClasswisePrior, ClasswiseMeans, ClasswiseVars)
 end
 
-Likelihood( x, mean, var, sd ) = (1.0 ./ sqrt.(2.0 * pi * sd)) .* exp.(-0.5 .* ( (x .- mean).^2.0 ./ var) )
+Likelihood( x, mean, var ) = (1.0 ./ sqrt.(2.0 * pi * var)) .* exp.(-0.5 .* ( ( (x .- mean) .^ 2.0 ) ./ var) )
 
 function (gnb::GaussianNaiveBayes)(X)
     (obs, vars) = size(X)
     Predictions = zeros(obs, gnb.classcount)
-    for c in 1 : gnb.classcount #Save on some log computations...
-        Predictions[:,c] .= log(1.0 + gnb.Priors[c])
-    end
     for o in 1 : obs, c in 1 : gnb.classcount
-        Predictions[o,c] += sum( log.(1.0 .+ Likelihood( X[o,:], gnb.Means[c,:], gnb.Vars[c,:], gnb.SDs[c,:] ) ) )
+        Predictions[o,c] = gnb.Priors[c] * prod( Likelihood( X[o,:], gnb.Means[c,:], gnb.Vars[c,:] ) )
     end
     return Predictions
 end
