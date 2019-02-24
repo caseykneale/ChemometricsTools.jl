@@ -49,7 +49,7 @@ The package does have specialized tools for chemometricians in special fields. F
 In Julia we can do mathematics like R or Matlab (no installations/imports), but write glue code as easily as python, with the expressiveness of scala, with (often) the performance of C/C++. Multidispatch makes recycling code painless, and broadcasting allows for intuitive application of operations across collections. I'm not a soft-ware engineer, but, these things have made Julia my language of choice. Try it for a week on Julia 1.0.3, if you don't get hooked, I'd be surprised.
 
 ## Wheres the Data?
-Right now I don't have rights to any data. I'd love for a collaborator to contribute some high-quality: spectra, mass spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. There's a good chance in a week or so I'll be reaching out to the community for these sorts of things.
+Right now I don't have rights to any cool data; but iris is included and a few basic sets will be added internally. I'd love for a collaborator to contribute some high-quality: spectra, mass spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. There's a good chance in a week or so I'll be reaching out to the community for these sorts of things.
 
 ## ToDo:
   - Test: BoxCox Transform, Hotelling and Q statistics, JK-NN...

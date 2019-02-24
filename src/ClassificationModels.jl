@@ -1,4 +1,3 @@
-
 abstract type ClassificationModel end
 
 struct KNN <: ClassificationModel
@@ -8,8 +7,12 @@ struct KNN <: ClassificationModel
 end
 
 function ( model::KNN )( Z; K = 1 )
-    DistMat = zeros( size( model.X )[ 1 ], size( Z )[ 1 ] )
-    Predictions = zeros( size( Z )[ 1 ] )
+    MostCommon = 0
+    Obs = size( Z )[ 1 ]
+    Classes = size(model.Y)[2]
+    DistMat = zeros( size( model.X )[ 1 ], Obs )
+    #Predictions = zeros( size( Z )[ 1 ] )
+    Predictions = zeros( Obs, Classes )
     #Apply Distance Fn
     if model.DistanceType == "euclidean"
         DistMat = SquareEuclideanDistance(model.X, Z)
@@ -17,14 +20,19 @@ function ( model::KNN )( Z; K = 1 )
         DistMat = ManhattanDistance(model.X, Z)
     end
     #Find nearest neighbors and majority vote
-    for obs in 1 : size( Z )[ 1 ]
+    for obs in 1 : Obs
         Preds = sortperm( DistMat[:, obs] )[ 1 : K ]
-        Predictions[ obs ] = argmax( StatsBase.countmap( model.Y[ Preds ] ) )
+        if K == 1
+            lbls = argmax(model.Y[ Preds,: ], dims = 2 )
+            MostCommon = argmax( StatsBase.countmap( lbls ) )[2]
+        else
+            lbls = argmax(model.Y[ Preds,: ], dims = 1 )
+            MostCommon = argmax( StatsBase.countmap( lbls ) )[2]
+        end
+        Predictions[ obs, MostCommon ] =  1
     end
-
     return Predictions
 end
-
 #Generalized Gaussian Discriminant Analysis
 struct GaussianDiscriminant
     Basis::Union{PCA, LDA}
