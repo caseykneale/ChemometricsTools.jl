@@ -1,5 +1,3 @@
-forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
-
 function IsColdEncoded(Y)
     return size( forceMatrix( Y ) )[2] == 1
 end
@@ -35,28 +33,12 @@ function HotToCold(Y, Schema::ClassificationLabel)
     Y = forceMatrix(Y)
     (lenY, Feats) = size( Y )
     @assert Feats == Schema.LabelCount
-    Output = zeros( lenY )
+    Output = Array{Any,2}(undef, lenY, 1 )
     for y in 1 : lenY
         Output[ y ] =  Schema.ToCold[ findfirst( x -> x == 1, Y[ y , : ] ) ]
     end
     return Output
 end
-
-#Y and GT are one cold encodings...
-#Cold : Some 1-array of unique class labels
-#Hot : Some 2-array where each unique label has a columns
-#HighestVote : Takes some 2 array and makes it fit a Hot Schema
-
-#If I have voted hot scheme but want absolute accuracies what do I do?
-#    Well.. what do we start with..
-
-#Cold -> Hot
-# => GT is Cold
-#   So we want the Hot Label for GT to designate columns in confusion matrix..
-#What if someone puts a hot GT in?
-#   we want to highest vote it I guess? Simple...
-#Say Y is Hot encoded...
-#  We want highest vote, easy again...
 
 function MulticlassStats(Y, GT, schema; Microaverage = true)
     Y = forceMatrix(Y)

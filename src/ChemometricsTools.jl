@@ -6,6 +6,9 @@ module ChemometricsTools
     using Plots
     using DSP #Ew I wanna get rid of this dependency... One function uses it...
 
+    #A generic function that I use everywhere...
+    forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
+
     include("ClassificationMetrics.jl")
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
         Threshold, MulticlassThreshold, HighestVote

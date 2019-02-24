@@ -61,3 +61,25 @@ end
     Pipe1 = Pipeline(FauxData2,  Logit);
     @test RMSE( FauxData2, Pipe1(Pipe1(FauxData2); inverse = true) ) < 1e-14
 end
+
+
+@testset "Find Peaks" begin
+    y = sin.( collect(1:720) .* (pi/180) );
+    @test findpeaks(y) == [90, 450]
+    @test y[findpeaks(y)] == [1.0, 1.0]
+end
+
+@testset "Classification Metrics" begin
+    CE = [ :a,:b,:c,:a,:b,:c ]
+    @test IsColdEncoded( CE ) == true
+    LEnc = LabelEncoding( CE )
+    HOT = ColdToHot(CE, LEnc)
+    @test HOT == [[1,0,0,1,0,0] [0,1,0,0,1,0] [0,0,1,0,0,1]]
+    COLD = HotToCold([[1,0,0,1,0,0] [0,1,0,0,1,0] [0,0,1,0,0,1]], LEnc)
+    A = MulticlassStats(COLD, CE, LEnc)
+    @test A["Accuracy"] == 1.0
+    @test A == MulticlassStats(HOT, CE, LEnc)
+    @test A == MulticlassStats(HOT, HOT, LEnc)
+    @test A == MulticlassStats(CE, HOT, LEnc)
+    #MulticlassStats(Y, GT, schema; Microaverage = true)
+end

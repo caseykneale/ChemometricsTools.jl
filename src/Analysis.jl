@@ -160,7 +160,3 @@ function findpeaks( vY; m = 3)
     end #End loop
     return ret
 end
-
-# y = sin.( collect(1:720) .* (pi/180) );
-# findpeaks(y)
-# y[findpeaks(y)]
