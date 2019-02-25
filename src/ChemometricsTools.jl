@@ -10,6 +10,9 @@ module ChemometricsTools
     #A generic function that I use everywhere...
     forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
 
+    include("InHouseStats.jl")
+    export EmpiricalQuantiles
+
     include("ClassificationMetrics.jl")
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
         Threshold, MulticlassThreshold, HighestVote
