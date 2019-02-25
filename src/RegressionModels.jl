@@ -7,7 +7,7 @@ abstract type RegressionModels end
 # maybe in Julia 2.0?
 
 struct ClassicLeastSquares <: RegressionModels
-    Coefficients
+    Coefficients::Array
     Bias::Bool
 end
 
@@ -80,13 +80,13 @@ PredictFn(X, M::PrincipalComponentRegression) = M.CLS( M.PCA( X ) )
 (M::PrincipalComponentRegression)( X ) = PredictFn( X, M )
 
 struct PartialLeastSquares <: RegressionModels
-    XLoadings
-    XScores
-    YLoadings
-    YScores
-    XWeights
-    Coefficients
-    Factors
+    XLoadings::Array
+    XScores::Array
+    YLoadings::Array
+    YScores::Array
+    XWeights::Array
+    Coefficients::Array
+    Factors::Int
 end
 
 #PLS-2 algorithm, this was decided because it is the most general...
@@ -150,8 +150,8 @@ end
 (M::PartialLeastSquares)(X; Factors = M.Factors) = PredictFn(X, M; Factors = Factors)
 
 struct ExtremeLearningMachine <: RegressionModels
-    Reservoir
-    Coefficients
+    Reservoir::Array
+    Coefficients::Array
     Fn::Function
 end
 

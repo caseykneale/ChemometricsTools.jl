@@ -118,9 +118,9 @@ function (DSX::DirectStandardizationXform)(X; Factors = length(DSX.pca.Values))
 end
 
 struct OrthogonalSignalCorrection
-    Weights
-    Loadings
-    Residuals
+    Weights::Array
+    Loadings::Array
+    Residuals::Array
 end
 
 function OrthogonalSignalCorrection(X, Y; Factors = 1)

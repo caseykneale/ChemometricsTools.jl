@@ -42,6 +42,8 @@ function StumpOrNode( x, y ; gainfn = entropy )
 end
 
 #I made this a lot more efficient at the cost of being less generic
+#I'd apologize for that, but, I'd rather have this be an end-user function
+#then a developer function...
 function StumpOrNodeRegress( x, y ; gainfn = ssd )
     maxgain = -Inf
     (decisionbound, decisionvar) = (0.0, 0)

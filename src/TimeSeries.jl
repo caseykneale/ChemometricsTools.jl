@@ -1,19 +1,19 @@
 rbinomial(p, size...) = map( x -> (x < p) ? 1 : 0, rand(size...) )
 
 struct EchoStateNetwork
-    Winput
-    W
-    Woutput
-    States
-    LastState
-    L2
-    alpha
+    Winput::Array
+    W::Array
+    Woutput::Array
+    States::Array
+    LastState::Array
+    L2::Float64
+    alpha::Float64
     bias
 end
 
 function EchoStateNetwork(X, Y, Reservoir = 1000;
                         L2 = 1e-8, alpha = 0.25, SpectralRadius = 1.00, Sparsity = 0.99, Noise = -1.00,
-                        bias = TRUE, burnin = 0)
+                        bias = true, burnin = 0)
     X = forceMatrix( X ) ; Y = forceMatrix( Y )#Ensure inputs are Array2's
     (Obs, Vars) = size( X )
     #Allocate memory for the collected states matrix
