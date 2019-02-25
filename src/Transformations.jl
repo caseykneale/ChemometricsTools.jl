@@ -11,7 +11,6 @@ Pipeline(Transforms) = pipeline(Transforms, false)
 function PipelineInPlace( X, FnStack...)
     pipe = Array{Any,1}(undef, length(FnStack))
     for (i, fn) in enumerate( FnStack )
-        #pipe[i] = fn(X)
         pipe[i] = isa(fn, Function) ? fn : fn(X)
         X .= pipe[i]( X )
     end

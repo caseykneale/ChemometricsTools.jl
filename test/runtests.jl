@@ -47,6 +47,7 @@ end
     InPlacePipe = PipelineInPlace(FauxData1, RangeNorm, Center, Scale, RangeNorm);
     @test FauxData1 != OriginalCopy
     @test Processed == FauxData1
+
     #Inplace transform the data back
     InPlacePipe(FauxData1; inverse = true)
     @test RMSE( OriginalCopy, FauxData1 ) < 1e-14
