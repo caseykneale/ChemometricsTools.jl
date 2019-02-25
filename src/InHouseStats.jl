@@ -26,8 +26,8 @@ end
 # EmpiricalQuantiles(X, quantiles)
 
 mutable struct RunningMean
-    mu
-    p
+    mu::Float64
+    p::Int
 end
 #Constructor for scalar
 RunningMean(x) = RunningMean( x, 1 )
@@ -37,26 +37,26 @@ function Update!(RM::RunningMean, x)
     RM.mu += (x - RM.mu) / RM.p
 end
 
+Update(RM::RunningMean, x) = RunningMean( RM.mu + (x - RM.mu) / ( RM.p + 1 ), RM.p + 1 )
+
 #(n*un - xn)/(n − 1) =  μn−1
 function Remove!(RM::RunningMean, x)
     RM.mu = (RM.p * RM.mu - x) / (RM.p - 1)
     RM.p -= 1
 end
 
+Remove(RM::RunningMean, x) = RunningMean( (RM.p * RM.mu - x) / (RM.p - 1), RM.p - 1 )
 
 
-# using Statistics
-# x = randn(100);
-#
-# Statistics.mean(x)
-# Statistics.mean(x[1:49])
-#
-#
-# z = RunningMean(mean(x),100)
-# for i in 50:100
-#     Remove!(z, x[i])
+#using Statistics
+#x = randn(100,10);
+
+#Statistics.mean(x, dims = 1)
+#Statistics.mean(x[1:49,:], dims = 1)
+
+# z = RunningMean(x[1,:], 1);
+# for i in 2:49
+#     Update!(z, x[i,:])
 # end
 # z
-#
-#
 # Statistics.mean(x[1:49]) - z.mu

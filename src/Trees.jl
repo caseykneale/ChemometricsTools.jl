@@ -8,7 +8,7 @@ end
 entropy(v) = -sum( map( x -> x * (x == 1.0 ? 0.0 : log( x , 2 )), v ) )
 gini(p) = 1.0 - sum( p .^ 2 )
 ssd(split) = sum( ( split .- mean( split ) ) .^ 2 )
-
+ssdwithmean(split,mean) = sum( ( split .- mean ) .^ 2 )
 #I have concerns about some of the performance here...
 #Ideas:
 #       sortedinds = sortperm(  x[ sortedinds , var ]  )
@@ -41,22 +41,25 @@ function StumpOrNode( x, y ; gainfn = entropy )
     return (decisionbound, decisionvar)
 end
 
-
-function StumpOrNodeRegress( x, y ; gainfn = ssd )
+#I made this a lot more efficient at the cost of being less generic
+function StumpOrNodeRegress( x, y ; gainfn = ssdwithmean )
     maxgain = -Inf
     (decisionbound, decisionvar) = (0.0, 0)
     (Obs, Vars) = size( x )
-    beforeinfo = gainfn( y )
+    totalmean = RunningMean( mean(y), Obs )
+    beforeinfo = gainfn( y, totalmean )
     sortedinds = 1:Obs
     for var in 1 : Vars
         sortedinds = sortperm(  x[ : , var ]  )
         y = y[sortedinds]
         x = x[sortedinds,:]
+        lhmean = RunningMean(y[1])
+        rhmean = Remove(totalmean, y[1])
         for obs in 2 : ( Obs - 1 )
-            lhsprops = y[1:obs]
-            rhsprops = y[(obs + 1):end]
-            LHS = gainfn( lhsprops )
-            RHS = gainfn( rhsprops )
+            Update!( lhmean, y[obs] )
+            Remove!( rhmean, y[obs] )
+            LHS = gainfn( y[1 : obs]        , lhmean )
+            RHS = gainfn( y[(obs + 1) : end], rhmean )
             curgain = beforeinfo - ( (obs/Obs) * LHS + ((Obs - obs)/Obs) * RHS)
             if curgain > maxgain
                 maxgain         = curgain
