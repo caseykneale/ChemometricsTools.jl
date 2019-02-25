@@ -37,13 +37,26 @@ function Update!(RM::RunningMean, x)
     RM.mu += (x - RM.mu) / RM.p
 end
 
+#(n*un - xn)/(n − 1) =  μn−1
+function Remove!(RM::RunningMean, x)
+    RM.mu = (RM.p * RM.mu - x) / (RM.p - 1)
+    RM.p -= 1
+end
+
+
+
 # using Statistics
 # x = randn(100);
 #
 # Statistics.mean(x)
+# Statistics.mean(x[1:49])
 #
-# z = RunningMean(x[1])
-# for i in 2:100
-#     Update!(z, x[i])
+#
+# z = RunningMean(mean(x),100)
+# for i in 50:100
+#     Remove!(z, x[i])
 # end
 # z
+#
+#
+# Statistics.mean(x[1:49]) - z.mu
