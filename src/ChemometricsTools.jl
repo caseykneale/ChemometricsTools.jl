@@ -11,7 +11,7 @@ module ChemometricsTools
     forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
 
     include("InHouseStats.jl")
-    export EmpiricalQuantiles
+    export EmpiricalQuantiles, Update!, Remove!, RunningMean
 
     include("ClassificationMetrics.jl")
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
