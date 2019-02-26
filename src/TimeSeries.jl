@@ -1,4 +1,3 @@
-rbinomial(p, size...) = map( x -> (x < p) ? 1 : 0, rand(size...) )
 
 struct EchoStateNetwork
     Winput::Array

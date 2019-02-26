@@ -1,5 +1,7 @@
 #This file will have 0 dependencies...
 
+rbinomial( p, size... ) = map( x -> ( x < p ) ? 1 : 0, rand( size... ) )
+
 #This copies the array... Use a subset if memory is the concern...
 function EmpiricalQuantiles(X, quantiles)
     @assert all((quantiles .>= 0.0) .& (quantiles .< 1.0))

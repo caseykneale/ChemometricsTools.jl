@@ -1,17 +1,18 @@
 module ChemometricsTools
     using CSV: read
     using LinearAlgebra
-    using Distributions#Could probably also get rid of this one...
+    using Distributions #Could probably also get rid of this one...
     using Statistics
     using StatsBase
     using Plots
     using DSP: conv #Ew I wanna get rid of this dependency... One function uses it...
 
     #A generic function that I use everywhere...
-    forceMatrix(a) = (length(size(a)) == 1) ? reshape( a, length(a), 1 ) : a
+    forceMatrix( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, length(a), 1 ) : a
 
     include("InHouseStats.jl")
-    export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean
+    export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean,
+        rbinomial
 
     include("ClassificationMetrics.jl")
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
@@ -75,6 +76,9 @@ module ChemometricsTools
 
     include("PlottingTools.jl")
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay
+
+    include("TimeSeries.jl")
+    export EchoStateNetwork, TuneRidge, PredictFn
 
     #Generic function for pulling data from within this package.
     #If enough datasets are provided then the data/dataloading could be a seperate package...
