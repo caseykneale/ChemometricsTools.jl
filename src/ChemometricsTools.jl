@@ -78,7 +78,7 @@ module ChemometricsTools
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay
 
     include("TimeSeries.jl")
-    export EchoStateNetwork, TuneRidge, PredictFn
+    export RollingWindow, EchoStateNetwork, TuneRidge, PredictFn
 
     #Generic function for pulling data from within this package.
     #If enough datasets are provided then the data/dataloading could be a seperate package...

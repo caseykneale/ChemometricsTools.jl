@@ -17,13 +17,18 @@ function PipelineInPlace( X, FnStack...)
     return pipeline(Tuple(pipe), true)
 end
 
-function Pipeline( X, FnStack...)
-    pipe = Array{Any,1}(undef, length(FnStack))
+function Pipeline( X, FnStack... )
+    pipe = Array{Any,1}( undef, length( FnStack ))
+    #dumbyarray = randn(10, size(X)[2])
     for (i, fn) in enumerate( FnStack )
-        pipe[i] = isa(fn, Function) ? fn : fn(X)
-        X = pipe[i]( X )
+        pipe[ i ] = isa( fn, Function ) ? fn : fn( X )
+        #Someone forgot the Transform tag...
+        # if isdefined(pipe[i](dumbyarray), :invertible)
+        #     pipe[ i ] = pipe[ i ]( X )
+        # end
+        X = pipe[ i ]( X )
     end
-    return pipeline(Tuple(pipe), false)
+    return pipeline(Tuple( pipe ), false)
 end
 
 function (P::pipeline)(X; inverse = false)
@@ -42,12 +47,15 @@ function (P::pipeline)(X; inverse = false)
     end
 end
 
+
+#Pipeline(randn(3,5), X -> QuantileTrim(X; quantiles = (0.2,0.8)), RangeNorm)
+#Transforms with hyper parameters can be added via an anonymous function...
 struct QuantileTrim <: Transform
     Quantiles::Array
     invertible::Bool
 end
 
-function QuantileTrim(Z, quantiles::Tuple{Float64,Float64} = (0.05, 0.95) )
+function QuantileTrim(Z; quantiles::Tuple{Float64,Float64} = (0.05, 0.95) )
     @assert length(quantiles) == 2
     return QuantileTrim( EmpiricalQuantiles(Z, quantiles), false )
 end
@@ -65,6 +73,9 @@ function (T::QuantileTrim)(X, inverse = false)
     end
     return X
 end
+
+
+
 
 struct Center{B} <: Transform
     Mean::B

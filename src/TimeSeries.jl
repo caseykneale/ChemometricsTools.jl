@@ -1,3 +1,29 @@
+struct RollingWindow
+    WindowSize::Int
+    observations::Int
+    maxiter::Int
+    skip::Int
+end
+
+RollingWindow(samples::Int,windowsize::Int) = RollingWindow(windowsize, samples,samples - windowsize + 1, 1)
+RollingWindow(samples::Int,windowsize::Int,skip::Int) = RollingWindow(windowsize, samples,samples - windowsize + 1, skip)
+
+function Base.iterate( iter::RollingWindow, state = 1 )
+    window = 0
+    if state <= iter.maxiter
+        window = collect( state : ( state + iter.WindowSize - 1) )
+    else
+        return nothing
+    end
+    return ( window ,  state + iter.skip  )
+end
+
+# RollingWindow(5,10).maxiter
+#
+# for i in RollingWindow(10,5,4)
+#     println(i)
+# end
+
 
 struct EchoStateNetwork
     Winput::Array

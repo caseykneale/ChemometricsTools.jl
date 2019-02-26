@@ -61,6 +61,10 @@ end
     FauxData2 = [1,1,2,3,4,5,6,7] ./ 10.0;
     Pipe1 = Pipeline(FauxData2,  Logit);
     @test RMSE( FauxData2, Pipe1(Pipe1(FauxData2); inverse = true) ) < 1e-14
+
+    #Test Quantile scaler
+    # Pipe1 = Pipeline(FauxData1, x -> QuantileTrim(x; quantiles = (0.25,0.75)), RangeNorm);
+    # Pipe1(FauxData1)
 end
 
 
