@@ -52,7 +52,7 @@ In Julia we can do mathematics like R or Matlab (no installations/imports), but 
 Right now I don't have rights to any cool data; but iris is included and a few basic sets will be added internally. I'd love for a collaborator to contribute some high-quality: spectra, mass spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. There's a good chance in a week or so I'll be reaching out to the community for these sorts of things.
 
 ## What about Time Series? Cluster models?
-Well, I'd love to hammer time series methods in here. It was originally part of the plan, but then I realized (OnlineStats.jl)[https://github.com/joshday/OnlineStats.jl] already has pretty much everything. Similarly, if you want clustering methods, just install (Clustering.jl)[https://github.com/JuliaStats/Clustering.jl]. I'll add a few supportive odds and ends in here but really, some of the Julia ecosystem is really done up.
+Well, I'd love to hammer time series methods in here. It was originally part of the plan, but then I realized (OnlineStats.jl)[https://github.com/joshday/OnlineStats.jl] already has pretty much everything covered. Similarly, if you want clustering methods, just install (Clustering.jl)[https://github.com/JuliaStats/Clustering.jl]. I'll add a few supportive odds and ends in here but really, some of the Julia ecosystem is really done up.
 
 ## ToDo:
   - SIMPLISMA return unique pure var's...
@@ -61,8 +61,8 @@ Well, I'd love to hammer time series methods in here. It was originally part of 
   - Docs (Make): Method shoot-out for regression/classification/etc...
   - Alignment methods... At least one reliable fast one.
   - EWMA
-  - SIMCA, N-WAY PCA, and N-WAY PLS
-  - ... Writing hundreds of unit tests ...
+  - Long-term: SIMCA, N-WAY PCA, and N-WAY PLS
+  - ... Writing dozens of unit tests ...
 
 ## Maybes:
   - Hyperspectral data preprocessing?
