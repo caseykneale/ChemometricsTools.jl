@@ -51,13 +51,16 @@ In Julia we can do mathematics like R or Matlab (no installations/imports), but 
 ## Wheres the Data?
 Right now I don't have rights to any cool data; but iris is included and a few basic sets will be added internally. I'd love for a collaborator to contribute some high-quality: spectra, mass spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. There's a good chance in a week or so I'll be reaching out to the community for these sorts of things.
 
+## What about Time Series? Cluster models?
+Well, I'd love to hammer time series methods in here. It was originally part of the plan, but then I realized (OnlineStats.jl)[https://github.com/joshday/OnlineStats.jl] already has pretty much everything. Similarly, if you want clustering methods, just install (Clustering.jl)[https://github.com/JuliaStats/Clustering.jl]. I'll add a few supportive odds and ends in here but really, some of the Julia ecosystem is really done up.
+
 ## ToDo:
   - SIMPLISMA return unique pure var's...
   - Test: QuantileScaler, BoxCox Transform, Hotelling and Q statistics, JK-NN...
   - Docs: rolling window, running mean, quantiles(empirical/scaler), ssd...
   - Docs (Make): Method shoot-out for regression/classification/etc...
   - Alignment methods... At least one reliable fast one.
-  - Time Series / soft-sensing stuff / Recursive regression methods
+  - EWMA
   - SIMCA, N-WAY PCA, and N-WAY PLS
   - ... Writing hundreds of unit tests ...
 

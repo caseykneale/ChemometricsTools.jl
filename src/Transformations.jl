@@ -63,19 +63,18 @@ end
 function (T::QuantileTrim)(X, inverse = false)
     if inverse == false
         for c in 1:size(X)[2]
-            lt = X[ : , c ] .< T.Quantiles[ 1, c ]
-            gt = X[ : , c ] .> T.Quantiles[ 2, c ]
-            X[ lt, c ] .= T.Quantiles[ 1, c ]
-            X[ gt, c ] .= T.Quantiles[ 2, c ]
+            if T.Quantiles[ 1, c ] != T.Quantiles[ 2, c ]
+                lt = X[ : , c ] .< T.Quantiles[ 1, c ]
+                gt = X[ : , c ] .> T.Quantiles[ 2, c ]
+                X[ lt, c ] .= T.Quantiles[ 1, c ]
+                X[ gt, c ] .= T.Quantiles[ 2, c ]
+            end
         end
     else
         println("QuantileScale does not provide an inverse, skipping operation.")
     end
     return X
 end
-
-
-
 
 struct Center{B} <: Transform
     Mean::B

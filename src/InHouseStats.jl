@@ -8,13 +8,21 @@ function EmpiricalQuantiles(X, quantiles)
     quantilevalues = zeros( length( quantiles ), vars )
     for v in 1 : vars
         Potentials = sort( unique(X[:, v]) )
-        for (j, potential) in enumerate(Potentials)
-            lt = sum(X[:,v] .<= potential)
-            ltscore = lt ./ obs
-            for ( i, q ) in enumerate(quantiles)
-                if (ltscore >= q) && ( quantilevalues[i, v] == 0.0)
-                    quantilevalues[i, v] = potential
+        if length(Potentials) > 2
+            for (j, potential) in enumerate(Potentials)
+                lt = sum(X[:,v] .<= potential)
+                ltscore = lt ./ obs
+                for ( i, q ) in enumerate(quantiles)
+                    if (ltscore >= q) && ( quantilevalues[i, v] == 0.0)
+                        quantilevalues[i, v] = potential
+                    end
                 end
+            end
+        else
+            if length(Potentials) == 2
+                quantilevalues[1:2, v] = Potentials[1 : 2]
+            else
+                quantilevalues[1, v] = Potentials[1]
             end
         end
     end
