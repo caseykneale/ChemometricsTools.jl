@@ -27,8 +27,8 @@ module ChemometricsTools
         GaussianKernel, LinearKernel, Kernel
 
     include("Transformations.jl")
-    export Transform, PipelineInPlace, Pipeline, Center, Scale, CenterScale,
-        RangeNorm, Logit, BoxCox
+    export Transform, PipelineInPlace, Pipeline, QuantileTrim, Center, Scale,
+        CenterScale, RangeNorm, Logit, BoxCox
 
     include("Analysis.jl")
     export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance,

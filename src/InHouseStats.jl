@@ -9,7 +9,6 @@ function EmpiricalQuantiles(X, quantiles)
     quantilevalues = zeros( length( quantiles ), vars )
     for v in 1 : vars
         Potentials = sort( unique(X[:, v]) )
-
         for (j, potential) in enumerate(Potentials)
             lt = sum(X[:,v] .<= potential)
             ltscore = lt ./ obs

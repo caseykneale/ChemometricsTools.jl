@@ -42,6 +42,29 @@ function (P::pipeline)(X; inverse = false)
     end
 end
 
+struct QuantileTrim <: Transform
+    Quantiles::Array
+    invertible::Bool
+end
+
+function QuantileTrim(Z, quantiles::Tuple{Float64,Float64} = (0.05, 0.95) )
+    @assert length(quantiles) == 2
+    return QuantileTrim( EmpiricalQuantiles(Z, quantiles), false )
+end
+
+function (T::QuantileTrim)(X, inverse = false)
+    if inverse == false
+        for c in 1:size(X)[2]
+            lt = X[ : , c ] .< T.Quantiles[ 1, c ]
+            gt = X[ : , c ] .> T.Quantiles[ 2, c ]
+            X[ lt, c ] .= T.Quantiles[ 1, c ]
+            X[ gt, c ] .= T.Quantiles[ 2, c ]
+        end
+    else
+        println("QuantileScale does not provide an inverse, skipping operation.")
+    end
+    return X
+end
 
 struct Center{B} <: Transform
     Mean::B
