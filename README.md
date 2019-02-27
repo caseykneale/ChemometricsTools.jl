@@ -47,7 +47,7 @@ This package has specialized tools for special fields of analysis'. For instance
 In Julia we can do mathematics like R or Matlab (no installations/imports), but write glue code as easily as python, with the expressiveness of scala, with (often) the performance of C/C++. Multidispatch makes recycling code painless, and broadcasting allows for intuitive application of operations across collections. I'm not a soft-ware engineer, but, these things have made Julia my language of choice. Try it for a week on Julia 1.0.3, if you don't get hooked, I'd be surprised.
 
 ## Wheres the Data?
-Right now I don't have rights to any cool data; but iris and the Tecator meat data are included. I'd love for a collaborator to contribute some high-quality: spectra, mass spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. There's a good chance in a week or so I'll be reaching out to the community for these sorts of things, but for now this isn't ready for prime-time yet.
+Right now I don't have rights to any cool data; but iris and the Tecator meat data are included. I'd love for a collaborator to contribute some high-quality: spectra, mass spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. There's a good chance in a week or so I'll be reaching out to the community for these sorts of things, in the mean time you can load in your own datasets using the Julia ecosystem.
 
 ## What about Time Series? Cluster models?
 Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has pretty much everything covered. Similarly, if you want clustering methods, just install [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I'll add a few supportive odds and ends in here but really, some of the Julia ecosystem is really done up.
@@ -56,7 +56,6 @@ Well, I'd love to hammer in some time series methods. That was originally part o
   - SIMPLISMA return unique pure var's...
   - Test: QuantileScaler, BoxCox Transform, Hotelling and Q statistics, JK-NN...
   - Docs: rolling window, running mean, quantiles(empirical/scaler), ssd...
-  - Docs (Make): Method shoot-out for regression/classification/etc...
   - Alignment methods... At least one reliable fast one.
   - EWMA
   - Long-term: SIMCA, N-WAY PCA, and N-WAY PLS
