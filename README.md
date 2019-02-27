@@ -41,7 +41,7 @@ Dozens of regression performance metrics, and a few built in plots (Bland Altman
 In-house classification encodings(one cold/one hot), multiclass performance statistics. ChemometricsTools currently includes: LDA with guassian discriminants, logistic regression, PLS-DA, K-NN, Gaussian Naive Bayes, Classification Trees, Random Forest, and more to come.
 
 ## Specialized tools?
-But this is steadily becoming chock-full of tools for chemometrics. The package does have specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, curve resolution for forensics, etc. There are certainly plans for a few other tools for analyzing chemical data that packages in other languages have seemingly left out. More to come. Stay tuned.
+This package has specialized tools for special fields of analysis'. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing for spectroscopists, curve resolution for forensics, etc. There are certainly plans for a few other tools for analyzing chemical data that packages in other languages have seemingly left out. More to come. Stay tuned.
 
 ## Why Julia?
 In Julia we can do mathematics like R or Matlab (no installations/imports), but write glue code as easily as python, with the expressiveness of scala, with (often) the performance of C/C++. Multidispatch makes recycling code painless, and broadcasting allows for intuitive application of operations across collections. I'm not a soft-ware engineer, but, these things have made Julia my language of choice. Try it for a week on Julia 1.0.3, if you don't get hooked, I'd be surprised.
