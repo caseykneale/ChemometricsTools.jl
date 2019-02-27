@@ -149,7 +149,7 @@ function PredictFn(X, M::PartialLeastSquares; Factors)
 end
 (M::PartialLeastSquares)(X; Factors = M.Factors) = PredictFn(X, M; Factors = Factors)
 
-struct ExtremeLearningMachine <: RegressionModels
+struct ELM <: RegressionModels
     Reservoir::Array
     Coefficients::Array
     Fn::Function
@@ -158,10 +158,10 @@ end
 sigmoid(x) = 1.0 / (1.0 + exp(-1.0 * x))
 
 function ExtremeLearningMachine(X, Y, ReservoirSize = 10; ActivationFn = sigmoid)
-    W = randn( size( x )[2], ReservoirSize )
-    return ELM( W, LinearAlgebra.pinv( ActivationFn.(x * W) ) * y,
+    W = randn( size( X )[2], ReservoirSize )
+    return ELM( W, LinearAlgebra.pinv( ActivationFn.(X * W) ) * Y,
                 ActivationFn)
 end
 
-PredictFn(X, M::ExtremeLearningMachine) = M.Fn.(X * M.Reservoir) * M.Coefficients;
-(M::ExtremeLearningMachine)(X) = PredictFn(X, M)
+PredictFn(X, M::ELM) = M.Fn.(X * M.Reservoir) * M.Coefficients;
+(M::ELM)(X) = PredictFn(X, M)

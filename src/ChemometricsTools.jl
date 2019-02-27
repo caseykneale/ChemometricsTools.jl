@@ -55,7 +55,7 @@ module ChemometricsTools
 
     include("RegressionModels.jl")
     export ClassicLeastSquares, RidgeRegression, PrincipalComponentRegression,
-        PartialLeastSquares, KernelRidgeRegression, LSSVM, ExtremeLearningMachine, PredictFn
+        PartialLeastSquares, KernelRidgeRegression, LSSVM, ExtremeLearningMachine, PredictFn, sigmoid
 
     include("Trees.jl")
     export OneHotOdds, entropy, gini, ssd, StumpOrNode, ClassificationTree, RegressionTree, CART
