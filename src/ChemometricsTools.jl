@@ -9,6 +9,7 @@ module ChemometricsTools
 
     #A generic function that I use everywhere...
     forceMatrix( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, length(a), 1 ) : a
+    export forceMatrix
 
     include("InHouseStats.jl")
     export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean,

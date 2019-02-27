@@ -41,9 +41,7 @@ Dozens of regression performance metrics, and a few built in plots (Bland Altman
 In-house classification encodings(one cold/one hot), multiclass performance statistics. ChemometricsTools currently includes: LDA with guassian discriminants, logistic regression, PLS-DA, K-NN, Gaussian Naive Bayes, Classification Trees, Random Forest, and more to come.
 
 ## Specialized tools?
-You might be saying, classification trees, ridge regression, logistic regression, K-NN, PCA, etc, isn't this just a machine learning library with some preprocessing tools for chemometrics? If that's what you wanna use it for be my guest. Seems kinda wrong and inefficient to PyCall scikit learn (which calls on C, fortran, etc) to do basic machine learning/analysis in Julia anyways... I'll be buffing up the machine learning methods available as time allows. But this is steadily becoming chock-full of tools for chemometrics.
-
-The package does have specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, curve resolution for forensics, etc. There are certainly plans for a few other tools for analyzing chemical data that packages in other languages have seemingly left out. More to come. Stay tuned.
+But this is steadily becoming chock-full of tools for chemometrics. The package does have specialized tools for chemometricians in special fields. For instance, fractional derivatives for the electrochemists (and the adventurous), Savitsky Golay smoothing, curve resolution for forensics, etc. There are certainly plans for a few other tools for analyzing chemical data that packages in other languages have seemingly left out. More to come. Stay tuned.
 
 ## Why Julia?
 In Julia we can do mathematics like R or Matlab (no installations/imports), but write glue code as easily as python, with the expressiveness of scala, with (often) the performance of C/C++. Multidispatch makes recycling code painless, and broadcasting allows for intuitive application of operations across collections. I'm not a soft-ware engineer, but, these things have made Julia my language of choice. Try it for a week on Julia 1.0.3, if you don't get hooked, I'd be surprised.
@@ -52,7 +50,7 @@ In Julia we can do mathematics like R or Matlab (no installations/imports), but 
 Right now I don't have rights to any cool data; but iris and the Tecator meat data are included. I'd love for a collaborator to contribute some high-quality: spectra, mass spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. There's a good chance in a week or so I'll be reaching out to the community for these sorts of things, but for now this isn't ready for prime-time yet.
 
 ## What about Time Series? Cluster models?
-Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized (OnlineStats.jl)[https://github.com/joshday/OnlineStats.jl] already has pretty much everything covered. Similarly, if you want clustering methods, just install (Clustering.jl)[https://github.com/JuliaStats/Clustering.jl]. I'll add a few supportive odds and ends in here but really, some of the Julia ecosystem is really done up.
+Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has pretty much everything covered. Similarly, if you want clustering methods, just install [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I'll add a few supportive odds and ends in here but really, some of the Julia ecosystem is really done up.
 
 ## ToDo:
   - SIMPLISMA return unique pure var's...
