@@ -12,8 +12,8 @@ module ChemometricsTools
     export forceMatrix
 
     include("InHouseStats.jl")
-    export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean,
-        rbinomial
+    export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean, RunningVar,
+        Variance, Mean, rbinomial
 
     include("ClassificationMetrics.jl")
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,

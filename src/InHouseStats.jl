@@ -55,6 +55,33 @@ end
 
 Remove(RM::RunningMean, x) = RunningMean( (RM.p * RM.mu - x) / (RM.p - 1), RM.p - 1 )
 
+mutable struct RunningVar
+    m::RunningMean
+    v::Float64
+end
+#Constructor for scalar
+RunningVar(x) = RunningVar( RunningMean( x, 1 ), 0.0 )
+function Update!(RV::RunningVar, x)
+    OldMean = copy(RV.m.mu)
+    Update!(RV.m, x)
+    RV.v = ( (RV.v * (RV.m.p - 2)) + ( (x - OldMean) * ( x - RV.m.mu ) ) ) / (RV.m.p - 1.0)
+end
+
+Variance(rv::RunningVar) = RV.v
+Mean(rv::RunningVar) = RV.m.mu
+Mean(rm::RunningMean) = Rm.mu
+
+using Statistics
+x = randn(100);
+Statistics.mean(x)
+Statistics.var(x)
+rv = RunningVar(x[1])
+
+for i in 2:100
+    Update!(rv, x[i])
+end
+
+rv
 
 #using Statistics
 #x = randn(100,10);
