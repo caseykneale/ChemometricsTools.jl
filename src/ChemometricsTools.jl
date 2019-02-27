@@ -87,8 +87,35 @@ module ChemometricsTools
         dircontents = readdir(datapath)
         return Dict( (1:length(dircontents)) .=> dircontents )
     end
-    ChemometricsToolsDataset(filename::String) = read( Base.joinpath( datapath, filename ) )
-    ChemometricsToolsDataset(file::Int) = read( Base.joinpath( datapath, readdir(datapath)[file] ) )
+    function ChemometricsToolsDataset(filename::String)
+        if filename == "tecator.csv"
+            println("Statement of permission from Tecator (the original data source).These data are recorded on a Tecator" *
+            "\n Infratec Food and Feed Analyzer working in the wavelength range 850 - 1050 nm by the Near Infrared" *
+            "\n Transmission (NIT) principle. Each sample contains finely chopped pure meat with different moisture, fat" *
+            "\n and protein contents.If results from these data are used in a publication we want you to mention the" *
+            "\n instrument and company name (Tecator) in the publication. In addition, please send a preprint of your " *
+            "\n article to Karin Thente, Tecator AB, Box 70, S-263 21 Hoganas, Sweden. The data are available in the " *
+            "\n public domain with no responsability from the original data source. The data can be redistributed as long " *
+            "\n as this permission note is attached. For more information about the instrument - call Perstorp Analytical's" *
+            "\n representative in your area.")
+        end
+        read( Base.joinpath( datapath, filename ) )
+    end
+    function ChemometricsToolsDataset(file::Int)
+        #Legal babble...
+        if readdir(datapath)[file] == "tecator.csv"
+            println("Statement of permission from Tecator (the original data source).These data are recorded on a Tecator" *
+            "\n Infratec Food and Feed Analyzer working in the wavelength range 850 - 1050 nm by the Near Infrared" *
+            "\n Transmission (NIT) principle. Each sample contains finely chopped pure meat with different moisture, fat" *
+            "\n and protein contents.If results from these data are used in a publication we want you to mention the" *
+            "\n instrument and company name (Tecator) in the publication. In addition, please send a preprint of your " *
+            "\n article to Karin Thente, Tecator AB, Box 70, S-263 21 Hoganas, Sweden. The data are available in the " *
+            "\n public domain with no responsability from the original data source. The data can be redistributed as long " *
+            "\n as this permission note is attached. For more information about the instrument - call Perstorp Analytical's" *
+            "\n representative in your area.")
+        end
+        read( Base.joinpath( datapath, readdir(datapath)[file] ) )
+    end
     export ChemometricsToolsDataset, ChemometricsToolsDatasets
     #ToDo: Add more unit tests to test/runtests.jl...
 

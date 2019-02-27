@@ -1,5 +1,3 @@
-LastDir = pwd()
-cd("/ChemometricsTools/")
 using Pkg
 Pkg.activate(".")
 using ChemometricsTools

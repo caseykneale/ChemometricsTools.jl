@@ -18,13 +18,6 @@ function Base.iterate( iter::RollingWindow, state = 1 )
     return ( window ,  state + iter.skip  )
 end
 
-# RollingWindow(5,10).maxiter
-#
-# for i in RollingWindow(10,5,4)
-#     println(i)
-# end
-
-
 struct EchoStateNetwork
     Winput::Array
     W::Array
