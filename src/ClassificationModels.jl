@@ -151,7 +151,7 @@ function GaussianNaiveBayes(X,Y)
     return GaussianNaiveBayes(obs, classes, ClasswisePrior, ClasswiseMeans, ClasswiseVars)
 end
 
-Likelihood( x, mean, var ) = (1.0 ./ sqrt.(2.0 * pi * var)) .* exp.(-0.5 .* ( ( (x .- mean) .^ 2.0 ) ./ var) )
+Likelihood( x, mean, var ) = ( 1.0 ./ sqrt.( 2.0 * pi * var ) ) .* exp.( -0.5 .* ( ( (x .- mean) .^ 2.0 ) ./ var ) )
 
 function (gnb::GaussianNaiveBayes)(X)
     (obs, vars) = size(X)
