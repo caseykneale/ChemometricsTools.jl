@@ -25,13 +25,26 @@ mutable struct ewma
     rv::RunningVar
 end
 
-EWMA(Initial, Lambda) = ewma(Lambda, Initial, Initial, RunningVar(Initial))
+EWMA(Initial::Float64, Lambda::Float64) = ewma(Lambda, Initial, Initial, RunningVar(Initial))
+function EWMA(Initial::Array, Lambda::Float64)
+    burnin = EWMA(Initial[1], Lambda)#Call constructor above
+    len = length(Initial)
+    for sample in 1:len
+        burnin(Initial[sample])
+    end
+    burnin.center = burnin.rv.m.mu
+    return burnin
+end
 
-function (P::ewma)(New)
+function (P::ewma)(New; train = true)
     P.lastval = ( P.lambda * New ) + ( 1 - P.lambda ) * P.lastval
-    Update!(P.rv, New)
+    if train == true
+        Update!(P.rv, New)
+    end
     return P.lastval
 end
+
+#Add move center function to EWMA...
 
 Variance(P::ewma) = (P.lambda / (2.0 - P.lambda) ) * Variance(P.rv)
 Limits(P::ewma; k = 3.0) = (P.center + (k * sqrt( Variance( P ) ) ), P.center - (k * sqrt( Variance( P ) ) )  )
