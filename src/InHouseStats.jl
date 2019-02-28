@@ -29,10 +29,6 @@ function EmpiricalQuantiles(X, quantiles)
     return quantilevalues
 end
 
-# X = randn(3000,30);
-# quantiles = (0.05, 0.5, 0.95)
-# EmpiricalQuantiles(X, quantiles)
-
 mutable struct RunningMean
     mu::Float64
     p::Int
@@ -70,28 +66,3 @@ end
 Variance(rv::RunningVar) = rv.v
 Mean(rv::RunningVar) = rv.m.mu
 Mean(rm::RunningMean) = rm.mu
-
-using Statistics
-x = randn(100);
-Statistics.mean(x)
-Statistics.var(x)
-rv = RunningVar(x[1])
-
-for i in 2:100
-    Update!(rv, x[i])
-end
-
-rv
-
-#using Statistics
-#x = randn(100,10);
-
-#Statistics.mean(x, dims = 1)
-#Statistics.mean(x[1:49,:], dims = 1)
-
-# z = RunningMean(x[1,:], 1);
-# for i in 2:49
-#     Update!(z, x[i,:])
-# end
-# z
-# Statistics.mean(x[1:49]) - z.mu
