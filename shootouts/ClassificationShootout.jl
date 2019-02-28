@@ -27,6 +27,8 @@ Shuffle!( X, YHot );
                         maxdepth = 10,  minbranchsize = 5,
                         samples = 0.7, maxvars = nothing)
 
+
+
 #Let's evaluate them on the training set then the hold out - see how they do!
 models = ( knn, ldagd, mnsr, gnb, ct, rf );
 modelnames = ( :knn, :ldagd, :mnsr, :gnb, :ct, :rf );

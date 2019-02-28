@@ -112,7 +112,7 @@ function MultinomialSoftmaxRegression(X, Y; LearnRate = 1e-3, maxiters = 1000, L
             CostPerIt[it] += -sum( Y[o,:] .* log.( Output[o,:] .+ 1e-6 ) ) + (L2 * sum(W .^ 2))
             residualsOutput = Y[o,:] .- Output[o,:]
             #calculate changes to be applied to the weights by these gradients and update them...
-            B .+= LearnRate * B * sum(residualsOutput)
+            B .+= LearnRate * [1.0] * sum(residualsOutput)
             W .+= LearnRate .* (X[o,:] * residualsOutput')
             if L2 > 0.0
                 W .+= LearnRate .* ( (2.0 / L2) .* W)
