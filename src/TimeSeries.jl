@@ -18,23 +18,23 @@ function Base.iterate( iter::RollingWindow, state = 1 )
     return ( window ,  state + iter.skip  )
 end
 
-mutable struct EWMA
+mutable struct ewma
     lambda::Float64
     center::Float64
     lastval::Float64
+    rv::RunningVar
 end
 
-EWMA(Initial, Lambda) = EWMA(Lambda, Initial, Initial)
+EWMA(Initial, Lambda) = ewma(Lambda, Initial, Initial, RunningVar(Initial))
 
-function (P::EWMA)(Y)
+function (P::ewma)(New)
     P.lastval = ( P.lambda * New ) + ( 1 - P.lambda ) * P.lastval
+    Update!(P.rv, New)
     return P.lastval
 end
 
-variance(P::EWMA, historical) = (P.lambda / (2.0 - P.lambda) ) * Statistics.var(historical)
-limits(P::EWMA; k = 3.0) = (P.center + k  , P.center + k  )
-
-
+Variance(P::ewma) = (P.lambda / (2.0 - P.lambda) ) * Variance(P.rv)
+Limits(P::ewma; k = 3.0) = (P.center + (k * sqrt( Variance( P ) ) ), P.center - (k * sqrt( Variance( P ) ) )  )
 
 struct EchoStateNetwork
     Winput::Array

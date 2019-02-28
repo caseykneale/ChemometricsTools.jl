@@ -67,9 +67,9 @@ function Update!(RV::RunningVar, x)
     RV.v = ( (RV.v * (RV.m.p - 2)) + ( (x - OldMean) * ( x - RV.m.mu ) ) ) / (RV.m.p - 1.0)
 end
 
-Variance(rv::RunningVar) = RV.v
-Mean(rv::RunningVar) = RV.m.mu
-Mean(rm::RunningMean) = Rm.mu
+Variance(rv::RunningVar) = rv.v
+Mean(rv::RunningVar) = rv.m.mu
+Mean(rm::RunningMean) = rm.mu
 
 using Statistics
 x = randn(100);
