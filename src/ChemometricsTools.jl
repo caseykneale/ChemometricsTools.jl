@@ -1,11 +1,7 @@
 module ChemometricsTools
+    using LinearAlgebra, Statistics, StatsBase, SparseArrays, Plots
     using CSV: read
-    using LinearAlgebra
     using Distributions #Could probably also get rid of this one...
-    using Statistics
-    using StatsBase
-    using SparseArrays
-    using Plots
     using DSP: conv #Ew I wanna get rid of this dependency... One function uses it...
 
     #A generic function that I use everywhere...

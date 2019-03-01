@@ -2,45 +2,46 @@
 #Untested. Not super optimal, but should work fine, for small data...
 #Could store inter distance matrix to a struct...
 #Untested...
-function OneClassJKNN( Normal, New; J = 1, K = 1, threshold = 1.0 )
+function OneClassJKNN( Normal, New; J::Int = 1, K::Int = 1, DistanceType = "euclidean" )
     Obs = size( Normal )[ 1 ]
     ObsNew = size( New )[ 1 ]
     DistMat = zeros( Obs, ObsNew )
-    NNPool = zeros( ObsNew, J )
+    JNNPool = zeros( ObsNew, J )
     IntraDataMeanDist = zeros(ObsNew)
     #Apply Distance Fn
-    if model.DistanceType == "euclidean"
-        DistMat = SquareEuclideanDistance( Obs, ObsNew )
-    elseif model.DistanceType == "manhattan"
-        DistMat = ManhattanDistance( Obs, ObsNew )
+    if DistanceType == "euclidean"
+        DistMat = SquareEuclideanDistance( Normal, New )
+    elseif DistanceType == "manhattan"
+        DistMat = ManhattanDistance( Normal, New )
     end
-    #Find nearest neighbors between new samples and the old samples
+    #Find J nearest neighbors between new samples and the old samples
     for obs in 1 : ObsNew
-        NNPool[ obs , : ] = sortperm( DistMat[ : , obs ] )[ 1 : J ]
-        IntraDataMeanDist[obs] = sum( DistMat[ NNPool[ obs , : ], obs] )
+        JNNPool[ obs , : ] = sortperm( DistMat[ : , obs ] )[ 1 : J ]
+        IntraDataMeanDist[obs] = sum( DistMat[ JNNPool[ obs , : ] .|> Int, obs] )
     end
-    #What samples do we need from the original dataset?
-    OriginalSamples = unique( NNPool )
-    #Make a dictionary to lookup indices later...
-    Lookup = Dict( 1:length(OriginalSamples) .=> OriginalSamples  )
-    OrigNNPool = zeros( Obs, Obs )
-    InterDataMeanDist = zeros( Obs[ OriginalSamples ,:])
-    if model.DistanceType == "euclidean"
-        InterDataMeanDist = SquareEuclideanDistance( Obs )
-    elseif model.DistanceType == "manhattan"
-        InterDataMeanDist = ManhattanDistance( Obs )
+    #Find K nearest neighbors in the original/normal data
+    InterDataDists = zeros( Obs, Obs )
+    if DistanceType == "euclidean"
+        InterDataDists = SquareEuclideanDistance( Normal )
+    elseif DistanceType == "manhattan"
+        InterDataDists = ManhattanDistance( Normal )
     end
-
+    #For each new sample, find it's J nearest neighbors K nearest neighbor distances
+    MeanDists = zeros( ObsNew )
     for obs in 1 : ObsNew
-        Smpls = NNPool[ obs , : ]
+        #Find row where J lives ( ObsNew, J )
+        Smpls = JNNPool[ obs , : ] .|> Int
         for j in 1 : J
-            InterDataMeanDist[ obs ] += sum( sort( InterDataMeanDist[ Smpls[j] , : ] )[ 1 : K ] )
+            KNNInds = sortperm( InterDataDists[  : , Smpls[ j ] ] )
+            Screened = (KNNInds[1] == Smpls[j]) ? KNNInds[ 2 : ( K + 1 ) ] : KNNInds[ 1 : K ]
+            MeanDists[ obs ] += sum( InterDataDists[ Smpls, Screened ] )
         end
     end
 
-    InterDataMeanDist[ obs ] ./= J #* K #No need  to divide by K
-    return (IntraDataMeanDist ./ InterDataMeanDist) .< Threshold
+    MeanDists ./= J #* K #No need  to divide by K
+    return (IntraDataMeanDist ./ MeanDists)
 end
+
 
 #A review of PCA-based statistical process monitoring methodsfor time-dependent, high-dimensional data. Bart De Ketelaere
 #https://wis.kuleuven.be/stat/robust/papers/2013/deketelaere-review.pdf

@@ -1,7 +1,9 @@
 using Pkg
+using Revise
 Pkg.activate(".")
 using ChemometricsTools
 using Plots
+
 #View the data in the package space
 ChemometricsToolsDatasets()
 #Load the data from package-space: remove the time column while we're at it
@@ -9,6 +11,8 @@ DF = ChemometricsToolsDataset("actuator.csv");
 actuator = convert(Matrix,  DF)[:,2:end];
 #Split into a training set based on normal behaviour
 (Train, Test) = SplitByProportion(actuator, 0.40)
+
+
 #Plot the data
 plot(Train, legend = false, title = "Train Set - Raw Data", ylabel = "Measurements", xlabel = "time")
 #alot of DC offsets let's column center each variable.
@@ -51,4 +55,9 @@ end
 plot(ewmascore, label = "EWMA", title = "EWMA Fault detection", ylabel = "EWMA", xlabel = "time");
 hline!([UpperEWMA], label = "Upper Limit");
 hline!([LowerEWMA], label = "Lower Limit");
+vline!([120], label = "Known Fault")
+
+score = OneClassJKNN( Train, Test; J = 1, K = 1,  DistanceType = "euclidean" );
+scatter(log10.(score));
+hline!([1.0], label = "Threshold of 1");
 vline!([120], label = "Known Fault")
