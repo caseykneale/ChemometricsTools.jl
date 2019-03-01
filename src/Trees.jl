@@ -111,7 +111,7 @@ function ClassificationTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize 
                 end
                 LHS = cmap[findall(x[cmap, var] .< bound)]
                 RHS = cmap[findall(x[cmap, var] .>= bound)]
-                if (length(LHS) >= 0) && (length(RHS) >= 0)
+                if (length(LHS) > 0) && (length(RHS) > 0)
                     push!(nextmap, LHS, RHS)
                     nextsky += 2
                     curdt[sky] = (var => bound)
@@ -161,7 +161,7 @@ function RegressionTree(x, y; gainfn = ssd, maxdepth = 4, minbranchsize = 3, var
                 end
                 LHS = cmap[findall(x[cmap, var] .< bound)]
                 RHS = cmap[findall(x[cmap, var] .>= bound)]
-                if (length(LHS) >= 0) && (length(RHS) >= 0)
+                if (length(LHS) > 0) && (length(RHS) > 0)
                     push!(nextmap, LHS, RHS)
                     nextsky += 2
                     curdt[sky] = (var => bound)
