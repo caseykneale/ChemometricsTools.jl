@@ -44,7 +44,9 @@ function (P::ewma)(New; train = true)
     return P.lastval
 end
 
-#Add move center function to EWMA...
+function ChangeCenter(P::ewma, new::Float64)
+    P.center .= new
+end
 
 Variance(P::ewma) = (P.lambda / (2.0 - P.lambda) ) * Variance(P.rv)
 Limits(P::ewma; k = 3.0) = (P.center + (k * sqrt( Variance( P ) ) ), P.center - (k * sqrt( Variance( P ) ) )  )
