@@ -4,6 +4,7 @@ module ChemometricsTools
     using Distributions #Could probably also get rid of this one...
     using Statistics
     using StatsBase
+    using SparseArrays
     using Plots
     using DSP: conv #Ew I wanna get rid of this dependency... One function uses it...
 
@@ -50,7 +51,7 @@ module ChemometricsTools
     export FirstDerivative, SecondDerivative, FractionalDerivative, SavitzkyGolay,
         DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection,
         StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, boxcarScaleMinMax,
-        offsetToZero
+        offsetToZero, ALSSmoother, PerfectSmoother
         #,TransferByOrthogonalProjection
 
     include("RegressionModels.jl")

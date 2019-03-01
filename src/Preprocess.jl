@@ -21,6 +21,31 @@ function boxcar(X; windowsize = 3, fn = mean)
     return result
 end
 
+
+#Paul H. C. Eilers, Hans F.M. Boelens. Baseline Correction with Asymmetric Least Squares Smoothing.  2005
+function ALSSmoother(y; lambda = 100, p = 0.001, maxiters = 10)
+    m = length(y)
+    D = SecondDerivative( sparse( I, m, m )' )';
+    w = ones(m);
+    for it in 1 : maxiters
+        W = spdiagm(0 => w);
+        C = cholesky(W + lambda * D' * D).U;
+        z = C \ (C' \ (w .* y));
+        w[y .> z] .= p;
+        w[y .< z] .+= 1.0 - p;
+    end
+    return z
+end
+
+#Paul H. C. Eilers. "A Perfect Smoother". Analytical Chemistry, 2003, 75 (14), pp 3631–3636.
+function PerfectSmoother(y; lambda = 100, maxiters = 10)
+    m = length(y)
+    D = SecondDerivative( sparse( I, m, m )' )';
+    w = spdiagm(0 => ones(m));
+    C = cholesky(W + lambda * D' * D).U
+    return C \ (C' \ (w * y))
+end
+
 #Pretty sure this is reversible like a transform, but don't have time to solve it
 #in reverse yet...
 struct MultiplicativeScatterCorrection
@@ -94,7 +119,6 @@ function SavitzkyGolay(X, Delta, PolyOrder, windowsize)
     end
     return output
 end
-
 
 #Direct Standardization Calibration Transfer Method
 struct DirectStandardizationXform
