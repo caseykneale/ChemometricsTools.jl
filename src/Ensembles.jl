@@ -43,10 +43,10 @@ function RandomForest(x, y, mode = :classification; gainfn = entropy, trees = 50
     for tree in 1:trees
         grabbag = unique( rand( 1:obs, bag ) )
         if mode == :classification
-            push!(Forest, ClassificationTree(x[grabbag,:], y[grabbag,:]; gainfn = entropy,
+            push!(Forest, ClassificationTree(x[grabbag,:], y[grabbag,:]; gainfn = gainfn,
                         maxdepth = maxdepth, minbranchsize = minbranchsize, varsmpl = maxvars))
         else
-            push!(Forest, RegressionTree(x[grabbag,:], y[grabbag]; gainfn = entropy,
+            push!(Forest, RegressionTree(x[grabbag,:], y[grabbag]; gainfn = gainfn,
                         maxdepth = maxdepth, minbranchsize = minbranchsize, varsmpl = maxvars))
         end
     end

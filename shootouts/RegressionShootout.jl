@@ -38,11 +38,14 @@ pca = PCA(TrainX;Factors = 4);
 @time pcr = PrincipalComponentRegression(pca, TrainY )
 @time plsr = PartialLeastSquares( TrainX, TrainY; Factors = 4, tolerance = 1e-8, maxiters = 200 )
 @time elm = ExtremeLearningMachine(TrainX, TrainY, 11; ActivationFn = sigmoid)
-
+@time rt = RegressionTree( TrainX, TrainY; gainfn = ssd, maxdepth = 15, minbranchsize = 5)
+#@time rf = RandomForest(TrainX, TrainY, :regression; gainfn = ssd, trees = 150,
+#                        maxdepth = 15,  minbranchsize = 5,
+#                        samples = 0.7, maxvars = nothing)
 
 #Let's evaluate them on the training set then the hold out - see how they do!
-models = ( rr, krr, lssvm, pcr, plsr, elm );
-modelnames = ( :rr, :krr, :lssvm, :pcr, :plsr, :elm  );
+models = ( rr, krr, lssvm, pcr, plsr, elm, rt)#, rf );
+modelnames = ( :rr, :krr, :lssvm, :pcr, :plsr, :elm, :rt)#, :rf );
 
 TrainingRMSE = Dict()
 TrainingRMSE[:cls] = RMSE( cls(TrainX[:,[5, 25, 45, 60, 90]]), TrainY )
@@ -56,5 +59,4 @@ HoldOutRMSE[:cls] = RMSE( cls(TestX[:,[5, 25, 45, 60, 90]]), TestY )
 for ( name, model ) in zip(modelnames, models)
     HoldOutRMSE[name] = RMSE( model(TestX), TestY )
 end
-
 HoldOutRMSE
