@@ -155,11 +155,10 @@ function RegressionTree(x, y; gainfn = ssd, maxdepth = 4, minbranchsize = 3, var
                 if varsmpl > 0
                     varsavail = unique( rand(1:Vars, varsmpl) )
                 end
-                (bound, var) = StumpOrNodeRegress( x[cmap,:], y[cmap] ; gainfn = gainfn )
+                (bound, var) = StumpOrNodeRegress( x[cmap,varsavail], y[cmap] ; gainfn = gainfn )
                 if varsmpl > 0
                     var = varsavail[ var ]
                 end
-                #println(".!!!.")
                 LHS = cmap[findall(x[cmap, var] .< bound)]
                 RHS = cmap[findall(x[cmap, var] .>= bound)]
                 if (length(LHS) >= 0) && (length(RHS) >= 0)
