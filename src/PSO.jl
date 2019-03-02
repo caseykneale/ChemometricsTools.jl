@@ -54,6 +54,8 @@ Where P is an array of the particles used in the optimization.
 
 *Note: if the optimization function requires an additional constant parameter, please pass that parameter to InternalParams.
 This will only work if the optimized parameter(o) and constant parameter(c) for the function of interest has the following format: F(o,c) *
+
+Kennedy, J.; Eberhart, R. (1995). Particle Swarm Optimization. Proceedings of IEEE International Conference on Neural Networks. IV. pp. 1942–1948. doi:10.1109/ICNN.1995.488968
 """
 function PSO(fn, Bounds::Bounds, VelRange::Bounds, Particles::Int;
                 tolerance = 1e-6, maxiters = 1000,
