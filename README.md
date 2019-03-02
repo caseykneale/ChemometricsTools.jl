@@ -1,19 +1,19 @@
-No official doc's yet, but the [wiki](https://github.com/caseykneale/ChemometricsTools/wiki) has the majority of the API and a few tutorials. Feel free to check the code-base, good place to start would be the [module source](https://github.com/caseykneale/ChemometricsTools/blob/master/src/ChemometricsTools.jl).
+[Read the Docs!](https://caseykneale.github.io/ChemometricsTools/)
+[Module Source Code](https://github.com/caseykneale/ChemometricsTools/blob/master/src/ChemometricsTools.jl).
 
 # ChemometricsTools
 This is a collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. It is currently richer and more fundamental then any single free chemometrics package available in any other language. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is a pile of applied linear algebra that is well reasoned by the physics and meaning of chemical measurements. This is somewhat orthogonal to most fields of machine learning (aka "add more layers"). Sometimes chemometricians also get desperate and break out pure machine learning methods. So some of those are in here, but if you want neural networks [Flux.jl](https://github.com/FluxML/Flux.jl) is my favorite deep learning library. It is super easy and fast to use.
 
 The goals for this package are the following: rely only on basic dependencies for longevity and stability, essential algorithms should read similar to pseudocode in papers, and the tools provided should be fast, flexible, and reliable. That's the Julia way after-all. No code will directly call R, Python, C, etc. It is currently and will continue to be written in Julia from the ground up.
 
-## Demonstrations:
-  - [Calibration Transfer: Direct Standardization](https://github.com/caseykneale/ChemometricsTools/wiki/Calibration-Transfer:-Direct-Standardization-Demo)
-  - [Curve Resolution](https://github.com/caseykneale/ChemometricsTools/wiki/Curve-Resolution:-Demo)
-  - [Stacked Interval Partial Least Squares Regression](https://github.com/caseykneale/ChemometricsTools/wiki/Stacked-Interval-Partial-Least-Squares:-A-Demo)
-## Doc's with Tutorials
-  - [Classification](https://github.com/caseykneale/ChemometricsTools/wiki/Classification-Methods)
-  - [Training](https://github.com/caseykneale/ChemometricsTools/wiki/Training-Methods)
-  - [Transforms](https://github.com/caseykneale/ChemometricsTools/wiki/Transformations)
-  - [Pipelines](https://github.com/caseykneale/ChemometricsTools/wiki/Pipelines)
+## Tutorials/Demonstrations:
+  - [Transforms](https://caseykneale.github.io/ChemometricsTools/Demos/Transforms/)
+  - [Pipelines](https://caseykneale.github.io/ChemometricsTools/Demos/Pipelines/)
+  - [Classification](https://caseykneale.github.io/ChemometricsTools/Demos/ClassificationExample/)
+  - [Regression](https://caseykneale.github.io/ChemometricsTools/Demos/RegressionExample/)
+  - [Calibration Transfer: Direct Standardization](https://caseykneale.github.io/ChemometricsTools/Demos/CalibXfer/)
+  - [Stacked Interval Partial Least Squares Regression](https://caseykneale.github.io/ChemometricsTools/Demos/SIPLS/)
+  - [Curve Resolution](https://caseykneale.github.io/ChemometricsTools/Demos/CurveResolution/)
 
 ## Ethos
 Dependencies: Only base libraries (LinearAlgebra, StatsBase, Statistics, Plots) etc will be required. This is for longevity, and to provide a fast precompilation time. As wonderful as it is that other packages exist to do some of the internal operations this one needs, we won't have to worry about a breaking change made by an external author working out the kinks in a separate package. I want this to be long-term reliable without much upkeep. I'm a busy guy working a day job; I write this to warm-up before work, and unwind afterwards.
