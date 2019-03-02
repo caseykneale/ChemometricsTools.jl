@@ -33,6 +33,198 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "Demos/Transforms/#",
+    "page": "Transforms",
+    "title": "Transforms",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "Demos/Transforms/#Transforms-Demo-1",
+    "page": "Transforms",
+    "title": "Transforms Demo",
+    "category": "section",
+    "text": "Two design choices introduced in this package are \"Transformations\" and \"Pipelines\". Transformations are the smallest unit of a \'pipeline\'. They are simply functions that have a deterministic inverse. For example if we mean center our data and store the mean vector, we can always invert the transform by adding the mean back to the data. That\'s effectively what transforms do, they provide to and from common data transformations used in chemometrics.Let\'s start with a trivial example with faux data where a random matrix of data is center scaled and divided by the standard deviation(StandardNormalVariate):FauxSpectra1 = randn(10,200);\nSNV = StandardNormalVariate(FauxSpectra1);\nTransformed1 = SNV(FauxSpectra1);As can be seen the application of the StandardNormalVariate() function returns an object that is used to transform future data by the data it was created from. This object can be applied to new data as follows,FauxSpectra2 = randn(10,200);\nTransformed2 = SNV(FauxSpectra2);Transformations can also be inverted (with-in numerical noise). For example,RMSE(FauxSpectra1, SNV(Transformed1; inverse = true)) < 1e-14\nRMSE(FauxSpectra2, SNV(Transformed2; inverse = true)) < 1e-14We can use transformations to treat data from multiple sources the same way. This helps mitigate user-error for cases where test data is scaled based on training data, calibration transfer, etc. Pipelines are a logical and convenient extension of transformations."
+},
+
+{
+    "location": "Demos/Pipelines/#",
+    "page": "Pipelines",
+    "title": "Pipelines",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "Demos/Pipelines/#Pipelines-Demo-1",
+    "page": "Pipelines",
+    "title": "Pipelines Demo",
+    "category": "section",
+    "text": "Multiple Transformations can be easily chained together and stored using \"Pipelines\". Preprocessing methods, or really any univariate function may be included in a pipeline, but that will likely mean it can no longer be inverted. Pipelines are basically convenience functions, but are somewhat flexible and can be used for automated searches,PreprocessPipe = Pipeline(FauxSpectra1, RangeNorm, Center);\nProcessed = PreprocessPipe(FauxSpectra1);Of course pipelines of transforms can also be inverted,RMSE( FauxSpectra1, PreprocessPipe(Processed; inverse = true) ) < 1e-14Pipelines can also be created and executed as an \'in place\' operation for large datasets. This has the advantage that your data is transformed immediately without making copies in memory. This may be useful for large datasets and memory constrained environments. WARNING: be careful to only run the pipeline call or its inverse once! It is much safer to use the not inplace function outside of a REPL/script environment.FauxSpectra = randn(10,200);\nOriginalCopy = copy(FauxSpectra);\nInPlacePipe = PipelineInPlace(FauxSpectra, Center, Scale);See without returning the data or an extra function call we have transformed it according to the pipeline as it was instantiated...FauxSpectra == OriginalCopy\n#Inplace transform the data back\nInPlacePipe(FauxSpectra; inverse = true)\nRMSE( OriginalCopy, FauxSpectra ) < 1e-14Pipelines are kind of flexible. We can put nontransform (operations that cannot be inverted) preprocessing steps in them as well. In the example below the first derivative is applied to the data, this irreversibly removes a column from the data,PreprocessPipe = Pipeline(FauxSpectra1, FirstDerivative, RangeNorm, Center);\nProcessed = PreprocessPipe(FauxSpectra1);\n#This should be equivalent to the following...\nSpectraDeriv = FirstDerivative(FauxSpectra1);\nAlternative = Pipeline(SpectraDeriv , RangeNorm, Center);\nProcessed == Alternative(SpectraDeriv)Great right? Well what happens if we try to do the inverse of our pipeline with an irreversible function (First Derivative) in it?PreprocessPipe(Processed; inverse = true)Well we get an assertion error."
+},
+
+{
+    "location": "Demos/Pipelines/#Automated-Pipeline-Example-1",
+    "page": "Pipelines",
+    "title": "Automated Pipeline Example",
+    "category": "section",
+    "text": "We can take advantage of how pipelines are created; at their core they are tuples of transforms/functions. So if we can make an array of transforms and set some conditions they can be stored and applied to unseen data. A fun example of an automated transform pipeline is in the whimsical paper written by Willem Windig et. al. That paper is called \'Loopy Multiplicative Scatter Transform\'. Below I\'ll show how we can implement that algorithm here (or anything similar) with ease. Loopy MSC: A Simple Way to Improve Multiplicative Scatter Correction. Willem Windig, Jeremy Shaver, Rasmus Bro. Applied Spectroscopy. 2008. Vol 62, issue: 10, 1153-1159First let\'s look at the classic Diesel data before applying Loopy MSC (Image: rawspectra)Alright, there is scatter, let\'s go for it,RealSpectra = convert(Array, CSV.read(\"/diesel_spectra.csv\"));\nCurrent = RealSpectra;\nLast = zeros(size(Current));\nTransformArray = [];\nwhile RMSE(Last, Current) > 1e-5\n    if any(isnan.(Current))\n        break\n    else\n        push!(TransformArray, MultiplicativeScatterCorrection( Current ) )\n        Last = Current\n        Current = TransformArray[end](Last)\n    end\nend\n#Now we can make a pipeline object from the array of stored transforms\nLoopyPipe = Pipeline( Tuple( TransformArray ) );For a sanity check we can ensure the output of the algorithm  is the same as the new pipeline so it can be applied to new data.Current == LoopyPipe(RealSpectra)Looks like our automation driven pipeline is equivalent to the loop it took to make it. More importantly did we remove scatter after 3 automated iterations of MSC? (Image: loopymsc)Yes, yes we did. Pretty easy right?"
+},
+
+{
+    "location": "Demos/ClassificationExample/#",
+    "page": "Classification",
+    "title": "Classification",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "Demos/ClassificationExample/#Classification-Demo:-1",
+    "page": "Classification",
+    "title": "Classification Demo:",
+    "category": "section",
+    "text": "There\'s also a bunch of tools for changes of basis such as: principal components analysis, linear discriminant analysis, orthogonal signal correction, etc. With those kinds of tools we can reduce the dimensions of our data and make classes more separable. So separable that trivial classification methods like a Gaussian discriminant can get us pretty good results. Below is an example analysis performed on mid-infrared spectra of strawberry purees and adulterated strawberry purees (yes fraudulent food items are a common concern).(Image: Raw)Use of Fourier transform infrared spectroscopy and partial least squares regression for the detection of adulteration of strawberry purées. J K Holland, E K Kemsley, R H Wilsonsnv = StandardNormalVariate(Train);\nTrain_pca = PCA(snv(Train);; Factors = 15);\n\nEnc = LabelEncoding(TrnLbl);\nHot = ColdToHot(TrnLbl, Enc);\n\nlda = LDA(Train_pca.Scores , Hot);\nclassifier = GaussianDiscriminant(lda, TrainS, Hot)\nTrainPreds = classifier(TrainS; Factors = 2);(Image: LDA of PCA)Cool right? Well, we can now apply the same transformations to the test set and pull some multivariate Gaussians over the train set classes to see how we do identifying fraudulent puree\'s,TestSet = Train_pca(snv(Test));\nTestSet = lda(TestSet);\nTestPreds = classifier(TestS; Factors  = 2);\nMulticlassStats(TestPreds .- 1, TstLbl , Enc)If you\'re following along you\'ll get ~92% F-measure. Not bad. You may also notice this package has a nice collection of performance metrics for classification, regression, and clustering. Anyways, I\'ve gotten 100%\'s with more advanced methods but this is a cute way to show off some of the tools currently available."
+},
+
+{
+    "location": "Demos/RegressionExample/#",
+    "page": "Regression",
+    "title": "Regression",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "Demos/RegressionExample/#Regression/Training-Demo:-1",
+    "page": "Regression",
+    "title": "Regression/Training Demo:",
+    "category": "section",
+    "text": "There are a few built-in\'s to make training models a snap. Philosophically I decided, that making wrapper functions to perform Cross Validation is not fair to the end-user. There are many cases where we want specialized CV\'s but we don\'t want to write nested for-loops that run for hours then debug them... Similarly, most people don\'t want to spend their time hacking into rigid GridSearch objects, or scouring stack exchange / package documentation. Especially when it\'d be easier to write an equivalent approach that is self documenting from scratch. Instead, I used Julia\'s iterators to make K-Fold validations convenient, below is an example Partial Least Squares Regression CV.#Split our data into two parts one 70% one 30%\n((TrainX,TrainY),(TestX, TestY)) = SplitByProportion(x, yprop, 0.7);\n#Preprocess it\nMSC_Obj = MultiplicativeScatterCorrection(TrainX);\nTrainX = MSC_Obj(TrainX);\nTestX = MSC_Obj(TestX);\n#Begin CV!\nLatentVariables = 22\nErr = repeat([0.0], LatentVariables);\n#Note this is the Julian way to nest two loops\nfor Lv in 1:LatentVariables, (Fold, HoldOut) in KFoldsValidation(20, TrainX, TrainY)\n    PLSR = PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv)\n    Err[Lv] += SSE( PLSR(HoldOut[1]), HoldOut[2] )\nend\nscatter(Err, xlabel = \"Latent Variables\", ylabel = \"Cumulative SSE\", labels = [\"Error\"])\nBestLV = argmin(Err)\nPLSR = PartialLeastSquares(TrainX, TrainY; Factors = BestLV)\nRMSE( PLSR(TestX), TestY )(Image: 20folds)That\'s great right? but, hey that was kind of slow. Knowing what we know about ALS based models, we can do the same operation in linear time with respect to latent factors by computing the most latent variables first and only recomputing the regression coefficients. An example of this is below,Err = repeat([0.0], 22);\nModels = []\nfor Lv in 22:-1:1\n    for ( i, ( Fold, HoldOut ) ) in enumerate(KFoldsValidation(20, TrainX, TrainY))\n        if Lv == 22\n            push!( Models, PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv) )\n        end\n        Err[Lv] += SSE( Models[i]( HoldOut[1]; Factors = Lv), HoldOut[2] )\n    end\nendThis approach is ~5 times faster on a single core( < 2 seconds), pours through 7Gb less data, and makes 1/5th the allocations (on this dataset at least). If you wanted you could distribute the inner loop (using Distributed.jl) and see drastic speed ups!"
+},
+
+{
+    "location": "Demos/SIPLS/#",
+    "page": "SIPLS",
+    "title": "SIPLS",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "Demos/SIPLS/#Stacked-Interval-Partial-Least-Squares-1",
+    "page": "SIPLS",
+    "title": "Stacked Interval Partial Least Squares",
+    "category": "section",
+    "text": "Here\'s a post I kind of debated making... I once read a paper stating that SIPLS was \"too complicated\" to implement, and used that as an argument to favour other methods. SIPLS is actually pretty simple(almost embarrassingly so), highly effective, and it has statistical guarantees. What\'s complicated about SIPLS is providing it to end-users without shielding them from the internals, or leaving them with a pile of hard to read low level code. I decided, the way to go for \'advanced\' methods, is to just provide convenience functions. Make life easier for an end-user that knows what they are doing. Demo\'s are for helping ferry people along and showing at least one way to do things, but there\'s no golden ticket one-line generic code-base here. Providing it, would be a mistake to people who would actually rely on using this sort of method..."
+},
+
+{
+    "location": "Demos/SIPLS/#Steps-to-SISPLS-1",
+    "page": "SIPLS",
+    "title": "4-Steps to SISPLS",
+    "category": "section",
+    "text": "Break our spectra\'s columnspace into invervals (the size can be CV\'d but below I just picked one), then we CV PLS models inside each interval.\nOn a hold out set(or via pooling), we find the prediction error of our intervals\nWe reciprocally weight our errors\nWe apply those weights to future predictions via multiplication and sum the result of each interval model."
+},
+
+{
+    "location": "Demos/SIPLS/#.-Crossvalidate-the-interval-models-1",
+    "page": "SIPLS",
+    "title": "1. Crossvalidate the interval models",
+    "category": "section",
+    "text": "MaxLvs = 10\nCVModels = []\nCVErr = []\nIntervals = MakeIntervals( size(calib1)[2], 30 );\nfor interval in Intervals\n    IntervalError = repeat([0.0], MaxLvs);\n    Models = []\n\n    for Lv in MaxLvs:-1:1\n        for ( i, ( Fold, HoldOut ) ) in enumerate(KFoldsValidation(10, calib1, caliby))\n            if Lv == MaxLvs\n                KFoldModel = PartialLeastSquares(Fold[1][:,interval], Fold[2]; Factors = Lv)\n                push!( Models, KFoldModel )\n            end\n\n            Predictions = Models[i]( HoldOut[1][:, interval]; Factors = Lv)\n            IntervalError[Lv] += SSE( Predictions, HoldOut[2])\n        end\n    end\n    OptimalLv = argmin(IntervalError)\n    push!(CVModels, PartialLeastSquares(calib1[:, interval], caliby; Factors = OptimalLv) )\n    push!(CVErr,    IntervalError[OptimalLv] )\nendFor fun, we can view the weights of each intervals relative error on the CV\'d spectra with this lovely convenience function,IntervalOverlay(calib1, Intervals, CVErr)(Image: CVERR)"
+},
+
+{
+    "location": "Demos/SIPLS/#.-Validate-1",
+    "page": "SIPLS",
+    "title": "2. Validate",
+    "category": "section",
+    "text": "VErr = []\nIntervalError = repeat([0.0], MaxLvs);\nfor (model, interval) in enumerate(Intervals)\n    push!(VErr, SSE( CVModels[model](valid1[:,interval]), validy) )\nend"
+},
+
+{
+    "location": "Demos/SIPLS/#.-Make-reciprocal-weights-1",
+    "page": "SIPLS",
+    "title": "3. Make reciprocal weights",
+    "category": "section",
+    "text": "StackedWeights = stackedweights(VErr);We can recycle that same plot recipe to observe what this weighting function does for us. The weights basically make intervals with lower error contribute more to the final stacked(additive) model, (Image: OS)"
+},
+
+{
+    "location": "Demos/SIPLS/#.-Pool-predictions-on-test-set-and-weight-results-1",
+    "page": "SIPLS",
+    "title": "4. Pool predictions on test set and weight results",
+    "category": "section",
+    "text": "Results = zeros(size(tst1)[1]);\nfor (model, interval) in enumerate(Intervals)\n    Results += CVModels[model](tst1[:,interval]) .* StackedWeights[model]\nend\n\nRMSE( Results, tsty)> 4.09So the RMSE is about 0.6 units less then that which we can observe from the same dataset using base PLSR in my Calibration Transfer Demo. This is actually really fast to run too. Every line in this script (aside from importing CSV) runs in roughly ~1-2 seconds."
+},
+
+{
+    "location": "Demos/CalibXfer/#",
+    "page": "Calibration Transfer",
+    "title": "Calibration Transfer",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "Demos/CalibXfer/#Direct-Standardization-Demo-1",
+    "page": "Calibration Transfer",
+    "title": "Direct Standardization Demo",
+    "category": "section",
+    "text": "The point of this demo is to basically show off that ChemometricsTools contains some base methods for Calibration Transfer. If you don\'t know what that is, it\'s basically the subset of Chemometrics that focuses on transfer learning data collected on one instrument to another. This saves time and money for instruments that need to be calibrated but perform routine analysis\'.This demo uses the 2002 pharmaceutical shoot-out data and predicts upon the first property value(pretty sure its API content).First let\'s look at our linear sources of variation to get a feel for the data,pca = PCA(calib1; Factors = 20);\nplot(cumsum(ExplainedVariance(pca)), title = \"Scree plot\", xlabel = \"PC\'s\", ylabel = \"Variance Explained\")(Image: scree)Yea so this isn\'t a true Scree plot, but it has the same information...Looks like after ~5 factors we have garbage w.r.t X decompositions, good to know. So I\'d venture to guess a maximum of 15 Latent Variables for a PLS-1 regression is more than a good enough cut-off for cross-validaiton.MaxLvs = 15\nErr = repeat([0.0], MaxLvs);\nModels = []\nfor Lv in MaxLvs:-1:1\n    for ( i, ( Fold, HoldOut ) ) in enumerate(KFoldsValidation(10, calib1, caliby))\n        if Lv == MaxLvs\n            push!( Models, PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv) )\n        end\n        Err[Lv] += SSE( Models[i]( HoldOut[1]; Factors = Lv), HoldOut[2] )\n    end\nend\n\nscatter(Err, xlabel = \"Latent Variables\", ylabel = \"Cumulative SSE\", labels = [\"Error\"])(Image: cv)Great looks like we can get by with 5-8 LV\'s. Let\'s fine tune our Latent Variables based on the hold out set to make our final PLSR model.PLSR1 = PartialLeastSquares(calib1, caliby; Factors = 8);\nfor vLv in 5:8\n    println(\"LV: \", vLv)\n    println(\"RMSEV: \", RMSE(PLSR1(valid1; Factors = vLv), validy))\nendKind of hacky, but it works fine, we see that 7 factors is optimal on the hold out set so that\'s what we\'ll use from here on,println(\"RMSEP: \", RMSE(PLSR1(tst1; Factors = 7), tsty))> RMSEP: 4.76860402876937"
+},
+
+{
+    "location": "Demos/CalibXfer/#Getting-to-the-point-1",
+    "page": "Calibration Transfer",
+    "title": "Getting to the point",
+    "category": "section",
+    "text": "So why do we need to do a calibration transfer? Same chemical, same type of measurement, even the same wavelengths recorded. Hah, learn basic analytical chemistry, or at least, do the naive thing, apply this model to the measurements on instrument 2. See what error you get.println(\"RMSEP: \", RMSE(PLSR1(tst2; Factors = 7), tsty))>RMSEP: 10.303430504546292The prediction error is about 2 fold, in this case it\'d be hard to argue this is a useful model at all. Especially if you check the residuals. It\'s pretty clear the contributions of variance across multiple instruments are not the same in this case."
+},
+
+{
+    "location": "Demos/CalibXfer/#Now-for-calibration-transfer!-1",
+    "page": "Calibration Transfer",
+    "title": "Now for calibration transfer!",
+    "category": "section",
+    "text": "So let\'s use DirectStandardization. First we\'ll find the optimal number of DirectStandardization Factors to include in our model. We can do that on our hold out set and this should be very fast because we have a hold out set, so we can do this with some inefficient code.Factors = 1:15\nErr = repeat([0.0], length(Factors));\nfor F in Factors\n    DS2to1 = DirectStandardization(calib1, calib2; Factors = F);\n    cds2to1 = DS2to1(valid2; Factors = F)\n    Err[F] = RMSE( PLSR1(cds2to1; Factors = 7), validy )\nend\nscatter(Err, title = \"Transfered Model Validation Error\", xlabel = \"Latent Factors\",\n        ylabel = \"RMSE\", labels = [\"Error\"])(Image: cv)OptimalDSFactor = argmin(Err)\nDS2to1 = DirectStandardization(calib1, calib2; Factors = OptimalDSFactor);\ntds2to1 = DS2to1(tst2; Factors = OptimalDSFactor);Looks like 8 Factors in the DS transfer is pretty good. Lets see how the transferred data compares on the prediction set using the same model,println(\"RMSEP: \", RMSE(PLSR1(tds2to1; Factors = 7), tsty))> RMSEP: 5.693023386113084Viola... So in conclusion we can transform the data from instrument 2 to be similar to that of instrument 1. The errors we see are effectively commensurate between the data sources with this transform, and without it the error is about 2x greater. Maybe the main point here is \"look ChemometricsTools has some calibration transfer methods and the tools included work\". OSC is also included, and maybe by the time you\'re reading this a few others."
+},
+
+{
+    "location": "Demos/CurveResolution/#",
+    "page": "Curve Resolution",
+    "title": "Curve Resolution",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "Demos/CurveResolution/#Curve-Resolution-Demo-1",
+    "page": "Curve Resolution",
+    "title": "Curve Resolution Demo",
+    "category": "section",
+    "text": "ChemometricsTools has some curve resolution methods baked in. So far NMF, SIMPLISMA, and MCR-ALS are included. If you aren\'t familiar with them, they are used to extract spectral and concentration estimates from unknown mixtures in chemical signals. Below is an example of spectra which are composed of signals from a mixture of a 3 components. I could write a volume analyzing this simple set, but this is just a show-case of some methods and how to call them, what kind of results they might give you. The beauty of this example is that, we know what is in it, in a forensic or real-world situation we won\'t know what is in it, and we have to rely on domain knowledge, physical reasoning, and metrics to determine the validity of our results.Anyways, because we know, the pure spectra look like the following: (Image: pure)Note: There are three components (water, acetic acid, methanol), but their spectra were collected in duplicate.And the concentration profiles of the components follow the following simplex design, (Image: pureC)But the models we are using will only see the following (no pure components) (Image: impure)Raw = CSV.read(\"/triliq.csv\");\nMixture = collect(convert(Array, Raw)[:,1:end]);\npure = [10,11,20,21,28,29];\nPURE = Mixture[pure,:];\nimpure = [collect(1:9); collect(12:19);collect(22:27)];\nMixture = Mixture[impure,:];Great, so now let\'s run NMF, SIMPLISMA, and MCR-ALS with the SIMPLISMA estimates.( W_NMF, H_NMF ) = NMF(Mixture; Factors = 3, maxiters = 300, tolerance = 1e-8)\n(C_Simplisma,S_Simplisma, vars) = SIMPLISMA(Mixture; Factors = 18)\nvars\n#Find purest variables that are not neighbors with one another\ncuts = S_Simplisma[ [1,3,17], :];\n( C_MCRALS, S_MCRALS, err ) = MCRALS(Mixture, nothing, RangeNorm(cuts\')(cuts\')\';\n                                    Factors = 3, maxiters = 10,\n                                    norm = (true, false),\n                                    nonnegative = (true, true) )(Image: NMFS)(Image: SIMPLISMAS)(Image: MCRALSS)"
+},
+
+{
+    "location": "Demos/CurveResolution/#Spectral-Recovery-Discussion-(Results-by-Eye):-1",
+    "page": "Curve Resolution",
+    "title": "Spectral Recovery Discussion (Results by Eye):",
+    "category": "section",
+    "text": "As we can see, NMF does resolve a few components that resemble a few of the actual pure components, but it really butchers the 3rd. While SIMPLISMA does a good job, at finding spectra that look \"real\" there are characteristics missing from the true spectra. It must be stated; SIMPLISMA wasn\'t invented for NIR signals. Finding pure variables in dozens... err... hundreds of over-lapping bands isn\'t really ideal. However, MCR-ALS quickly made work of those initial SIMPLISMA estimates and seems to have found some estimates that somewhat closely resemble the pure components."
+},
+
+{
+    "location": "Demos/CurveResolution/#Concentration-Profile-Discussion-(Results-by-Eye):-1",
+    "page": "Curve Resolution",
+    "title": "Concentration Profile Discussion (Results by Eye):",
+    "category": "section",
+    "text": "(Image: NMFC)(Image: SIMPLISMAC)(Image: MCRALSC)SIMPLISMA basically botched this dataset with regards to the concentration profiles. While NMF and MCR-ALS do quite good. Of course preprocessing can help here, and tinkering too. Ultimately not bad, given the mixture components. I do have a paper that shows another approach to this problem doubtful I\'d be allowed to rewrite the code, I think my university owns it!Casey Kneale, Steven D. Brown, Band target entropy minimization and target partial least squares for spectral recovery and quantitation, Analytica Chimica Acta, Volume 1031, 2018, Pages 38-46, ISSN 0003-2670, https://doi.org/10.1016/j.aca.2018.07.054."
+},
+
+{
     "location": "man/Preprocess/#",
     "page": "Preprocessing",
     "title": "Preprocessing",

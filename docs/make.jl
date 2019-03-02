@@ -12,6 +12,15 @@ makedocs(
 	authors = "Casey Kneale",
     doctest = true,
 	pages = ["Home" => "index.md",
+			"Demos" => Any[
+						"Transforms" => "Demos/Transforms.md",
+						"Pipelines" => "Demos/Pipelines.md",
+						"Classification" => "Demos/ClassificationExample.md",
+						"Regression" => "Demos/RegressionExample.md",
+						"SIPLS" => "Demos/SIPLS.md",
+						"Calibration Transfer" => "Demos/CalibXfer.md",
+						"Curve Resolution" => "Demos/CurveResolution.md",
+					   ],
 			 "API" => Any[
 			 			 "Preprocessing" => "man/Preprocess.md",
 			 			 "Transformations/Pipelines" => "man/Transformations.md",
