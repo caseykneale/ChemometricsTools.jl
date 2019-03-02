@@ -5,9 +5,13 @@ struct PCA
     algorithm::String
 end
 
-#NIPALS based PCA.
-#Kind of advantageous is you don't want to outright compute all latent variables.
-#Kind of slow, but a must for a chemometrics package...
+"""
+    PCA_NIPALS(X; Factors = minimum(size(X)) - 1, tolerance = 1e-7, maxiters = 200)
+
+Compute's a PCA from `x` using the NIPALS algorithm with a user specified number of latent variables(`Factors`).
+The tolerance is the minimum change in the F norm before ceasing execution. Returns a PCA object.
+
+"""
 function PCA_NIPALS(X; Factors = minimum(size(X)) - 1, tolerance = 1e-7, maxiters = 200)
     tolsq = tolerance * tolerance
     #Instantiate some variables up front for performance...
@@ -43,14 +47,33 @@ function PCA_NIPALS(X; Factors = minimum(size(X)) - 1, tolerance = 1e-7, maxiter
 end
 
 #SVD based PCA
+
+"""
+    PCA(X; Factors = minimum(size(X)) - 1)
+
+Compute's a PCA from `x` using LinearAlgebra's SVD algorithm with a user specified number of latent variables(`Factors`).
+Returns a PCA object.
+
+"""
 function PCA(Z; Factors = minimum(size(Z)) - 1)
     svdres = LinearAlgebra.svd(Z)
     return PCA(svdres.U[:, 1:Factors], svdres.Vt[1:Factors, :], svdres.S[1:Factors], "SVD")
 end
 
-#Calling a PCA object on new data brings the new data into the PCA transforms basis...
+"""
+    (T::PCA)(Z::Array; Factors = length(T.Values), inverse = false)
+
+Calling a PCA object on new data brings the new data `Z` into or out of (`inverse` = true) the PCA basis.
+
+"""
 (T::PCA)(Z::Array; Factors = length(T.Values), inverse = false) = (inverse) ? Z * (Diagonal(T.Values[1:Factors]) * T.Loadings[1:Factors,:]) : Z * (Diagonal( 1 ./ T.Values[1:Factors]) * T.Loadings[1:Factors,:])'
 
+"""
+    ExplainedVariance(PCA::PCA)
+
+Calculates the explained variance of each singular value in a pca object.
+
+"""
 ExplainedVariance(PCA::PCA) = ( PCA.Values .^ 2 ) ./ sum( PCA.Values .^ 2 )
 
 struct LDA
@@ -59,6 +82,14 @@ struct LDA
     Values::Array
 end
 
+
+"""
+    LDA(X, Y; Factors = 1)
+
+Compute's a LinearDiscriminantAnalysis transform from `x` with a user specified number of latent variables(`Factors`).
+Returns an LDA object.
+
+"""
 function LDA(X, Y; Factors = 1)
     (Obs, ClassNumber) = size( Y )
     Variables = size( X )[ 2 ]
@@ -99,10 +130,22 @@ function LDA(X, Y; Factors = 1)
     return LDA( Scores, Loadings, ReVals[ Sorted[ Contributions][1:Factors] ] )
 end
 
+"""
+    ( model::LDA )( Z; Factors = length(model.Values) )
+
+Calling a LDA object on new data brings the new data `Z` into the LDA basis.
+
+"""
 function ( model::LDA )( Z; Factors = length(model.Values) )
      Projected = Z * model.Loadings[:,1:Factors]
 end
 
+"""
+    ExplainedVariance(lda::LDA)
+
+Calculates the explained variance of each singular value in an LDA object.
+
+"""
 ExplainedVariance(lda::LDA) = lda.Values ./ sum(lda.Values)
 
 
@@ -134,19 +177,22 @@ function CanonicalCorrelationAnalysis(A, B)
     return CanonicalCorrelationAnalysis(Aprime' * A, V = Bprime' * B, singvaldecomp.S[1 : maxrank] )
 end
 
-#Currently only for vectors...
-#Original R function by Stas_G:
-#https://stats.stackexchange.com/questions/22974/how-to-find-local-peaks-valleys-in-a-series-of-data
+"""
+    findpeaks( vY; m = 3)
+
+Finds the indices of peaks in a vector vY with a window span of `2m`.
+Original R function by Stas_G:(https://stats.stackexchange.com/questions/22974/how-to-find-local-peaks-valleys-in-a-series-of-data)
+This version is based on a C++ variant by me.
+"""
 function findpeaks( vY; m = 3)
     @assert length(size(vY)) == 1
     sze = size(vY)[1];
     (i,q) = (0,0);#generic iterator, second generic iterator
     (lb,rb) = (0,0);#left bound, right bound
     ret = [];
-
-    for i in 1:(sze-2)
+    for i in 1 : ( sze - 2 )
         #Find all regions with negative laplacian between neighbors
-        if (sign( vY[ i + 2]  - vY[ i + 1 ] ) - sign( vY[ i + 1 ]  - vY[ i ] ) ) < 0
+        if (sign( vY[ i + 2 ]  - vY[ i + 1 ] ) - sign( vY[ i + 1 ]  - vY[ i ] ) ) < 0
             #Now assess all regions with negative laplacian between neighbors...
             lb = i - m - 1;# define left bound of vector
             lb = (lb < 1) ? 1 : lb
