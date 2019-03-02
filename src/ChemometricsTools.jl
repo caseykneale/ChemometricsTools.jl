@@ -16,11 +16,11 @@ module ChemometricsTools
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
         Threshold, MulticlassThreshold, HighestVote
 
-    include("RegressionMetrics.jl")
+    include("RegressionMetrics.jl") #Has Docs
     export ME, MAE, MAPE, SSE, MSE, RMSE, SSTotal, SSReg, SSRes, RSquare,
         PearsonCorrelationCoefficient, PercentRMSE
 
-    include("DistanceMeasures.jl")
+    include("DistanceMeasures.jl") #Has Docs
     export SquareEuclideanDistance, EuclideanDistance, ManhattanDistance,
         GaussianKernel, LinearKernel, Kernel
 
@@ -56,7 +56,7 @@ module ChemometricsTools
     include("Trees.jl") #Has Docs: Omitted StumpOrNode & StumpOrNodeRegress
     export OneHotOdds, entropy, gini, ssd, ClassificationTree, RegressionTree, CART
 
-    include("Ensembles.jl")
+    include("Ensembles.jl") #Has Docs
     export MakeInterval, MakeIntervals, stackedweights, RandomForest
 
     include("Sampling.jl")

@@ -33,6 +33,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.Kernel-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.Kernel",
+    "category": "method",
+    "text": "(K::Kernel)(X)\n\nThis is a convenience function to allow for one-line construction of kernels from a Kernel object K and new data X.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.LDA-Tuple{Any,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.LDA",
@@ -86,6 +94,22 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.PCA",
     "category": "method",
     "text": "(T::PCA)(Z::Array; Factors = length(T.Values), inverse = false)\n\nCalling a PCA object on new data brings the new data Z into or out of (inverse = true) the PCA basis.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.RandomForest",
+    "page": "Documentation",
+    "title": "ChemometricsTools.RandomForest",
+    "category": "type",
+    "text": "RandomForest(x, y, mode = :classification; gainfn = entropy, trees = 50, maxdepth = 10,  minbranchsize = 5, samples = 0.7, maxvars = nothing)\n\nReturns a classification (mode = :classification) or a regression (mode = :regression) random forest model. The gainfn can be entropy or gini for classification or ssd for regression. If the number of maximumvars is not provided it will default to sqrt(variables) for classification or variables/3 for regression.\n\nThe returned object can be used for inference by calling new data on the object as a function.\n\nBreiman, L. Machine Learning (2001) 45: 5. https://doi.org/10.1023/A:1010933404324\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.RandomForest-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.RandomForest",
+    "category": "method",
+    "text": "(RF::RandomForest)(X)\n\nReturns bagged prediction vector of random forest model.\n\n\n\n\n\n"
 },
 
 {
@@ -185,6 +209,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.EuclideanDistance-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.EuclideanDistance",
+    "category": "method",
+    "text": "EuclideanDistance(X, Y)\n\nReturns the euclidean distance matrix of X and Y such that the columns are the samples in Y.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.EuclideanDistance-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.EuclideanDistance",
+    "category": "method",
+    "text": "EuclideanDistance(X)\n\nReturns the Grahm aka the euclidean distance matrix of X.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.ExplainedVariance-Tuple{LDA}",
     "page": "Documentation",
     "title": "ChemometricsTools.ExplainedVariance",
@@ -217,6 +257,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.GaussianKernel-Tuple{Any,Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.GaussianKernel",
+    "category": "method",
+    "text": "GaussianKernel(X, Y, sigma)\n\nCreates a Gaussian/RBF kernel from Arrays X and Y with hyperparameter sigma.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.GaussianKernel-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.GaussianKernel",
+    "category": "method",
+    "text": "GaussianKernel(X, sigma)\n\nCreates a Gaussian/RBF kernel from Array X using hyperparameter sigma.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.Hotelling-Tuple{Any,PCA}",
     "page": "Documentation",
     "title": "ChemometricsTools.Hotelling",
@@ -238,6 +294,86 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.Limits",
     "category": "method",
     "text": "Limits(P::ewma; k = 3.0)\n\nThis function returns the upper and lower control limits with a k span of variance for an EWMA object P. \n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.LinearKernel-Tuple{Any,Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.LinearKernel",
+    "category": "method",
+    "text": "LinearKernel(X, Y, c)\n\nCreates a Linear kernel from Arrays X and Y with hyperparameter C.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.LinearKernel-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.LinearKernel",
+    "category": "method",
+    "text": "LinearKernel(X, c)\n\nCreates a Linear kernel from Array X and hyperparameter C.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.MAE-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.MAE",
+    "category": "method",
+    "text": "MAE( y, yhat )\n\nCalculates Mean Average Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.MAPE-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.MAPE",
+    "category": "method",
+    "text": "MAPE( y, yhat )\n\nCalculates Mean Average Percent Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.ME-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.ME",
+    "category": "method",
+    "text": "ME( y, yhat )\n\nCalculates Mean Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.MSE-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.MSE",
+    "category": "method",
+    "text": "MSE( y, yhat )\n\nCalculates Mean Squared Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.MakeIntervals",
+    "page": "Documentation",
+    "title": "ChemometricsTools.MakeIntervals",
+    "category": "function",
+    "text": "MakeIntervals( columns::Int, intervalsize::Union{Array, Tuple} = [20, 50, 100] )\n\nCreates an Dictionary whose key is the interval size and values are an array of intervals from the range: 1 - columns of size intervalsize.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.MakeIntervals",
+    "page": "Documentation",
+    "title": "ChemometricsTools.MakeIntervals",
+    "category": "function",
+    "text": "MakeIntervals( columns::Int, intervalsize::Int = 20 )\n\nReturns an 1-Array of intervals from the range: 1 - columns of size intervalsize.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.ManhattanDistance-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.ManhattanDistance",
+    "category": "method",
+    "text": "ManhattanDistance(X, Y)\n\nReturns the Manhattan distance matrix of X and Y such that the columns are the samples in Y.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.ManhattanDistance-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.ManhattanDistance",
+    "category": "method",
+    "text": "ManhattanDistance(X)\n\nReturns the Manhattan distance matrix of X.\n\n\n\n\n\n"
 },
 
 {
@@ -273,6 +409,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.PearsonCorrelationCoefficient-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.PearsonCorrelationCoefficient",
+    "category": "method",
+    "text": "PearsonCorrelationCoefficient( y, yhat )\n\nCalculates The Pearson Correlation Coefficient from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.PercentRMSE-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.PercentRMSE",
+    "category": "method",
+    "text": "PercentRMSE( y, yhat )\n\nCalculates Percent Root Mean Squared Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.PerfectSmoother-Tuple{Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.PerfectSmoother",
@@ -289,6 +441,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.RMSE-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.RMSE",
+    "category": "method",
+    "text": "RMSE( y, yhat )\n\nCalculates Root Mean Squared Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.RSquare-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.RSquare",
+    "category": "method",
+    "text": "RSquare( y, yhat )\n\nCalculates R^2 from Y and YHat\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.Remove!-Tuple{RunningMean,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.Remove!",
@@ -302,6 +470,38 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.Remove",
     "category": "method",
     "text": "Remove!(RM::RunningMean, x)\n\nRemoves an observation(x) from a RunningMean object(RM) and recuturns the new RunningMean object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.SSE-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.SSE",
+    "category": "method",
+    "text": "SSE( y, yhat )\n\nCalculates Sum of Squared Errors from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.SSReg-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.SSReg",
+    "category": "method",
+    "text": "SSReg( y, yhat )\n\nCalculates Sum of Squared Deviations due to Regression from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.SSRes-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.SSRes",
+    "category": "method",
+    "text": "SSRes( y, yhat )\n\nCalculates Sum of Squared Residuals from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.SSTotal-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.SSTotal",
+    "category": "method",
+    "text": "SSTotal( y, yhat )\n\nCalculates Total Sum of Squared Deviations from vectors Y and YHat\n\n\n\n\n\n"
 },
 
 {
@@ -358,6 +558,22 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.Shuffle",
     "category": "method",
     "text": "Shuffle( X, Y )\n\nShuffles the rows of the X and Y data without replacement. It returns a 2-Tuple of the shuffled set.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.SquareEuclideanDistance-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.SquareEuclideanDistance",
+    "category": "method",
+    "text": "SquareEuclideanDistance(X, Y)\n\nReturns the squared euclidean distance matrix of X and Y such that the columns are the samples in Y.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.SquareEuclideanDistance-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.SquareEuclideanDistance",
+    "category": "method",
+    "text": "SquareEuclideanDistance(X)\n\nReturns the squared Grahm aka the euclidean distance matrix of X.\n\n\n\n\n\n"
 },
 
 {
@@ -454,6 +670,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.ssd",
     "category": "method",
     "text": "ssd(p)\n\nCalculates the sum squared deviations from a decision tree split. Accepts a vector of values, and the mean of that  vector. Returns a scalar. A common gain function used in tree methods.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.stackedweights-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.stackedweights",
+    "category": "method",
+    "text": "stackedweights(ErrVec; power = 2)\n\nWeights stacked interval errors by the reciprocal power specified. Used for SIPLS, SISPLS, etc.\n\nNi, W. , Brown, S. D. and Man, R. (2009), Stacked partial least squares regression analysis for spectral calibration and prediction. J. Chemometrics, 23: 505-517. doi:10.1002/cem.1246\n\n\n\n\n\n"
 },
 
 {
