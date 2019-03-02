@@ -174,18 +174,36 @@ function (OSC::OrthogonalSignalCorrection)(Z; Factors = 2)
     return X
 end
 
-#Untested...
-# struct TransferByOrthogonalProjection
-#     pca::PCA
-# end
-#
-# function TransferByOrthogonalProjection(X1, X2; Factors = 1)
-#     (Obs,Vars) = size(X)
-#     OneToTwo = PCA(X1 .- X2; Factors)
-#     Instr1 = X1 * (LinearAlgebra.Diagonal( ones( Factors ) ) .- (OneToTwo.Loadings' * OneToTwo.Loadings))
-#     return OrthogonalSignalCorrection(W, Loadings, Residuals)
-# end
-#
-# function (TbOP::TransferByOrthogonalProjection)(X1; Factors = 1, inverse = false)
-#     return X1 * (LinearAlgebra.Diagonal( ones( Factors ) ) .- (TbOP.pca.Loadings[:,1:Factors]' * TbOP.pca.Loadings[:,1:Factors]))
-# end
+#Correlation Alignment for Unsupervised Domain Adaptation. Baochen Sun, Jiashi Feng, Kate Saenko
+#This transfers X1 to X2.
+#https://arxiv.org/abs/1612.01939
+struct CORAL
+    coralmat::Array
+end
+function CORAL(X1, X2; lambda = 1.0)
+    (Obs1, vars) = size(X1)
+    (Obs2, vars) = size(X2)
+    d = lambda .* LinearAlgebra.Diagonal(repeat([1], vars))
+    c1 = (1.0 / Obs1) * (X1' * X1) .+ d
+    c2 = (1.0 / Obs2) * (X2' * X2) .+ d
+    CORALXfer = c1 ^ (-1/2) * c2 ^ (1/2)
+    return CORAL(CORALXfer)
+end
+(C::CORAL)(Z) = Z * C.coralmat
+
+
+struct TransferByOrthogonalProjection
+    Factors::Int
+    vars::Int
+    pca::PCA
+end
+
+function TransferByOrthogonalProjection(X1, X2; Factors = 1)
+    (Obs,Vars) = size(X1)
+    OneToTwo = PCA(X1 .- X2; Factors = Factors)
+    return TransferByOrthogonalProjection(Factors, Vars, OneToTwo)
+end
+
+function (TbOP::TransferByOrthogonalProjection)(X1; Factors = TbOP.Factors)
+    return X1 * (LinearAlgebra.Diagonal( ones( TbOP.vars ) ) .- (TbOP.pca.Loadings[1:Factors,:]' * TbOP.pca.Loadings[1:Factors,:]))
+end
