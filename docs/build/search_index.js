@@ -49,11 +49,75 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.ClassicLeastSquares-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.ClassicLeastSquares",
+    "category": "method",
+    "text": "ClassicLeastSquares( X, Y; Bias = false )\n\nMakes a ClassicLeastSquares regression model of the form Y = AX with or without a Bias term. Returns a CLS object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.ClassicLeastSquares-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.ClassicLeastSquares",
+    "category": "method",
+    "text": "(M::ClassicLeastSquares)(X)\n\nMakes an inference from X using a ClassicLeastSquares object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.GaussianDiscriminant-Tuple{Any,Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.GaussianDiscriminant",
+    "category": "method",
+    "text": "GaussianDiscriminant(M, X, Y; Factors = nothing)\n\nReturns a GaussianDiscriminant classification model on basis object M (PCA, LDA) and one hot encoded Y.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.GaussianDiscriminant-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.GaussianDiscriminant",
+    "category": "method",
+    "text": "( model::GaussianDiscriminant )( Z; Factors = size(model.ProjectedClassMeans)[2] )\n\nReturns a 1 hot encoded inference from Z using a GaussianDiscriminant object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.GaussianNaiveBayes-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.GaussianNaiveBayes",
+    "category": "method",
+    "text": "GaussianNaiveBayes(X,Y)\n\nReturns a GaussianNaiveBayes classification model object from X and one hot encoded Y.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.GaussianNaiveBayes-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.GaussianNaiveBayes",
+    "category": "method",
+    "text": "(gnb::GaussianNaiveBayes)(X)\n\nReturns a 1 hot encoded inference from X using a GaussianNaiveBayes object.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.KFoldsValidation-Tuple{Int64,Any,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.KFoldsValidation",
     "category": "method",
     "text": "KFoldsValidation(K::Int, x, y)\n\nReturns a KFoldsValidation iterator with K folds. Because it\'s an iterator it can be used in for loops, see the tutorials for pragmatic examples. The iterator returns a 2-Tuple of 2-Tuples which have the  following form: ((TrainX,TrainY),(ValidateX,ValidateY).\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.KNN",
+    "page": "Documentation",
+    "title": "ChemometricsTools.KNN",
+    "category": "type",
+    "text": "KNN( X, Y; DistanceType::String )\n\nDistanceType can be \"euclidean\", \"manhattan\". Y Must be one hot encoded.\n\nReturns a KNN classification model.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.KNN-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.KNN",
+    "category": "method",
+    "text": "( model::KNN )( Z; K = 1 )\n\nReturns a 1 hot encoded inference from X with K Nearest Neighbors, using a KNN object.\n\n\n\n\n\n"
 },
 
 {
@@ -78,6 +142,30 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.LDA",
     "category": "method",
     "text": "( model::LDA )( Z; Factors = length(model.Values) )\n\nCalling a LDA object on new data brings the new data Z into the LDA basis.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.LSSVM-Tuple{Any,Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.LSSVM",
+    "category": "method",
+    "text": "LSSVM( X, Y, Penalty; KernelParameter = 0.0, KernelType = \"linear\" )\n\nMakes a LSSVM model of the form Y = AK with a bias term using a user specified Kernel(\"Linear\", or \"Guassian\") and has an L2 Penalty. Returns a LSSVM Wrapper for a CLS object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.LSSVM-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.LSSVM",
+    "category": "method",
+    "text": "(M::LSSVM)(X)\n\nMakes an inference from X using a LSSVM object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.LogisticRegression-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.LogisticRegression",
+    "category": "method",
+    "text": "( model::LogisticRegression )( X )\n\nReturns a 1 hot encoded inference from X using a LogisticRegression object.\n\n\n\n\n\n"
 },
 
 {
@@ -121,11 +209,43 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.PartialLeastSquares-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.PartialLeastSquares",
+    "category": "method",
+    "text": "PartialLeastSquares( X, Y; Factors = minimum(size(X)) - 2, tolerance = 1e-8, maxiters = 200 )\n\nReturns a PartialLeastSquares regression model object from arrays X and Y.\n\nPARTIAL LEAST-SQUARES REGRESSION: A TUTORIAL PAUL GELADI and BRUCE R.KOWALSKI. Analytica Chimica Acta, 186, (1986) PARTIAL LEAST-SQUARES REGRESSION:\nMartens H., NÊs T. Multivariate Calibration. Wiley: New York, 1989.\nRe-interpretation of NIPALS results solves PLSR inconsistency problem. Rolf Ergon. Published in Journal of Chemometrics 2009; Vol. 23/1: 72-75\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.PartialLeastSquares-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.PartialLeastSquares",
+    "category": "method",
+    "text": "(M::PartialLeastSquares)\n\nMakes an inference from X using a PartialLeastSquares object.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.Particle-Tuple{Any,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.Particle",
     "category": "method",
     "text": "Particle(ProblemBounds, VelocityBounds)\n\nDefault constructor for a Particle object. It creates a random unformly distributed particle within the specified ProblemBounds, and limits it\'s velocity to the specified VelocityBounds.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.PrincipalComponentRegression-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.PrincipalComponentRegression",
+    "category": "method",
+    "text": "(M::PrincipalComponentRegression)( X )\n\nMakes an inference from X using a PrincipalComponentRegression object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.PrincipalComponentRegression-Tuple{PCA,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.PrincipalComponentRegression",
+    "category": "method",
+    "text": "PrincipalComponentRegression(PCAObject, Y )\n\nMakes a PrincipalComponentRegression model object from a PCA Object and property value Y.\n\n\n\n\n\n"
 },
 
 {
@@ -150,6 +270,22 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.RandomForest",
     "category": "method",
     "text": "(RF::RandomForest)(X)\n\nReturns bagged prediction vector of random forest model.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.RidgeRegression-Tuple{Any,Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.RidgeRegression",
+    "category": "method",
+    "text": "RidgeRegression( X, Y, Penalty; Bias = false )\n\nMakes a RidgeRegression model of the form Y = AX with or without a Bias term and has an L2 Penalty. Returns a CLS object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.RidgeRegression-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.RidgeRegression",
+    "category": "method",
+    "text": "(M::RidgeRegression)(X)\n\nMakes an inference from X using a RidgeRegression object which wraps a ClassicLeastSquares object.\n\n\n\n\n\n"
 },
 
 {
@@ -225,6 +361,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.BetweenClusterSS-Tuple{ChemometricsTools.ClusterModel}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.BetweenClusterSS",
+    "category": "method",
+    "text": "BetweenClusterSS( Clustered::ClusterModel )\n\nReturns a scalar of the between cluster sum of squares for a ClusterModel object.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.ClassificationTree-Tuple{Any,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.ClassificationTree",
@@ -297,6 +441,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.ExtremeLearningMachine",
+    "page": "Documentation",
+    "title": "ChemometricsTools.ExtremeLearningMachine",
+    "category": "function",
+    "text": "ExtremeLearningMachine(X, Y, ReservoirSize = 10; ActivationFn = sigmoid)\n\nReturns a ELM regression model object from arrays X and Y, with a user specified ReservoirSize and ActivationFn.\n\nExtreme learning machine: a new learning scheme of feedforward neural networks. Guang-Bin Huang ; Qin-Yu Zhu ; Chee-Kheong Siew. 	2004 IEEE International Joint...\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.FNNLS-Tuple{Any,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.FNNLS",
@@ -353,11 +505,27 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.KMeans-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.KMeans",
+    "category": "method",
+    "text": "KMeans( X, Clusters; tolerance = 1e-8, maxiters = 200 )\n\nReturns a ClusterModel object after finding clusterings for data in X via MacQueens K-Means algorithm. Clusters is the K parameter, or the # of clusters.\n\nMacQueen, J. B. (1967). Some Methods for classification and Analysis of Multivariate Observations. Proceedings of 5th Berkeley Symposium on Mathematical Statistics and Probability. 1. University of California Press. pp. 281–297.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.KennardStone-Tuple{Any,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.KennardStone",
     "category": "method",
     "text": "KennardStone(X, TrainSamples; distance = \"euclidean\")\n\nReturns the indices of the Kennard-Stone sampled exemplars (E), and those not sampled (O) as a 2-Tuple (E, O).\n\nR. W. Kennard & L. A. Stone (1969) Computer Aided Design of Experiments, Technometrics, 111, 137-148, DOI: 10.1080/00401706.1969.10490666\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.KernelRidgeRegression-Tuple{Any,Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.KernelRidgeRegression",
+    "category": "method",
+    "text": "KernelRidgeRegression( X, Y, Penalty; KernelParameter = 0.0, KernelType = \"linear\" )\n\nMakes a KernelRidgeRegression model of the form Y = AK using a user specified Kernel(\"Linear\", or \"Guassian\") and has an L2 Penalty. Returns a KRR Wrapper for a CLS object.\n\n\n\n\n\n"
 },
 
 {
@@ -481,6 +649,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.MultinomialSoftmaxRegression-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.MultinomialSoftmaxRegression",
+    "category": "method",
+    "text": "MultinomialSoftmaxRegression(X, Y; LearnRate = 1e-3, maxiters = 1000, L2 = 0.0)\n\nReturns a LogisticRegression classification model made by Stochastic Gradient Descent.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.NMF-Tuple{Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.NMF",
@@ -509,7 +685,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Documentation",
     "title": "ChemometricsTools.PSO",
     "category": "method",
-    "text": "PSO(fn, Bounds, VelRange, Particles; tolerance = 1e-6, maxiters = 1000, InertialDecay = 0.5, PersonalWeight = 0.5, GlobalWeight = 0.5, InternalParams = nothing)\n\nMinimizes function fn with-in the user specified Bounds via a Particle Swarm Optimizer. The particle velocities are limitted to the VelRange. The number of particles are defined by the Particles parameter.\n\nReturns a Tuple of the following form: ( GlobalBestPos, GlobalBestScore, P ) Where P is an array of the particles used in the optimization.\n\n*Note: if the optimization function requires an additional constant parameter, please pass that parameter to InternalParams. This will only work if the optimized parameter(o) and constant parameter(c) for the function of interest has the following format: F(o,c) *\n\n\n\n\n\n"
+    "text": "PSO(fn, Bounds, VelRange, Particles; tolerance = 1e-6, maxiters = 1000, InertialDecay = 0.5, PersonalWeight = 0.5, GlobalWeight = 0.5, InternalParams = nothing)\n\nMinimizes function fn with-in the user specified Bounds via a Particle Swarm Optimizer. The particle velocities are limitted to the VelRange. The number of particles are defined by the Particles parameter.\n\nReturns a Tuple of the following form: ( GlobalBestPos, GlobalBestScore, P ) Where P is an array of the particles used in the optimization.\n\n*Note: if the optimization function requires an additional constant parameter, please pass that parameter to InternalParams. This will only work if the optimized parameter(o) and constant parameter(c) for the function of interest has the following format: F(o,c) *\n\nKennedy, J.; Eberhart, R. (1995). Particle Swarm Optimization. Proceedings of IEEE International Conference on Neural Networks. IV. pp. 1942–1948. doi:10.1109/ICNN.1995.488968\n\n\n\n\n\n"
 },
 
 {
@@ -713,6 +889,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.TotalClusterSS-Tuple{ChemometricsTools.ClusterModel}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.TotalClusterSS",
+    "category": "method",
+    "text": "TotalClusterSS( Clustered::ClusterModel )\n\nReturns a scalar of the total sum of squares for a ClusterModel object.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.Update!-Tuple{RunningMean,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.Update!",
@@ -769,6 +953,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.WithinClusterSS-Tuple{ChemometricsTools.ClusterModel}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.WithinClusterSS",
+    "category": "method",
+    "text": "WithinClusterSS( Clustered::ClusterModel )\n\nReturns a scalar of the within cluter sum of squares for a ClusterModel object.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.entropy-Tuple{Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.entropy",
@@ -817,6 +1009,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.sigmoid-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.sigmoid",
+    "category": "method",
+    "text": "sigmoid(x)\n\nApplies the sigmoid function to a scalar value X. Returns a scalar. Can be broad-casted over an Array.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.ssd-Tuple{Any,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.ssd",
@@ -838,6 +1038,22 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.DirectStandardizationXform",
     "category": "method",
     "text": "(DSX::DirectStandardizationXform)(X; Factors = length(DSX.pca.Values))\n\nApplies a the transform from a learned direct standardization object DSX to new data X.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.ELM-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.ELM",
+    "category": "method",
+    "text": "(M::ELM)(X)\n\nMakes an inference from X using a ELM object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.KRR-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.KRR",
+    "category": "method",
+    "text": "(M::KRR)(X)\n\nMakes an inference from X using a KRR object which wraps a ClassicLeastSquares object.\n\n\n\n\n\n"
 },
 
 {

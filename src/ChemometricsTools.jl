@@ -28,18 +28,18 @@ module ChemometricsTools
     export Transform, PipelineInPlace, Pipeline, QuantileTrim, Center, Scale,
         CenterScale, RangeNorm, Logit, BoxCox
 
-    include("Analysis.jl") #Has Docs : Missing CCA
+    include("Analysis.jl") #Has Docs : Missing CCA for now
     export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance,
         findpeaks
 
     include("AnomalyDetection.jl") #Has docs
     export OneClassJKNN, Q, Hotelling, Leverage
 
-    include("ClassificationModels.jl")
+    include("ClassificationModels.jl") #Has docs
     export KNN, GaussianDiscriminant, LogisticRegression, MultinomialSoftmaxRegression,
         GaussianNaiveBayes, HighestVoteOneHot
 
-    include("Clustering.jl")
+    include("Clustering.jl") #Has Docs
     export TotalClusterSS, WithinClusterSS, BetweenClusterSS, KMeansClustering, KMeans
 
     include("Preprocess.jl") #Has Docs
@@ -48,7 +48,7 @@ module ChemometricsTools
         StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, boxcarScaleMinMax,
         offsetToZero, ALSSmoother, PerfectSmoother, CORAL, TransferByOrthogonalProjection
 
-    include("RegressionModels.jl")
+    include("RegressionModels.jl") # Has Docs
     export ClassicLeastSquares, RidgeRegression, PrincipalComponentRegression,
         PartialLeastSquares, KernelRidgeRegression, LSSVM, ExtremeLearningMachine, PredictFn, sigmoid
 

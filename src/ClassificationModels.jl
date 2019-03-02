@@ -1,11 +1,23 @@
 abstract type ClassificationModel end
 
+"""
+    KNN( X, Y; DistanceType::String )
+
+DistanceType can be "euclidean", "manhattan". `Y` Must be one hot encoded.
+
+Returns a KNN classification model.
+"""
 struct KNN <: ClassificationModel
     X::Array{Float64,2}
     Y::Array{Float64,2}
-    DistanceType::String #Can be "euclidean", "manhattan", ...
+    DistanceType::String
 end
 
+"""
+    ( model::KNN )( Z; K = 1 )
+
+Returns a 1 hot encoded inference from `X` with `K` Nearest Neighbors, using a KNN object.
+"""
 function ( model::KNN )( Z; K = 1 )
     MostCommon = 0
     Obs = size( Z )[ 1 ]
@@ -42,6 +54,11 @@ struct GaussianDiscriminant
     ProjectedClassCovariances::Array
 end
 
+"""
+    GaussianDiscriminant(M, X, Y; Factors = nothing)
+
+Returns a GaussianDiscriminant classification model on basis object `M` (PCA, LDA) and one hot encoded `Y`.
+"""
 function GaussianDiscriminant(M, X, Y; Factors = nothing)
     (Obs, ClassNumber) = size( Y )
     Variables = size( X )[ 2 ]
@@ -62,6 +79,11 @@ function GaussianDiscriminant(M, X, Y; Factors = nothing)
     return GaussianDiscriminant(M, ClassSize, ClassSize ./ Obs, ProjClassMeans, ClassCovariances )
 end
 
+"""
+    ( model::GaussianDiscriminant )( Z; Factors = size(model.ProjectedClassMeans)[2] )
+
+Returns a 1 hot encoded inference from `Z` using a GaussianDiscriminant object.
+"""
 function ( model::GaussianDiscriminant )( Z; Factors = size(model.ProjectedClassMeans)[2] )
     MaximumLatentFactors = size(model.ProjectedClassMeans)[2]
     @assert Factors <= MaximumLatentFactors
@@ -92,10 +114,11 @@ function softmax(x)
   return exponent ./ sum(exponent)
 end
 
-#Uses SGD to do logistic regression,,,
-#BFGS might be better.. but I can add some bells and whistles here...
-#IE L1 and L2 Norms. Could call Flux, but huge over-head for a 1 line inference algorithm...
-#Bias term may be broken...
+"""
+    MultinomialSoftmaxRegression(X, Y; LearnRate = 1e-3, maxiters = 1000, L2 = 0.0)
+
+Returns a LogisticRegression classification model made by Stochastic Gradient Descent.
+"""
 function MultinomialSoftmaxRegression(X, Y; LearnRate = 1e-3, maxiters = 1000, L2 = 0.0)
     (Obs, ClassNumber) = size(Y)
     Vars = size(X)[2]
@@ -123,10 +146,12 @@ function MultinomialSoftmaxRegression(X, Y; LearnRate = 1e-3, maxiters = 1000, L
     return LogisticRegression(W, B, CostPerIt)
 end
 
-function ( model::LogisticRegression )( X )
-  return softmax( (X * model.Coefficients) .+ model.Biases )
-end
+"""
+    ( model::LogisticRegression )( X )
 
+Returns a 1 hot encoded inference from `X` using a LogisticRegression object.
+"""
+( model::LogisticRegression )( X ) = softmax( (X * model.Coefficients) .+ model.Biases )
 
 
 struct GaussianNaiveBayes
@@ -137,6 +162,11 @@ struct GaussianNaiveBayes
     Vars::Array{Float64,2}
 end
 
+"""
+    GaussianNaiveBayes(X,Y)
+
+Returns a GaussianNaiveBayes classification model object from `X` and one hot encoded `Y`.
+"""
 function GaussianNaiveBayes(X,Y)
     (obs, vars) = size(X)
     classes = size(Y)[2]
@@ -153,6 +183,11 @@ end
 
 Likelihood( x, mean, var ) = ( 1.0 ./ sqrt.( 2.0 * pi * var ) ) .* exp.( -0.5 .* ( ( (x .- mean) .^ 2.0 ) ./ var ) )
 
+"""
+    (gnb::GaussianNaiveBayes)(X)
+
+Returns a 1 hot encoded inference from `X` using a GaussianNaiveBayes object.
+"""
 function (gnb::GaussianNaiveBayes)(X)
     (obs, vars) = size(X)
     Predictions = zeros(obs, gnb.classcount)
