@@ -6,8 +6,20 @@ struct pipeline
 end
 
 #Naive Constructor...
+"""
+    Pipeline(Transforms)
+
+Constructs a transformation pipeline from vector/tuple of `Transforms`. The Transforms vector are effectively a vector of functions which transform data.
+"""
 Pipeline(Transforms) = pipeline(Transforms, false)
 
+"""
+    PipelineInPlace( X, FnStack...)
+
+Construct a pipeline object from vector/tuple of `Transforms`. The Transforms vector are effectively a vector of functions which transform data.
+This function makes "inplace" changes to the Array `X` as though it has been sent through the pipeline.
+This is more efficient if memory is a concern, but can irreversibly transform data in memory depending on the transforms in the pipeline.
+"""
 function PipelineInPlace( X, FnStack...)
     pipe = Array{Any,1}(undef, length(FnStack))
     for (i, fn) in enumerate( FnStack )
@@ -17,20 +29,26 @@ function PipelineInPlace( X, FnStack...)
     return pipeline(Tuple(pipe), true)
 end
 
+"""
+    Pipeline( X, FnStack... )
+
+Construct a pipeline object from vector/tuple of `Transforms`. The Transforms vector are effectively a vector of functions which transform data.
+"""
 function Pipeline( X, FnStack... )
     pipe = Array{Any,1}( undef, length( FnStack ))
-    #dumbyarray = randn(10, size(X)[2])
     for (i, fn) in enumerate( FnStack )
         pipe[ i ] = isa( fn, Function ) ? fn : fn( X )
-        #Someone forgot the Transform tag...
-        # if isdefined(pipe[i](dumbyarray), :invertible)
-        #     pipe[ i ] = pipe[ i ]( X )
-        # end
         X = pipe[ i ]( X )
     end
     return pipeline(Tuple( pipe ), false)
 end
 
+"""
+    (P::pipeline)(X; inverse = false)
+
+Applies the stored transformations in a pipeline object `P` to data in X.
+The inverse flag can allow for the transformations to be reversed provided they are invertible functions.
+"""
 function (P::pipeline)(X; inverse = false)
     if inverse
         if P.inplace
@@ -48,18 +66,27 @@ function (P::pipeline)(X; inverse = false)
 end
 
 
-#Pipeline(randn(3,5), X -> QuantileTrim(X; quantiles = (0.2,0.8)), RangeNorm)
-#Transforms with hyper parameters can be added via an anonymous function...
 struct QuantileTrim <: Transform
     Quantiles::Array
     invertible::Bool
 end
 
+"""
+    QuantileTrim(Z; quantiles::Tuple{Float64,Float64} = (0.05, 0.95) )
+
+Trims values above or below the specified columnwise quantiles to the quantile values themselves.
+"""
 function QuantileTrim(Z; quantiles::Tuple{Float64,Float64} = (0.05, 0.95) )
     @assert length(quantiles) == 2
     return QuantileTrim( EmpiricalQuantiles(Z, quantiles), false )
 end
 
+"""
+    (T::QuantileTrim)(X, inverse = false)
+
+Trims data in array `X` columns wise according to learned quantiles in QuantileTrim object `T`
+This function does NOT have an inverse.
+"""
 function (T::QuantileTrim)(X, inverse = false)
     if inverse == false
         for c in 1:size(X)[2]
@@ -81,16 +108,36 @@ struct Center{B} <: Transform
     invertible::Bool
 end
 
+"""
+    Center(Z)
+
+Acquires the mean of each column in `Z` provided and returns a transform that will subtract those column means from any future data.
+"""
 Center(Z) = Center( StatsBase.mean(Z, dims = 1), true )
 
-#Call with new data transforms the new data, or inverts it
+"""
+    (T::Center)(Z; inverse = false)
+
+Centers data in array `Z` column-wise according to learned mean centers in Center object `T`.
+"""
 (T::Center)(Z; inverse = false) = (inverse) ? (Z .+ T.Mean) : (Z .- T.Mean)
 
 struct Scale{B} <: Transform
     StdDev::B
     invertible::Bool
 end
+
+"""
+    Center(Z)
+
+Acquires the standard deviation of each column in `Z` provided and returns a transform that will divide those column-wise standard deviation from any future data.
+"""
 Scale(Z) = Scale( StatsBase.std(Z, dims = 1),  true )
+"""
+    (T::Scale)(Z; inverse = false)
+
+Scales data in array `Z` column-wise according to learned standard deviations in Scale object `T`.
+"""
 (T::Scale)(Z; inverse = false) = (inverse) ? (Z .* T.StdDev) : (Z ./ T.StdDev)
 
 struct CenterScale{B,C} <: Transform
@@ -99,12 +146,21 @@ struct CenterScale{B,C} <: Transform
     invertible::Bool
 end
 
+"""
+    CenterScale(Z)
+
+This is a composition of Center and Scale (in that order).
+"""
 function CenterScale(Z)
     mu = StatsBase.mean(Z, dims = 1)
     stdev = StatsBase.std(Z, dims = 1)
     CenterScale( mu, stdev, true)
 end
-#Call with new data transforms the new data, or inverts it
+"""
+    (T::CenterScale)(Z; inverse = false)
+
+Centers and Scales data in array `Z` column-wise according to learned measures of central tendancy in Scale object `T`.
+"""
 (T::CenterScale)(Z; inverse = false) = (inverse) ? ((Z .* T.StdDev) .+ T.Mean) : ((Z .- T.Mean) ./ T.StdDev)
 
 struct RangeNorm{B,C} <: Transform
@@ -112,12 +168,22 @@ struct RangeNorm{B,C} <: Transform
     Maxes::C
 end
 
+"""
+    RangeNorm( Z )
+
+Acquires the minimum and maximum of each column in `Z` provided and returns a transform that performs the following operation (Z - min(X))/(max(X) - min(X)) on any future data. This has the important effect of scaling all values observed in the range of `Z` to be between 0 and 1 with respect to each column.
+"""
 function RangeNorm( Z )
     mins = minimum(Z, dims = 1)
     maxes = maximum(Z, dims = 1)
     RangeNorm( mins, maxes)
 end
 
+"""
+    (T::RangeNorm)(Z; inverse = false)
+
+Scales and shifts data in array `Z` column-wise according to learned min-maxes in RangeNorm object `T`.
+"""
 (T::RangeNorm)(Z; inverse = false) = (inverse) ? ( (Z .* ( T.Maxes .- T.Mins ) ) .+ T.Mins) : (Z .- T.Mins) ./ ( T.Maxes .- T.Mins )
 
 struct BoxCox <: Transform
@@ -141,6 +207,13 @@ BoxCox(lambda) = return BoxCox(X; inverse = false) = begin
     return Z
 end
 
+
+"""
+    Logit(Z; inverse = false)
+
+Logit transforms every element in `Z`. The inverse may also be applied.
+*Warning: This can return Infs and NaNs if elements of Z are not suited to the transform*
+"""
 function Logit(Z; inverse = false)
     if inverse
         return (exp.(Z) ./ (1.0 .+ exp.(Z)))

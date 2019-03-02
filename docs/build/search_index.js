@@ -49,6 +49,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.Center-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.Center",
+    "category": "method",
+    "text": "(T::Center)(Z; inverse = false)\n\nCenters data in array Z column-wise according to learned mean centers in Center object T.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.CenterScale-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.CenterScale",
+    "category": "method",
+    "text": "(T::CenterScale)(Z; inverse = false)\n\nCenters and Scales data in array Z column-wise according to learned measures of central tendancy in Scale object T.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.ClassicLeastSquares-Tuple{Any,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.ClassicLeastSquares",
@@ -257,6 +273,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.QuantileTrim",
+    "page": "Documentation",
+    "title": "ChemometricsTools.QuantileTrim",
+    "category": "type",
+    "text": "(T::QuantileTrim)(X, inverse = false)\n\nTrims data in array X columns wise according to learned quantiles in QuantileTrim object T This function does NOT have an inverse.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.QuantileTrim-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.QuantileTrim",
+    "category": "method",
+    "text": "QuantileTrim(Z; quantiles::Tuple{Float64,Float64} = (0.05, 0.95) )\n\nTrims values above or below the specified columnwise quantiles to the quantile values themselves.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.RandomForest",
     "page": "Documentation",
     "title": "ChemometricsTools.RandomForest",
@@ -270,6 +302,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.RandomForest",
     "category": "method",
     "text": "(RF::RandomForest)(X)\n\nReturns bagged prediction vector of random forest model.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.RangeNorm-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.RangeNorm",
+    "category": "method",
+    "text": "(T::RangeNorm)(Z; inverse = false)\n\nScales and shifts data in array Z column-wise according to learned min-maxes in RangeNorm object T.\n\n\n\n\n\n"
 },
 
 {
@@ -318,6 +358,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.RunningVar",
     "category": "method",
     "text": "RunningVar(x)\n\nConstructs a RunningVar object with an initial scalar value of x. Note: RunningVar objects implicitly calculate the running mean.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.Scale-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.Scale",
+    "category": "method",
+    "text": "(T::Scale)(Z; inverse = false)\n\nScales data in array Z column-wise according to learned standard deviations in Scale object T.\n\n\n\n\n\n"
 },
 
 {
@@ -561,6 +609,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.Logit-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.Logit",
+    "category": "method",
+    "text": "Logit(Z; inverse = false)\n\nLogit transforms every element in Z. The inverse may also be applied. Warning: This can return Infs and NaNs if elements of Z are not suited to the transform\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.MAE-Tuple{Any,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.MAE",
@@ -710,6 +766,30 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.PerfectSmoother",
     "category": "method",
     "text": "PerfectSmoother(y; lambda = 100)\n\nApplies an assymetric least squares smoothing function to a vector y. The lambda parameter controls the smoothness. See the reference below for more information.\n\nPaul H. C. Eilers. \"A Perfect Smoother\". Analytical Chemistry, 2003, 75 (14), pp 3631–3636.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.Pipeline-Tuple{Any,Vararg{Any,N} where N}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.Pipeline",
+    "category": "method",
+    "text": "Pipeline( X, FnStack... )\n\nConstruct a pipeline object from vector/tuple of Transforms. The Transforms vector are effectively a vector of functions which transform data.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.Pipeline-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.Pipeline",
+    "category": "method",
+    "text": "Pipeline(Transforms)\n\nConstructs a transformation pipeline from vector/tuple of Transforms. The Transforms vector are effectively a vector of functions which transform data.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.PipelineInPlace-Tuple{Any,Vararg{Any,N} where N}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.PipelineInPlace",
+    "category": "method",
+    "text": "PipelineInPlace( X, FnStack...)\n\nConstruct a pipeline object from vector/tuple of Transforms. The Transforms vector are effectively a vector of functions which transform data. This function makes \"inplace\" changes to the Array X as though it has been sent through the pipeline. This is more efficient if memory is a concern, but can irreversibly transform data in memory depending on the transforms in the pipeline.\n\n\n\n\n\n"
 },
 
 {
@@ -1062,6 +1142,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.ewma",
     "category": "method",
     "text": "EWMA(P::ewma)(New; train = true)\n\nProvides an EWMA score for a New scalar value. If train == true the model is updated to include this new value.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.pipeline-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.pipeline",
+    "category": "method",
+    "text": "(P::pipeline)(X; inverse = false)\n\nApplies the stored transformations in a pipeline object P to data in X. The inverse flag can allow for the transformations to be reversed provided they are invertible functions.\n\n\n\n\n\n"
 },
 
 {

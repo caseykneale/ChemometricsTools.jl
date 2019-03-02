@@ -12,7 +12,7 @@ module ChemometricsTools
     export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean, RunningVar,
         Variance, Mean, rbinomial
 
-    include("ClassificationMetrics.jl")
+    include("ClassificationMetrics.jl") 
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
         Threshold, MulticlassThreshold, HighestVote
 
@@ -24,7 +24,7 @@ module ChemometricsTools
     export SquareEuclideanDistance, EuclideanDistance, ManhattanDistance,
         GaussianKernel, LinearKernel, Kernel
 
-    include("Transformations.jl")
+    include("Transformations.jl") #Has Docs: Box Cox Omitted for now...
     export Transform, PipelineInPlace, Pipeline, QuantileTrim, Center, Scale,
         CenterScale, RangeNorm, Logit, BoxCox
 
