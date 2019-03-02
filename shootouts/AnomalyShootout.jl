@@ -1,5 +1,4 @@
 using Pkg
-using Revise
 Pkg.activate(".")
 using ChemometricsTools
 using Plots
