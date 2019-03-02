@@ -1021,7 +1021,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Anomaly Detection",
     "title": "Anomaly Detection API Reference",
     "category": "section",
-    "text": ""
+    "text": "ChemometricsTools has a few anomaly detection methods. Feel free to read the API below. If that\'s too abstract, check out the shoot-out example : AnomalyDetection"
 },
 
 {
