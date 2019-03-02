@@ -13,8 +13,8 @@ This is a collection of tools to perform fundamental and advanced Chemometric an
   - [Stacked Interval Partial Least Squares Regression](https://caseykneale.github.io/ChemometricsTools/Demos/SIPLS/)
   - [Curve Resolution](https://caseykneale.github.io/ChemometricsTools/Demos/CurveResolution/)
 
-### Package Status => Nearing First Release
-This thing is brand new (~ 3 weeks old). Many of the tools available can reliably be used, but the documentation is somewhat vague. Betchya anything there are a few bugs hiding in the repo. This is an early preview for constructive criticism and spreading awareness.
+### Package Status => Pre-release! (v 0.1.0)
+This thing is brand new (~ 4 weeks old). Many of the tools available can reliably be used, the documentation is pretty fleshed out. Continuous Integration isn't in place yet. Betchya anything there are a few bugs hiding in the package. This is an early preview for constructive criticism and spreading awareness.
 
 # Package Highlights
 ### Transforms/Pipelines

@@ -17,19 +17,19 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#Installation:-1",
+    "page": "Home",
+    "title": "Installation:",
+    "category": "section",
+    "text": "using Pkg\nPkg.add(\"ChemometricsTools\")"
+},
+
+{
     "location": "#Support:-1",
     "page": "Home",
     "title": "Support:",
     "category": "section",
     "text": "This package was written in Julia 1.0 but should run fine in 1.1 or later releases. That\'s the beauty of from scratch code with minimal dependencies."
-},
-
-{
-    "location": "#Installation:-1",
-    "page": "Home",
-    "title": "Installation:",
-    "category": "section",
-    "text": "Unfortunately this is not an official Julia package yet. Until it gets curated here\'s how to install it,Git clone the repository to a directory of your choosingusing Pkg\nLastDir = pwd()\ncd(\"/your/path/here/ChemometricsTools/\")\nPkg.activate(\".\")\nPkg.resolve()\nusing ChemometricsTools\ncd(LastDir)"
 },
 
 {
