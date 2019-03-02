@@ -1,6 +1,11 @@
-#Ideally I'd only access each column once in the K loop... Tricky...
-#Untested. Not super optimal, but should work fine, for small data...
-#Could store inter distance matrix to a struct...
+"""
+    OneClassJKNN( Normal, New; J::Int = 1, K::Int = 1, DistanceType = "euclidean" )
+
+Creates a one class JK-NN classifier from `Normal` data and evaluates it on `New` data. This compares the inter sample
+distance (`DistanceType`) between a `New` and `Normal` J nearest neighbors to the K nearest neighbors of those
+J nearest neighbors in the `Normal` set. No cut off is provided, that should be done by the end-user. A typical
+cut off value is 1.0 .
+"""
 #ToDo: Only find distances of K's that matter! This will speed things up and slim memory use.
 function OneClassJKNN( Normal, New; J::Int = 1, K::Int = 1, DistanceType = "euclidean" )
     Obs = size( Normal )[ 1 ]
@@ -43,8 +48,15 @@ function OneClassJKNN( Normal, New; J::Int = 1, K::Int = 1, DistanceType = "eucl
 end
 
 
-#A review of PCA-based statistical process monitoring methodsfor time-dependent, high-dimensional data. Bart De Ketelaere
-#https://wis.kuleuven.be/stat/robust/papers/2013/deketelaere-review.pdf
+"""
+    Hotelling(X, pca::PCA; Quantile = 0.05, Variance = 1.0)
+
+Computes the hotelling Tsq and upper control limit cut off of a `pca` object using a specified `Quantile` and
+cumulative variance explained `Variance` for new or old data `X`.
+
+A review of PCA-based statistical process monitoring methodsfor time-dependent, high-dimensional data. Bart De Ketelaere
+https://wis.kuleuven.be/stat/robust/papers/2013/deketelaere-review.pdf
+"""
 function Hotelling(X, pca::PCA; Quantile = 0.05, Variance = 1.0)
     (Obs,Vars) = size(X)
     CumVar = cumsum( ExplainedVariance( pca ) )
@@ -67,12 +79,24 @@ function Hotelling(X, pca::PCA; Quantile = 0.05, Variance = 1.0)
     return Tsq, Threshold
 end
 
+"""
+    Leverage(pca::PCA)
+
+Calculates the leverage of samples in a `pca` object.
+"""
 function Leverage(pca::PCA)
     return [ sum(diag(pca.Scores[r,:] * Base.inv(pca.Scores[r,:]' * pca.Scores[r,:]) * pca.Scores[r,:]')) for r in 1:size(pca.Scores)[1] ]
 end
 
-#A review of PCA-based statistical process monitoring methodsfor time-dependent, high-dimensional data. Bart De Ketelaere
-#https://wis.kuleuven.be/stat/robust/papers/2013/deketelaere-review.pdf
+"""
+    Q(X, pca::PCA; Quantile = 0.95, Variance = 1.0)
+
+Computes the Q-statistic and upper control limit cut off of a `pca` object using a specified `Quantile` and
+cumulative variance explained `Variance` for new or old data `X`.
+
+A review of PCA-based statistical process monitoring methodsfor time-dependent, high-dimensional data. Bart De Ketelaere
+https://wis.kuleuven.be/stat/robust/papers/2013/deketelaere-review.pdf
+"""
 function Q(X, pca::PCA; Quantile = 0.95, Variance = 1.0)
     (Obs,Vars) = size(X)
     CumVar = cumsum( ExplainedVariance( pca ) )

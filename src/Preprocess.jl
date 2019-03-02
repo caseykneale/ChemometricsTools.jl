@@ -9,7 +9,7 @@ function ScaleMinMax(X)
     return (X .- mini) ./ (maxi .- mini)
 end
 
-offsetToZero(X) = X .+ reduce(min, X, dims = 2)
+offsetToZero(X) = X .- reduce(min, X, dims = 2)
 
 function boxcar(X; windowsize = 3, fn = mean)
     (obs, vars) = size(X)

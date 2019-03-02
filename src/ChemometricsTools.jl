@@ -4,7 +4,7 @@ module ChemometricsTools
     using Distributions #Could probably also get rid of this one...
     using DSP: conv #Ew I wanna get rid of this dependency... One function uses it...
 
-    #A generic function that I use everywhere...
+    #A generic function that I use everywhere to coerce a vecto dim 0 to a row vector...
     forceMatrix( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, length(a), 1 ) : a
     export forceMatrix
 
@@ -32,7 +32,7 @@ module ChemometricsTools
     export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance,
         findpeaks
 
-    include("AnomalyDetection.jl")
+    include("AnomalyDetection.jl") #Has docs
     export OneClassJKNN, Q, Hotelling, Leverage
 
     include("ClassificationModels.jl")
