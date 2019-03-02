@@ -40,8 +40,7 @@ module ChemometricsTools
         GaussianNaiveBayes, HighestVoteOneHot
 
     include("Clustering.jl")
-    export TotalClusterSS, WithinClusterSS, BetweenClusterSS,
-        KMeansClustering, KMeans
+    export TotalClusterSS, WithinClusterSS, BetweenClusterSS, KMeansClustering, KMeans
 
     include("Preprocess.jl") #Has Docs
     export FirstDerivative, SecondDerivative, FractionalDerivative, SavitzkyGolay,
@@ -59,13 +58,13 @@ module ChemometricsTools
     include("Ensembles.jl") #Has Docs
     export MakeInterval, MakeIntervals, stackedweights, RandomForest
 
-    include("Sampling.jl")
+    include("Sampling.jl") #Has Docs
     export VenetianBlinds, SplitByProportion, KennardStone
 
     include("Training.jl") #Has Docs
     export Shuffle, Shuffle!, LeaveOneOut, KFoldsValidation
 
-    include("PSO.jl")
+    include("PSO.jl") #Has docs
     export PSO, Particle, Bounds
 
     include("CurveResolution.jl")

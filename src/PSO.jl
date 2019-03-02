@@ -2,7 +2,20 @@ struct Bounds
     lower::Array{Float64, 1}
     upper::Array{Float64, 1}
 end
+
+"""
+    Bounds(dims)
+
+Default constructor for a Bounds object. Returns a bounds object with a lower bound of [0...] and upper bound[1...]
+with length of `dims`.
+"""
 Bounds(dims) = Bounds( repeat( [ 0 ], dims ), repeat( [ 1 ], dims ) )
+"""
+    Bounds(dims)
+
+Constructor for a Bounds object. Returns a bounds object with a lower bound of [lower...] and upper bound[upper...]
+with length of `dims`.
+"""
 Bounds(lower, upper, dims) = Bounds( repeat( [ lower ], dims ), repeat( [ upper ], dims ) )
 
 mutable struct Particle
@@ -12,6 +25,12 @@ mutable struct Particle
     Vel::Array{Float64, 1}
 end
 
+"""
+    Particle(ProblemBounds, VelocityBounds)
+
+Default constructor for a Particle object. It creates a random unformly distributed particle within the specified `ProblemBounds`,
+and limits it's velocity to the specified `VelocityBounds`.
+"""
 function Particle(ProblemBounds, VelocityBounds)
     Dimen = length(ProblemBounds.upper)
     @assert Dimen == length(VelocityBounds.upper)
@@ -23,9 +42,20 @@ function Particle(ProblemBounds, VelocityBounds)
 end
 
 #Particle( bounds(2,-1,3), bounds(0,1,3) )
+"""
+    PSO(fn, Bounds, VelRange, Particles; tolerance = 1e-6, maxiters = 1000, InertialDecay = 0.5, PersonalWeight = 0.5, GlobalWeight = 0.5, InternalParams = nothing)
 
-#This is a vanilla PSO minimizer... make your fn negative to maximize...
-function PSO(fn, Bounds, VelRange, Particles;
+Minimizes function `fn` with-in the user specified `Bounds` via a Particle Swarm Optimizer.
+The particle velocities are limitted to the `VelRange`.
+The number of particles are defined by the `Particles` parameter.
+
+Returns a Tuple of the following form: ( GlobalBestPos, GlobalBestScore, P )
+Where P is an array of the particles used in the optimization.
+
+*Note: if the optimization function requires an additional constant parameter, please pass that parameter to InternalParams.
+This will only work if the optimized parameter(o) and constant parameter(c) for the function of interest has the following format: F(o,c) *
+"""
+function PSO(fn, Bounds::Bounds, VelRange::Bounds, Particles::Int;
                 tolerance = 1e-6, maxiters = 1000,
                 InertialDecay = 0.5, PersonalWeight = 0.5, GlobalWeight = 0.5, InternalParams = nothing)
     P = [ Particle(Bounds, VelRange) for x in 1 : Particles ]
