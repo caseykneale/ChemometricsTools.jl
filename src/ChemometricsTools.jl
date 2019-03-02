@@ -8,7 +8,7 @@ module ChemometricsTools
     forceMatrix( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, length(a), 1 ) : a
     export forceMatrix
 
-    include("InHouseStats.jl")
+    include("InHouseStats.jl") #Has Docs
     export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean, RunningVar,
         Variance, Mean, rbinomial
 
@@ -43,7 +43,7 @@ module ChemometricsTools
     export TotalClusterSS, WithinClusterSS, BetweenClusterSS,
         KMeansClustering, KMeans
 
-    include("Preprocess.jl")
+    include("Preprocess.jl") #Has Docs
     export FirstDerivative, SecondDerivative, FractionalDerivative, SavitzkyGolay,
         DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection,
         StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, boxcarScaleMinMax,

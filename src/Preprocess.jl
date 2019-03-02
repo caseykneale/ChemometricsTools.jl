@@ -1,16 +1,55 @@
+"""
+    StandardNormalVariate(X)
+
+Scales the columns of `X` by the mean and standard deviation of each row. Returns the scaled array.
+"""
 StandardNormalVariate(X) = ( X .- Statistics.mean(X, dims = 2) ) ./ Statistics.std(X, dims = 2)
 
+"""
+    Scale1Norm(X)
+
+Scales the columns of `X` by the 1-Norm of each row. Returns the scaled array.
+"""
 Scale1Norm(X) = X ./ sum(abs.(X), dims = 2)
+
+"""
+    Scale2Norm(X)
+
+Scales the columns of `X` by the 2-Norm of each row. Returns the scaled array.
+"""
 Scale2Norm(X) = X ./ sqrt.(sum(X .^ 2, dims = 2))
+
+"""
+    ScaleInfNorm(X)
+
+Scales the columns of `X` by the Inf-Norm of each row. Returns the scaled array.
+"""
 ScaleInfNorm(X) = X ./ reduce(max, X, dims = 2)
+
+"""
+    ScaleMinMax(X)
+
+Scales the columns of `X` by the Min and Max of each row such that no observation is greater than 1 or less than zero.
+Returns the scaled array.
+"""
 function ScaleMinMax(X)
     mini = reduce(min, X, dims = 2)
     maxi = reduce(max, X, dims = 2)
     return (X .- mini) ./ (maxi .- mini)
 end
 
+"""
+    offsetToZero(X)
+
+Ensures that no observation(row) of Array `X` is less than zero, by ensuring the minimum value of each row is zero.
+"""
 offsetToZero(X) = X .- reduce(min, X, dims = 2)
 
+"""
+    boxcar(X; windowsize = 3, fn = mean)
+
+Applies a boxcar function (`fn`) to each window of size `windowsize` to every row in `X`.
+"""
 function boxcar(X; windowsize = 3, fn = mean)
     (obs, vars) = size(X)
     @assert windowsize <= vars
@@ -22,7 +61,14 @@ function boxcar(X; windowsize = 3, fn = mean)
 end
 
 
-#Paul H. C. Eilers, Hans F.M. Boelens. Baseline Correction with Asymmetric Least Squares Smoothing.  2005
+"""
+    ALSSmoother(y; lambda = 100, p = 0.001, maxiters = 10)
+
+Applies an assymetric least squares smoothing function to a vector `y`. The `lambda`, `p`, and `maxiters`
+parameters control the smoothness. See the reference below for more information.
+
+Paul H. C. Eilers, Hans F.M. Boelens. Baseline Correction with Asymmetric Least Squares Smoothing.  2005
+"""
 function ALSSmoother(y; lambda = 100, p = 0.001, maxiters = 10)
     m = length(y)
     D = SecondDerivative( sparse( I, m, m )' )';
@@ -37,8 +83,15 @@ function ALSSmoother(y; lambda = 100, p = 0.001, maxiters = 10)
     return z
 end
 
-#Paul H. C. Eilers. "A Perfect Smoother". Analytical Chemistry, 2003, 75 (14), pp 3631–3636.
-function PerfectSmoother(y; lambda = 100, maxiters = 10)
+"""
+    PerfectSmoother(y; lambda = 100)
+
+Applies an assymetric least squares smoothing function to a vector `y`. The `lambda`
+parameter controls the smoothness. See the reference below for more information.
+
+Paul H. C. Eilers. "A Perfect Smoother". Analytical Chemistry, 2003, 75 (14), pp 3631–3636.
+"""
+function PerfectSmoother(y; lambda = 100)
     m = length(y)
     D = SecondDerivative( sparse( I, m, m )' )';
     w = spdiagm(0 => ones(m));
@@ -54,17 +107,35 @@ struct MultiplicativeScatterCorrection
     Coefficients
 end
 
+"""
+    MultiplicativeScatterCorrection(Z)
+
+Creates a MultiplicativeScatterCorrection object from the data in Z
+
+Martens, H. Multivariate calibration. Wiley
+"""
 function MultiplicativeScatterCorrection(Z)
     BiasedMeans = hcat( ones( ( size(Z)[2], 1) ) , StatsBase.mean( Z, dims = 1 )[1,:] )
     Coeffs = ( BiasedMeans' * BiasedMeans ) \ ( Z * BiasedMeans )'
     MultiplicativeScatterCorrection( BiasedMeans, Coeffs[1,:], Coeffs[2,:] )
 end
 
+"""
+    (T::MultiplicativeScatterCorrection)(Z)
+
+Applies MultiplicativeScatterCorrection from a stored object `T` to Array `Z`.
+"""
 function (T::MultiplicativeScatterCorrection)(Z)
     Coeffs = ( T.BiasedMeans' * T.BiasedMeans ) \ ( Z * T.BiasedMeans )'
     return (Z .- Coeffs[1,:]) ./ Coeffs[2,:]
 end
 
+"""
+    FirstDerivative(X)
+
+Uses the finite difference method to compute the first derivative for every row in `X`.
+*Note: This operation results in the loss of a column dimension.*
+"""
 function FirstDerivative(X)
     X = (length(size(X)) == 1) ? reshape( X, 1,length(a) ) : X
     Xsize = size(X)
@@ -75,6 +146,12 @@ function FirstDerivative(X)
     return XNew
 end
 
+"""
+    FirstDerivative(X)
+
+Uses the finite difference method to compute the second derivative for every row in `X`.
+*Note: This operation results in the loss of two columns.*
+"""
 function SecondDerivative(X)
     X = (length(size(X)) == 1) ? reshape( X, 1,length(a) ) : X
     Xsize = size(X)
@@ -85,9 +162,16 @@ function SecondDerivative(X)
     return XNew
 end
 
-#Fractional Derivative via Grunwald Leitnikov algorithm,
-#Useful for preprocessing data, and electrochemistry.
-#Allows for nonuniform spacing in X...
+"""
+    FractionalDerivative(Y, X = 1 : length(Y); Order = 0.5)
+
+Calculates the Grunwald-Leitnikov fractional order derivative on every row of Array Y.
+Array `X` is a vector that has the spacing between column-wise entries in `Y`. `X` can be a scalar if that is constant (common in spectroscopy).
+`Order` is the fractional order of the derivative.
+*Note: This operation results in the loss of a column dimension.*
+
+The Fractional Calculus, by Oldham, K.; and Spanier, J. Hardcover: 234 pages. Publisher: Academic Press, 1974. ISBN 0-12-525550-0
+"""
 function FractionalDerivative(Y, X = 1 : length(Y); Order = 0.5)
     (Obs,Vars) = size(Y)
     ddy = zeros(Obs,Vars-1)
@@ -105,7 +189,15 @@ function FractionalDerivative(Y, X = 1 : length(Y); Order = 0.5)
     return ddy
 end
 
-#This is a little buggy, but its a start...
+"""
+    SavitzkyGolay(X, Delta, PolyOrder, windowsize)
+
+Performs SavitskyGolay smoothing across every row in an Array `X`.
+The `window size` is the size of the convolution filter, `PolyOrder` is the order of the polynomial,
+and `Delta` is the order of the derivative.
+
+Savitzky, A.; Golay, M.J.E. (1964). "Smoothing and Differentiation of Data by Simplified Least Squares Procedures". Analytical Chemistry. 36 (8): 1627–39. doi:10.1021/ac60214a047.
+"""
 function SavitzkyGolay(X, Delta, PolyOrder, windowsize)
     @assert (windowsize % 2) == 1
     (Obs,Vars) = size(X)#length(Y
@@ -126,6 +218,15 @@ struct DirectStandardizationXform
     TransferMatrix::Array
 end
 
+"""
+    DirectStandardization(InstrumentX1, InstrumentX2; Factors = minimum(collect(size(InstrumentX1))) - 1)
+
+Makes a DirectStandardization object to facilitate the transfer from Instrument #2 to Instrument #1 .
+The returned object can be used to transfer unseen data to the approximated space of instrument 1.
+The number of `Factors` used are those from the internal orthogonal basis.
+
+Yongdong Wang and Bruce R. Kowalski, "Calibration Transfer and Measurement Stability of Near-Infrared Spectrometers," Appl. Spectrosc. 46, 764-771 (1992)
+"""
 function DirectStandardization(InstrumentX1, InstrumentX2; Factors = minimum(collect(size(InstrumentX1))) - 1)
     pcamodel = PCA(InstrumentX1; Factors = Factors)
     InstrumentX2_DS = pcamodel(InstrumentX2; Factors = Factors, inverse = false)
@@ -133,7 +234,11 @@ function DirectStandardization(InstrumentX1, InstrumentX2; Factors = minimum(col
     return DirectStandardizationXform(pcamodel, TransferMatrix)
 end
 
-#Get the new samples in the Master instrument space...
+"""
+    (DSX::DirectStandardizationXform)(X; Factors = length(DSX.pca.Values))
+
+Applies a the transform from a learned direct standardization object `DSX` to new data `X`.
+"""
 function (DSX::DirectStandardizationXform)(X; Factors = length(DSX.pca.Values))
     #Transform data into PCA
     Into = DSX.pca(X; Factors = Factors)
@@ -147,6 +252,15 @@ struct OrthogonalSignalCorrection
     Residuals::Array
 end
 
+"""
+    OrthogonalSignalCorrection(X, Y; Factors = 1)
+
+Performs Thomas Fearn's Orthogonal Signal Correction to an endogenous `X` and exogenous `Y`.
+The number of `Factors` are the number of orthogonal components to be removed from `X`.
+This function returns an OSC object.
+
+Tom Fearn. On orthogonal signal correction. Chemometrics and Intelligent Laboratory Systems. Volume 50, Issue 1, 2000, Pages 47-52.
+"""
 function OrthogonalSignalCorrection(X, Y; Factors = 1)
     (Obs,Vars) = size(X)
     W = zeros(Vars, Factors)
@@ -165,7 +279,11 @@ function OrthogonalSignalCorrection(X, Y; Factors = 1)
     return OrthogonalSignalCorrection(W, Loadings, Residuals)
 end
 
+"""
+    (OSC::OrthogonalSignalCorrection)(Z; Factors = 2)
 
+Applies a the transform from a learned orthogonal signal correction object `OSC` to new data `Z`.
+"""
 function (OSC::OrthogonalSignalCorrection)(Z; Factors = 2)
     X = copy(Z)
     for factor in 1 : Factors
@@ -174,12 +292,47 @@ function (OSC::OrthogonalSignalCorrection)(Z; Factors = 2)
     return X
 end
 
-#Correlation Alignment for Unsupervised Domain Adaptation. Baochen Sun, Jiashi Feng, Kate Saenko
-#This transfers X1 to X2.
-#https://arxiv.org/abs/1612.01939
+
+struct TransferByOrthogonalProjection
+    Factors::Int
+    vars::Int
+    pca::PCA
+end
+
+"""
+    TransferByOrthogonalProjection(X1, X2; Factors = 1)
+
+Performs Thomas Fearns Transfer By Orthogonal Projection to facilitate transfer from `X1` to `X2`. Returns a TransferByOrthogonalProjection object.
+
+Anne Andrew, Tom Fearn. Transfer by orthogonal projection: making near-infrared calibrations robust to between-instrument variation. Chemometrics and Intelligent Laboratory Systems. Volume 72, Issue 1, 2004, Pages 51-56,
+"""
+function TransferByOrthogonalProjection(X1, X2; Factors = 1)
+    (Obs,Vars) = size(X1)
+    OneToTwo = PCA(X1 .- X2; Factors = Factors)
+    return TransferByOrthogonalProjection(Factors, Vars, OneToTwo)
+end
+
+"""
+    (TbOP::TransferByOrthogonalProjection)(X1; Factors = TbOP.Factors)
+
+Applies a the transform from a learned transfer by orthogonal projection object `TbOP` to new data `X1`.
+"""
+function (TbOP::TransferByOrthogonalProjection)(X1; Factors = TbOP.Factors)
+    return X1 * (LinearAlgebra.Diagonal( ones( TbOP.vars ) ) .- (TbOP.pca.Loadings[1:Factors,:]' * TbOP.pca.Loadings[1:Factors,:]))
+end
+
 struct CORAL
     coralmat::Array
 end
+
+
+"""
+    CORAL(X1, X2; lambda = 1.0)
+
+Performs CORAL to facilitate covariance based transfer from `X1` to `X2` with regularization parameter `lambda`. Returns a CORAL object.
+
+Correlation Alignment for Unsupervised Domain Adaptation. Baochen Sun, Jiashi Feng, Kate Saenko. https://arxiv.org/abs/1612.01939
+"""
 function CORAL(X1, X2; lambda = 1.0)
     (Obs1, vars) = size(X1)
     (Obs2, vars) = size(X2)
@@ -189,21 +342,10 @@ function CORAL(X1, X2; lambda = 1.0)
     CORALXfer = c1 ^ (-1/2) * c2 ^ (1/2)
     return CORAL(CORALXfer)
 end
+
+"""
+    (C::CORAL)(Z)
+
+Applies a the transform from a learned `CORAL` object to new data `Z`.
+"""
 (C::CORAL)(Z) = Z * C.coralmat
-
-
-struct TransferByOrthogonalProjection
-    Factors::Int
-    vars::Int
-    pca::PCA
-end
-
-function TransferByOrthogonalProjection(X1, X2; Factors = 1)
-    (Obs,Vars) = size(X1)
-    OneToTwo = PCA(X1 .- X2; Factors = Factors)
-    return TransferByOrthogonalProjection(Factors, Vars, OneToTwo)
-end
-
-function (TbOP::TransferByOrthogonalProjection)(X1; Factors = TbOP.Factors)
-    return X1 * (LinearAlgebra.Diagonal( ones( TbOP.vars ) ) .- (TbOP.pca.Loadings[1:Factors,:]' * TbOP.pca.Loadings[1:Factors,:]))
-end
