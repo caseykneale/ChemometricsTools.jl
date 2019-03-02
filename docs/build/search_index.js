@@ -9,6 +9,30 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.BlandAltman-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.BlandAltman",
+    "category": "method",
+    "text": "BlandAltman(Y1, Y2; Confidence = 1.96)\n\nReturns a Plot object of a Bland-Altman plot between vectors Y1 and Y2 with a confidence limit of Confidence.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.Bounds-Tuple{Any,Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.Bounds",
+    "category": "method",
+    "text": "Bounds(dims)\n\nConstructor for a Bounds object. Returns a bounds object with a lower bound of [lower...] and upper bound[upper...] with length of dims.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.Bounds-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.Bounds",
+    "category": "method",
+    "text": "Bounds(dims)\n\nDefault constructor for a Bounds object. Returns a bounds object with a lower bound of [0...] and upper bound[1...] with length of dims.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.CORAL-Tuple{Any,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.CORAL",
@@ -97,6 +121,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.Particle-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.Particle",
+    "category": "method",
+    "text": "Particle(ProblemBounds, VelocityBounds)\n\nDefault constructor for a Particle object. It creates a random unformly distributed particle within the specified ProblemBounds, and limits it\'s velocity to the specified VelocityBounds.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.QQ-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.QQ",
+    "category": "method",
+    "text": "QQ( Y1, Y2; Quantiles = collect( 1 : 99 ) ./ 100 )\n\nReturns a Plot object of a Quantile-Quantile plot between vectors Y1 and Y2 at the desired Quantiles.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.RandomForest",
     "page": "Documentation",
     "title": "ChemometricsTools.RandomForest",
@@ -166,6 +206,22 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.ALSSmoother",
     "category": "method",
     "text": "ALSSmoother(y; lambda = 100, p = 0.001, maxiters = 10)\n\nApplies an assymetric least squares smoothing function to a vector y. The lambda, p, and maxiters parameters control the smoothness. See the reference below for more information.\n\nPaul H. C. Eilers, Hans F.M. Boelens. Baseline Correction with Asymmetric Least Squares Smoothing.  2005\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.BTEM",
+    "page": "Documentation",
+    "title": "ChemometricsTools.BTEM",
+    "category": "function",
+    "text": "BTEM(X, bands = nothing; Factors = 3, particles = 50, maxiters = 1000)\n\nReturns a single recovered spectra from a 2-Array X, the selected bands, number of Factors, using a Particle Swarm Optimizer.\n\nNote: This is not the function used in the original paper. This will be updated... it was written from memory. Also the original method uses Simulated Annealing not PSO. Band-Target Entropy Minimization (BTEM):  An Advanced Method for Recovering Unknown Pure Component Spectra. Application to the FTIR Spectra of Unstable Organometallic Mixtures. Wee Chew,Effendi Widjaja, and, and Marc Garland. Organometallics 2002 21 (9), 1982-1990. DOI: 10.1021/om0108752\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.BTEMobjective-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.BTEMobjective",
+    "category": "method",
+    "text": "BTEMobjective( a, X )\n\nReturns the scalar BTEM objective function obtained from the linear combination vector a and loadings X.\n\nNote: This is not the function used in the original paper. This will be updated... it was written from memory.\n\n\n\n\n\n"
 },
 
 {
@@ -241,6 +297,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.FNNLS-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.FNNLS",
+    "category": "method",
+    "text": "FNNLS(A, b; LHS = false, maxiters = 520)\n\nUses an implementation of Bro et. al\'s Fast Non-Negative Least Squares on the matrix A and vector b. We can state whether to pose the problem has a left-hand side problem (LHS = true) or a right hand side problem (default). Returns regression coefficients in the form of a vector.\n\nNote: this function does not have guarantees. Use at your own risk for now. Fast Non-Negative Least Squares algorithm based on Bro, R., & de Jong, S. (1997) A fast non-negativity-constrained least squares algorithm. Journal of Chemometrics, 11, 393-401.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.FirstDerivative-Tuple{Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.FirstDerivative",
@@ -278,6 +342,22 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.Hotelling",
     "category": "method",
     "text": "Hotelling(X, pca::PCA; Quantile = 0.05, Variance = 1.0)\n\nComputes the hotelling Tsq and upper control limit cut off of a pca object using a specified Quantile and cumulative variance explained Variance for new or old data X.\n\nA review of PCA-based statistical process monitoring methodsfor time-dependent, high-dimensional data. Bart De Ketelaere https://wis.kuleuven.be/stat/robust/papers/2013/deketelaere-review.pdf\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.IntervalOverlay-Tuple{Any,Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.IntervalOverlay",
+    "category": "method",
+    "text": "IntervalOverlay(Spectra, Intervals, Err)\n\nDisplays the relative error(Err) of each interval ontop of a Spectra.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.KennardStone-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.KennardStone",
+    "category": "method",
+    "text": "KennardStone(X, TrainSamples; distance = \"euclidean\")\n\nReturns the indices of the Kennard-Stone sampled exemplars (E), and those not sampled (O) as a 2-Tuple (E, O).\n\nR. W. Kennard & L. A. Stone (1969) Computer Aided Design of Experiments, Technometrics, 111, 137-148, DOI: 10.1080/00401706.1969.10490666\n\n\n\n\n\n"
 },
 
 {
@@ -326,6 +406,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.MAPE",
     "category": "method",
     "text": "MAPE( y, yhat )\n\nCalculates Mean Average Percent Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.MCRALS",
+    "page": "Documentation",
+    "title": "ChemometricsTools.MCRALS",
+    "category": "function",
+    "text": "MCRALS(X, C, S = nothing; norm = (false, false), Factors = 1, maxiters = 20, nonnegative = (false, false) )\n\nPerforms Multivariate Curve Resolution using Alternating Least Squares on X taking initial estimates for S or C. S or C can be constrained by their norm, or by nonnegativity using nonnegative arguments. The number of resolved Factors can also be set.\n\nTauler, R. Izquierdo-Ridorsa, A. Casassas, E. Simultaneous analysis of several spectroscopic titrations with self-modelling curve resolution.Chemometrics and Intelligent Laboratory Systems. 18, 3, (1993), 293-300.\n\n\n\n\n\n"
 },
 
 {
@@ -393,6 +481,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.NMF-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.NMF",
+    "category": "method",
+    "text": "NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)\n\nPerforms a variation of non-negative matrix factorization on Array X and returns the a 2-Tuple of (Concentration Profile, Spectra)\n\nNote: This is not a coordinate descent based NMF. This is a simple fast version which works well enough for chemical signals Algorithms for non-negative matrix factorization. Daniel D. Lee. H. Sebastian Seung. NIPS\'00 Proceedings of the 13th International Conference on Neural Information Processing Systems. 535-54\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.OneHotOdds-Tuple{Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.OneHotOdds",
@@ -406,6 +502,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.PCA_NIPALS",
     "category": "method",
     "text": "PCA_NIPALS(X; Factors = minimum(size(X)) - 1, tolerance = 1e-7, maxiters = 200)\n\nCompute\'s a PCA from x using the NIPALS algorithm with a user specified number of latent variables(Factors). The tolerance is the minimum change in the F norm before ceasing execution. Returns a PCA object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.PSO-Tuple{Any,Bounds,Bounds,Int64}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.PSO",
+    "category": "method",
+    "text": "PSO(fn, Bounds, VelRange, Particles; tolerance = 1e-6, maxiters = 1000, InertialDecay = 0.5, PersonalWeight = 0.5, GlobalWeight = 0.5, InternalParams = nothing)\n\nMinimizes function fn with-in the user specified Bounds via a Particle Swarm Optimizer. The particle velocities are limitted to the VelRange. The number of particles are defined by the Particles parameter.\n\nReturns a Tuple of the following form: ( GlobalBestPos, GlobalBestScore, P ) Where P is an array of the particles used in the optimization.\n\n*Note: if the optimization function requires an additional constant parameter, please pass that parameter to InternalParams. This will only work if the optimized parameter(o) and constant parameter(c) for the function of interest has the following format: F(o,c) *\n\n\n\n\n\n"
 },
 
 {
@@ -470,6 +574,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.Remove",
     "category": "method",
     "text": "Remove!(RM::RunningMean, x)\n\nRemoves an observation(x) from a RunningMean object(RM) and recuturns the new RunningMean object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.SIMPLISMA-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.SIMPLISMA",
+    "category": "method",
+    "text": "SIMPLISMA(X; Factors = 1)\n\nPerforms SIMPLISMA on Array X. Returns a tuple of the following form: (Concentraion Profile, Pure Spectral Estimates, Pure Variables)\n\nNote: This is not the traditional SIMPLISMA algorithm presented by Willem Windig. REAL-TIME WAVELET COMPRESSION AND SELF-MODELING CURVE RESOLUTION FOR ION MOBILITY SPECTROMETRY. PhD. Dissertation. 2003. Guoxiang Chen.\n\n\n\n\n\n"
 },
 
 {
@@ -561,6 +673,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.SplitByProportion",
+    "page": "Documentation",
+    "title": "ChemometricsTools.SplitByProportion",
+    "category": "function",
+    "text": "SplitByProportion(X::Array, Proportion::Float64 = 0.5)\n\nSplits X Array along the observations dimension into a 2-Tuple based on the Proportion. The form of the output is the following: ( X1, X2 )\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.SplitByProportion",
+    "page": "Documentation",
+    "title": "ChemometricsTools.SplitByProportion",
+    "category": "function",
+    "text": "SplitByProportion(X::Array, Y::Array,Proportion::Float64 = 0.5)\n\nSplits an X and Associated Y Array along the observations dimension into a 2-Tuple of 2-Tuples based on the Proportion. The form of the output is the following: ( (X1, Y1), (X2, Y2) )\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.SquareEuclideanDistance-Tuple{Any,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.SquareEuclideanDistance",
@@ -625,6 +753,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.VenetianBlinds-Tuple{Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.VenetianBlinds",
+    "category": "method",
+    "text": "VenetianBlinds(X,Y)\n\nSplits an X and associated Y Array along the observation dimension into a 2-Tuple of 2-Tuples based on the whether it is even or odd. The form of the output is the following: ( (X1,Y1), (X2, Y2) )\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.VenetianBlinds-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.VenetianBlinds",
+    "category": "method",
+    "text": "VenetianBlinds(X)\n\nSplits an X Array along the observations dimension into a 2-Tuple of 2-Tuples based on the whether it is even or odd. The form of the output is the following: ( X1, X2 )\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.entropy-Tuple{Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.entropy",
@@ -654,6 +798,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.offsetToZero",
     "category": "method",
     "text": "offsetToZero(X)\n\nEnsures that no observation(row) of Array X is less than zero, by ensuring the minimum value of each row is zero.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.plotchem-Tuple{QQ}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.plotchem",
+    "category": "method",
+    "text": "plotchem(QQ::{QQ, BlandAltman}; title )\n\nreturns either a QQ Plot or a Bland-Altman plot with the defined title\n\n\n\n\n\n"
 },
 
 {

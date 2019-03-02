@@ -67,10 +67,10 @@ module ChemometricsTools
     include("PSO.jl") #Has docs
     export PSO, Particle, Bounds
 
-    include("CurveResolution.jl")
+    include("CurveResolution.jl") #Has Docs
     export BTEMobjective, BTEM, NMF, SIMPLISMA, MCRALS, FNNLS
 
-    include("PlottingTools.jl")
+    include("PlottingTools.jl") #Has Docs
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay
 
     include("TimeSeries.jl") #Has Docs: Omitted EchoStateNetwork Fns

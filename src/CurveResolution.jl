@@ -1,3 +1,10 @@
+"""
+    BTEMobjective( a, X )
+
+Returns the scalar BTEM objective function obtained from the linear combination vector `a` and loadings `X`.
+
+*Note: This is not the function used in the original paper. This will be updated... it was written from memory.*
+"""
 function BTEMobjective( a, X )
     LinComb = a' * X
     Deriv = Scale1Norm( ScaleMinMax( FirstDerivative( LinComb ) ) )
@@ -8,7 +15,14 @@ function BTEMobjective( a, X )
     return H + Penalty
 end
 
+"""
+    BTEM(X, bands = nothing; Factors = 3, particles = 50, maxiters = 1000)
 
+Returns a single recovered spectra from a 2-Array `X`, the selected `bands`, number of `Factors`, using a Particle Swarm Optimizer.
+
+*Note: This is not the function used in the original paper. This will be updated... it was written from memory. Also the original method uses Simulated Annealing not PSO.*
+Band-Target Entropy Minimization (BTEM):  An Advanced Method for Recovering Unknown Pure Component Spectra. Application to the FTIR Spectra of Unstable Organometallic Mixtures. Wee Chew,Effendi Widjaja, and, and Marc Garland. Organometallics 2002 21 (9), 1982-1990. DOI: 10.1021/om0108752
+"""
 function BTEM(X, bands = nothing; Factors = 3, particles = 50, maxiters = 1000)
     ( Obs, Vars ) = size( X )
     if isa( bands, Nothing ); bands = 1 : Vars; end
@@ -25,11 +39,14 @@ function BTEM(X, bands = nothing; Factors = 3, particles = 50, maxiters = 1000)
     return a
 end
 
-#Simplest NMF algorithm ever...
-#Super fast and reasonable for chemometric applications...If you want a generic NMF(impution etc)
-#Look into coordinate descent....
-#Algorithms for non-negative matrix factorization. Daniel D. Lee. H. Sebastian Seung.
-#NIPS'00 Proceedings of the 13th International Conference on Neural Information Processing Systems. 535-54
+"""
+    NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
+
+Performs a variation of non-negative matrix factorization on Array `X` and returns the a 2-Tuple of (Concentration Profile, Spectra)
+
+*Note: This is not a coordinate descent based NMF. This is a simple fast version which works well enough for chemical signals*
+Algorithms for non-negative matrix factorization. Daniel D. Lee. H. Sebastian Seung. NIPS'00 Proceedings of the 13th International Conference on Neural Information Processing Systems. 535-54
+"""
 function NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
     (Obs, Vars) = size(X)
     W = abs.( randn( Obs , Factors ) )
@@ -49,14 +66,15 @@ function NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
 end
 
 
-#I really like this SIMPLISMA algorithm it uses grahm-shmidt. It's fast,
-#has fewer manual operations and is pretty clean.
-#I think there's some factors to include here, like don't let pure Vars
-#neighbor within a given radius(spectral resolution argument), and
-#drop vars that are 95 percentile noise or 95 percentile baseline...
-#But with some end user knowledge it's cake.
-#REAL-TIME WAVELET COMPRESSION AND SELF-MODELING CURVE RESOLUTION FOR ION MOBILITY SPECTROMETRY
-#PhD. Dissertation. 2003. Guoxiang Chen.
+"""
+    SIMPLISMA(X; Factors = 1)
+
+Performs SIMPLISMA on Array `X`.
+Returns a tuple of the following form: (Concentraion Profile, Pure Spectral Estimates, Pure Variables)
+
+*Note: This is not the traditional SIMPLISMA algorithm presented by Willem Windig.*
+REAL-TIME WAVELET COMPRESSION AND SELF-MODELING CURVE RESOLUTION FOR ION MOBILITY SPECTROMETRY. PhD. Dissertation. 2003. Guoxiang Chen.
+"""
 function SIMPLISMA(X; Factors = 1)
     (obs, vars) = size(X)
     PurestVar = ones(Factors) .|> Int
@@ -86,13 +104,17 @@ function SIMPLISMA(X; Factors = 1)
     return (C, S, PurestVar)
 end
 
-#This needs some pretty serious cleaning, and was really tricky to write...
-#I am actually quite sure a bug still persists in it... roughly 7% of random regressions
-#afford a weight that has a negative component... doubtful its due to singular solns too....
-#Hasn't effected my MCR-ALS results yet...
-# Fast Non-Negative Least Squares algorithm based on Bro, R., & de Jong, S. (1997) A fast
-#non-negativity-constrained least squares algorithm. Journal of Chemometrics, 11, 393-401.
 
+"""
+    FNNLS(A, b; LHS = false, maxiters = 520)
+
+Uses an implementation of Bro et. al's Fast Non-Negative Least Squares on the matrix `A` and vector `b`.
+We can state whether to pose the problem has a left-hand side problem (`LHS` = true) or a right hand side problem (default).
+Returns regression coefficients in the form of a vector.
+
+*Note: this function does not have guarantees. Use at your own risk for now.*
+Fast Non-Negative Least Squares algorithm based on Bro, R., & de Jong, S. (1997) A fast non-negativity-constrained least squares algorithm. Journal of Chemometrics, 11, 393-401.
+"""
 function FNNLS(A, b; LHS = false,
                 maxiters = 520)
     if LHS
@@ -140,9 +162,15 @@ function FNNLS(A, b; LHS = false,
     return X
 end
 
-#Not super fond of the arguments here. There should be something pragmatic
-# ideally generic to other curve resolution methods? Eh, then again,
-#it's mcr-als...
+"""
+    MCRALS(X, C, S = nothing; norm = (false, false), Factors = 1, maxiters = 20, nonnegative = (false, false) )
+
+Performs Multivariate Curve Resolution using Alternating Least Squares on `X` taking initial estimates for `S` or `C`.
+S or C can be constrained by their `norm`, or by nonnegativity using `nonnegative` arguments.
+The number of resolved `Factors` can also be set.
+
+Tauler, R. Izquierdo-Ridorsa, A. Casassas, E. Simultaneous analysis of several spectroscopic titrations with self-modelling curve resolution.Chemometrics and Intelligent Laboratory Systems. 18, 3, (1993), 293-300.
+"""
 function MCRALS(X, C, S = nothing; norm = (false, false),
                 Factors = 1, maxiters = 20,
                 nonnegative = (false, false) )
