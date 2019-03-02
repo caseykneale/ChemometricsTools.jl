@@ -1,3 +1,8 @@
+"""
+    IsColdEncoded(Y)
+
+Returns a boolean true if the array Y is cold encoded, and false if not.
+"""
 IsColdEncoded(Y) = size( forceMatrix( Y ) )[2] == 1
 
 struct ClassificationLabel
@@ -6,6 +11,12 @@ struct ClassificationLabel
     LabelCount::Int
 end
 
+""""
+    LabelEncoding(HotOrCold)
+
+Determines if an Array, `Y`, is one hot encoded, or cold encoded by it's dimensions.
+Returns a ClassificationLabel object/schema to convert between the formats.
+"""
 function LabelEncoding(HotOrCold)
     HotOrCold = forceMatrix(HotOrCold)
     if IsColdEncoded(HotOrCold)
@@ -18,6 +29,11 @@ function LabelEncoding(HotOrCold)
                                 length(Lbls) )
 end
 
+"""
+    ColdToHot(Y, Schema::ClassificationLabel)
+
+Turns a cold encoded `Y` vector into a one hot encoded array.
+"""
 function ColdToHot(Y, Schema::ClassificationLabel)
     lenY = length( Y )
     Output = zeros( lenY, Schema.LabelCount )
@@ -27,6 +43,11 @@ function ColdToHot(Y, Schema::ClassificationLabel)
     return Output
 end
 
+"""
+    HotToCold(Y, Schema::ClassificationLabel)
+
+Turns a one hot encoded `Y` array into a cold encoded vector.
+"""
 function HotToCold(Y, Schema::ClassificationLabel)
     Y = forceMatrix(Y)
     (lenY, Feats) = size( Y )
@@ -38,6 +59,12 @@ function HotToCold(Y, Schema::ClassificationLabel)
     return Output
 end
 
+"""
+    MulticlassStats(Y, GT, schema; Microaverage = true)
+
+Calculates many essential classification statistics based on predicted values `Y`, and ground truth values `GT`, using
+the encoding `schema`. Returns a dictionary of many statistics...
+"""
 function MulticlassStats(Y, GT, schema; Microaverage = true)
     Y = forceMatrix(Y)
     GT = forceMatrix(GT)
@@ -93,9 +120,20 @@ function MulticlassStats(Y, GT, schema; Microaverage = true)
 end
 
 #Voting Schemes
+"""
+    Threshold(yhat; level = 0.5)
+
+For a binary vector `yhat` this decides if the label is a 0 or a 1 based on it's value relative to a threshold `level`.
+"""
 Threshold(yhat; level = 0.5) = map( y -> (y >= level) ? 1 : 0, yhat)
 
-#Warning this function can allow for no class assignments...
+"""
+    MulticlassThreshold(yhat; level = 0.5)
+
+Effectively does the same thing as Threshold() but per-row across columns.
+
+*Warning this function can allow for no class assignments. HighestVote is preferred*
+"""
 function MulticlassThreshold(yhat; level = 0.5)
     newY = zeros(size(yhat))
     for obs in 1 : size(yhat)[1]
@@ -107,10 +145,20 @@ function MulticlassThreshold(yhat; level = 0.5)
     return newY
 end
 
+"""
+    HighestVote(yhat)
+
+Returns the column index for each row that has the highest value in one hot encoded `yhat`. Returns a one cold encoded vector.
+"""
 function HighestVote( yhat )
     return [ findmax( yhat[obs,:] )[2] for obs in 1 : size(yhat)[1]  ]
 end
 
+"""
+    HighestVoteOneHot(yhat)
+
+Turns the highest column-wise value to a 1 and the others to zeros per row in a one hot encoded `yhat`. Returns a one cold encoded vector.
+"""
 function HighestVoteOneHot( yhat )
     (Obs, Classes) = size( yhat )
     ret = zeros( ( Obs, Classes ) )

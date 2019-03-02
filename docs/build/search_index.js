@@ -425,6 +425,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.ColdToHot-Tuple{Any,ChemometricsTools.ClassificationLabel}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.ColdToHot",
+    "category": "method",
+    "text": "ColdToHot(Y, Schema::ClassificationLabel)\n\nTurns a cold encoded Y vector into a one hot encoded array.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.DirectStandardization-Tuple{Any,Any}",
     "page": "Documentation",
     "title": "ChemometricsTools.DirectStandardization",
@@ -537,6 +545,30 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#ChemometricsTools.HighestVote-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.HighestVote",
+    "category": "method",
+    "text": "HighestVote(yhat)\n\nReturns the column index for each row that has the highest value in one hot encoded yhat. Returns a one cold encoded vector.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.HighestVoteOneHot-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.HighestVoteOneHot",
+    "category": "method",
+    "text": "HighestVoteOneHot(yhat)\n\nTurns the highest column-wise value to a 1 and the others to zeros per row in a one hot encoded yhat. Returns a one cold encoded vector.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.HotToCold-Tuple{Any,ChemometricsTools.ClassificationLabel}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.HotToCold",
+    "category": "method",
+    "text": "HotToCold(Y, Schema::ClassificationLabel)\n\nTurns a one hot encoded Y array into a cold encoded vector.\n\n\n\n\n\n"
+},
+
+{
     "location": "#ChemometricsTools.Hotelling-Tuple{Any,PCA}",
     "page": "Documentation",
     "title": "ChemometricsTools.Hotelling",
@@ -550,6 +582,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.IntervalOverlay",
     "category": "method",
     "text": "IntervalOverlay(Spectra, Intervals, Err)\n\nDisplays the relative error(Err) of each interval ontop of a Spectra.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.IsColdEncoded-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.IsColdEncoded",
+    "category": "method",
+    "text": "IsColdEncoded(Y)\n\nReturns a boolean true if the array Y is cold encoded, and false if not.\n\n\n\n\n\n"
 },
 
 {
@@ -574,6 +614,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.KernelRidgeRegression",
     "category": "method",
     "text": "KernelRidgeRegression( X, Y, Penalty; KernelParameter = 0.0, KernelType = \"linear\" )\n\nMakes a KernelRidgeRegression model of the form Y = AK using a user specified Kernel(\"Linear\", or \"Guassian\") and has an L2 Penalty. Returns a KRR Wrapper for a CLS object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.LabelEncoding-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.LabelEncoding",
+    "category": "method",
+    "text": "\"     LabelEncoding(HotOrCold)\n\nDetermines if an Array, Y, is one hot encoded, or cold encoded by it\'s dimensions. Returns a ClassificationLabel object/schema to convert between the formats.\n\n\n\n\n\n"
 },
 
 {
@@ -613,7 +661,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Documentation",
     "title": "ChemometricsTools.Logit",
     "category": "method",
-    "text": "Logit(Z; inverse = false)\n\nLogit transforms every element in Z. The inverse may also be applied. Warning: This can return Infs and NaNs if elements of Z are not suited to the transform\n\n\n\n\n\n"
+    "text": "Logit(Z; inverse = false)\n\nLogit transforms (ln( X / (1 - X) ))) every element in Z. The inverse may also be applied. Warning: This can return Infs and NaNs if elements of Z are not suited to the transform\n\n\n\n\n\n"
 },
 
 {
@@ -702,6 +750,22 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.Mean",
     "category": "method",
     "text": "Mean(rv::RunningVar)\n\nReturns the current mean inside of a RunningVar object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.MulticlassStats-Tuple{Any,Any,Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.MulticlassStats",
+    "category": "method",
+    "text": "MulticlassStats(Y, GT, schema; Microaverage = true)\n\nCalculates many essential classification statistics based on predicted values Y, and ground truth values GT, using the encoding schema. Returns a dictionary of many statistics...\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.MulticlassThreshold-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.MulticlassThreshold",
+    "category": "method",
+    "text": "MulticlassThreshold(yhat; level = 0.5)\n\nEffectively does the same thing as Threshold() but per-row across columns.\n\nWarning this function can allow for no class assignments. HighestVote is preferred\n\n\n\n\n\n"
 },
 
 {
@@ -966,6 +1030,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.StandardNormalVariate",
     "category": "method",
     "text": "StandardNormalVariate(X)\n\nScales the columns of X by the mean and standard deviation of each row. Returns the scaled array.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#ChemometricsTools.Threshold-Tuple{Any}",
+    "page": "Documentation",
+    "title": "ChemometricsTools.Threshold",
+    "category": "method",
+    "text": "Threshold(yhat; level = 0.5)\n\nFor a binary vector yhat this decides if the label is a 0 or a 1 based on it\'s value relative to a threshold level.\n\n\n\n\n\n"
 },
 
 {

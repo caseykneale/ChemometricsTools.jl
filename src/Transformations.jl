@@ -211,7 +211,7 @@ end
 """
     Logit(Z; inverse = false)
 
-Logit transforms every element in `Z`. The inverse may also be applied.
+Logit transforms (```ln( X / (1 - X) ))```) every element in `Z`. The inverse may also be applied.
 *Warning: This can return Infs and NaNs if elements of Z are not suited to the transform*
 """
 function Logit(Z; inverse = false)

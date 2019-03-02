@@ -12,7 +12,7 @@ module ChemometricsTools
     export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean, RunningVar,
         Variance, Mean, rbinomial
 
-    include("ClassificationMetrics.jl") 
+    include("ClassificationMetrics.jl") #Has Docs
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
         Threshold, MulticlassThreshold, HighestVote
 
