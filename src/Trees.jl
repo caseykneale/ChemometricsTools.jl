@@ -14,7 +14,7 @@ end
 """
     entropy(v)
 
-Calculates the Shannon-Entropy of a probability vector. Returns a scalar. A common gain function used in tree methods.
+Calculates the Shannon-Entropy of a probability vector `v`. Returns a scalar. A common gain function used in tree methods.
 
 """
 entropy(v) = -sum( map( x -> x * (x == 1.0 ? 0.0 : log( x , 2 )), v ) )
@@ -22,11 +22,10 @@ entropy(v) = -sum( map( x -> x * (x == 1.0 ? 0.0 : log( x , 2 )), v ) )
 """
     gini(p)
 
-Calculates the GINI coefficient of a probability vector. Returns a scalar. A common gain function used in tree methods.
+Calculates the GINI coefficient of a probability vector `p`. Returns a scalar. A common gain function used in tree methods.
 
 """
 gini(p) = 1.0 - sum( p .^ 2 )
-#ssd(split) = sum( ( split .- mean( split ) ) .^ 2 )
 """
     ssd(p)
 
@@ -35,6 +34,10 @@ Calculates the sum squared deviations from a decision tree split. Accepts a vect
 
 """
 ssd(split,mean) = sum( ( split .- mean ) .^ 2 )
+
+#ssd(split) = sum( ( split .- mean( split ) ) .^ 2 )
+
+#The following functions are internal methods. 
 #I have concerns about some of the performance here...
 #Ideas:
 #       sortedinds = sortperm(  x[ sortedinds , var ]  )
@@ -106,10 +109,17 @@ struct CART
     Classification::Bool
 end
 
-#this is a purely nonrecursive decision tree.
-#The julia compiler doesn't like storing structs of nested things.
-#I wrote it the recursive way in the past and it was quite slow :/, I think this is true also
-#of interpretted languages like R/Python...So here it is, nonrecursive tree's!
+
+"""
+    ClassificationTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize = 3)
+
+Builds a CART object using either gini or entropy as a partioning method. Y must be a one hot encoded 2-Array.
+Predictions can be formed by calling the following function from the CART object: (M::CART)(x).
+
+*Note: this is a purely nonrecursive decision tree. The julia compiler doesn't like storing structs of nested things.
+I wrote it the recursive way in the past and it was quite slow, I think this is true also
+of interpretted languages like R/Python...So here it is, nonrecursive tree's!
+"""
 function ClassificationTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize = 3, varsmpl = 0)
     curdepth = 1 #Place holder for power of 2 depth of the binary tree
     cursky = 1 #Holds a 1 if branch can grow, 0 if it cannot
@@ -159,6 +169,16 @@ function ClassificationTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize 
     return CART(dt, Classes, true)
 end
 
+"""
+    RegressionTree(x, y; gainfn = ssd, maxdepth = 4, minbranchsize = 3)
+
+Builds a CART object using ssd as a partioning method. Y must be a one column Array.
+Predictions can be formed by calling the following function from the CART object: (M::CART)(x).
+
+*Note: this is a purely nonrecursive decision tree. The julia compiler doesn't like storing structs of nested things.
+I wrote it the recursive way in the past and it was quite slow, I think this is true also
+of interpretted languages like R/Python...So here it is, nonrecursive tree's!
+"""
 
 function RegressionTree(x, y; gainfn = ssd, maxdepth = 4, minbranchsize = 3, varsmpl = 0)
     curdepth = 1 #Place holder for power of 2 depth of the binary tree
@@ -210,10 +230,13 @@ function RegressionTree(x, y; gainfn = ssd, maxdepth = 4, minbranchsize = 3, var
 end
 
 
+"""
+    (M::CART)(x)
 
-#This is a universal CART predict function
-#This finds ways to interpret the minimal storage used in the tree dictionary.
-#Took me a little bit to see the pattern here, but I think this is pretty expedient.
+This is a universal CART object predict function.
+
+"""
+
 function (M::CART)(x)
     (Obs, Vars) = size(x) .|> Int
     output = zeros(Obs, M.MaxClasses)

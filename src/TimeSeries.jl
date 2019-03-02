@@ -5,7 +5,19 @@ struct RollingWindow
     skip::Int
 end
 
+"""
+    RollingWindow(samples::Int,windowsize::Int)
+
+Creates a RollingWindow iterator from a number of `samples` and a static `windowsize`. The iterator can be used
+in for loops to iteratively return indices of a dynamic rolling window.
+"""
 RollingWindow(samples::Int,windowsize::Int) = RollingWindow(windowsize, samples,samples - windowsize + 1, 1)
+"""
+    RollingWindow(samples::Int,windowsize::Int,skip::Int)
+
+Creates a RollingWindow iterator from a number of `samples` and a static `windowsize` where every iteration `skip` steps are skipped.
+The iterator can be used in for loops to iteratively return indices of a dynamic rolling window.
+"""
 RollingWindow(samples::Int,windowsize::Int,skip::Int) = RollingWindow(windowsize, samples,samples - windowsize + 1, skip)
 
 function Base.iterate( iter::RollingWindow, state = 1 )
@@ -25,7 +37,20 @@ mutable struct ewma
     rv::RunningVar
 end
 
+"""
+    EWMA(Initial::Float64, Lambda::Float64) = ewma(Lambda, Initial, Initial, RunningVar(Initial))
+
+Constructs an exponentially weighted moving average object from an initial scalar property value `Initial` and
+the decay parameter `Lambda`. This defaults the center value to be the initial value.
+"""
 EWMA(Initial::Float64, Lambda::Float64) = ewma(Lambda, Initial, Initial, RunningVar(Initial))
+"""
+    EWMA(Initial::Float64, Lambda::Float64) = ewma(Lambda, Initial, Initial, RunningVar(Initial))
+
+Constructs an exponentially weighted moving average object from an vector of scalar property values `Initial` and
+the decay parameter `Lambda`. This computes the running statistcs neccesary for creating the EWMA model using the
+interval provided and updates the center value to the mean of the provided values.
+"""
 function EWMA(Initial::Array, Lambda::Float64)
     burnin = EWMA(Initial[1], Lambda)#Call constructor above
     len = length(Initial)
@@ -35,7 +60,11 @@ function EWMA(Initial::Array, Lambda::Float64)
     burnin.center = burnin.rv.m.mu
     return burnin
 end
+"""
+    EWMA(P::ewma)(New; train = true)
 
+Provides an EWMA score for a `New` scalar value. If ```train == true``` the model is updated to include this new value.
+"""
 function (P::ewma)(New; train = true)
     P.lastval = ( P.lambda * New ) + ( 1 - P.lambda ) * P.lastval
     if train == true
@@ -43,12 +72,25 @@ function (P::ewma)(New; train = true)
     end
     return P.lastval
 end
+"""
+    ChangeCenter(P::ewma, new::Float64)
 
+This is a convenience function to update the center of a `P` EWMA model, to a `new` scalar value.
+"""
 function ChangeCenter(P::ewma, new::Float64)
     P.center .= new
 end
+"""
+    Variance(P::ewma)
 
+This function returns the EWMA control variance.
+"""
 Variance(P::ewma) = (P.lambda / (2.0 - P.lambda) ) * Variance(P.rv)
+"""
+    Limits(P::ewma; k = 3.0)
+
+This function returns the upper and lower control limits with a `k` span of variance for an EWMA object `P`. 
+"""
 Limits(P::ewma; k = 3.0) = (P.center + (k * sqrt( Variance( P ) ) ), P.center - (k * sqrt( Variance( P ) ) )  )
 
 struct EchoStateNetwork

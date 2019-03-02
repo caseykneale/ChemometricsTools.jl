@@ -1,8 +1,20 @@
+
+"""
+    Shuffle( X, Y )
+
+Shuffles the rows of the `X` and `Y` data without replacement. It returns a 2-Tuple of the shuffled set.
+"""
 function Shuffle( X, Y )
     Inds = StatsBase.sample( collect(1 : size(X)[1] ), size(X)[1], replace = false )
     return( X[Inds,:], Y[Inds,:] )
 end
 
+"""
+    Shuffle!( X, Y )
+
+Shuffles the rows of the `X` and `Y` data without replacement in place. In place, means that this function
+alters the order of the data in memory and this function does not return anything.
+"""
 function Shuffle!( X, Y )
     Inds = StatsBase.sample( collect(1 : size(X)[1] ), size(X)[1], replace = false )
     X .= X[Inds,:]
@@ -18,6 +30,14 @@ struct KFoldsValidation
     Y
 end
 
+"""
+    KFoldsValidation(K::Int, x, y)
+
+Returns a KFoldsValidation iterator with `K` folds. Because it's an iterator it can be used in for loops,
+see the tutorials for pragmatic examples. The iterator returns a 2-Tuple of 2-Tuples which have the
+ following form: ``` ((TrainX,TrainY),(ValidateX,ValidateY) ```.
+
+"""
 function KFoldsValidation(K::Int, x, y)
     observations = size( x )[ 1 ]
     if floor(size( x )[ 1 ] / K) == 1

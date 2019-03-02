@@ -28,7 +28,7 @@ module ChemometricsTools
     export Transform, PipelineInPlace, Pipeline, QuantileTrim, Center, Scale,
         CenterScale, RangeNorm, Logit, BoxCox
 
-    include("Analysis.jl")
+    include("Analysis.jl") #Has Docs : Missing CCA
     export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance,
         findpeaks
 
@@ -48,14 +48,13 @@ module ChemometricsTools
         DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection,
         StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, boxcarScaleMinMax,
         offsetToZero, ALSSmoother, PerfectSmoother, CORAL, TransferByOrthogonalProjection
-        #,TransferByOrthogonalProjection
 
     include("RegressionModels.jl")
     export ClassicLeastSquares, RidgeRegression, PrincipalComponentRegression,
         PartialLeastSquares, KernelRidgeRegression, LSSVM, ExtremeLearningMachine, PredictFn, sigmoid
 
-    include("Trees.jl")
-    export OneHotOdds, entropy, gini, ssd, StumpOrNode, ClassificationTree, RegressionTree, CART
+    include("Trees.jl") #Has Docs: Omitted StumpOrNode & StumpOrNodeRegress
+    export OneHotOdds, entropy, gini, ssd, ClassificationTree, RegressionTree, CART
 
     include("Ensembles.jl")
     export MakeInterval, MakeIntervals, stackedweights, RandomForest
@@ -63,7 +62,7 @@ module ChemometricsTools
     include("Sampling.jl")
     export VenetianBlinds, SplitByProportion, KennardStone
 
-    include("Training.jl")
+    include("Training.jl") #Has Docs
     export Shuffle, Shuffle!, LeaveOneOut, KFoldsValidation
 
     include("PSO.jl")
@@ -75,7 +74,7 @@ module ChemometricsTools
     include("PlottingTools.jl")
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay
 
-    include("TimeSeries.jl")
+    include("TimeSeries.jl") #Has Docs: Omitted EchoStateNetwork Fns
     export RollingWindow, EchoStateNetwork, TuneRidge, PredictFn, EWMA, Variance, Limits
 
     #Generic function for pulling data from within this package.
