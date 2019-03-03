@@ -1,7 +1,7 @@
 """
     ME( y, yhat )
 
-Calculates Mean Error from vectors `Y` and `YHat`
+Calculates Mean Error from vectors `Y` and `YHat`.
 """
 function ME( y, yhat )
     return ( 1.0 / size(Y)[1] ) * sum( ( y - yhat ) )
