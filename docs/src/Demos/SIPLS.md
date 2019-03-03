@@ -1,11 +1,11 @@
 # Stacked Interval Partial Least Squares
-Here's a post I kind of debated making... I once read a paper stating that SIPLS was "too complicated" to implement, and used that as an argument to favour other methods. SIPLS is actually pretty simple(almost embarrassingly so), highly effective, and it has statistical guarantees. What's complicated about SIPLS is providing it to end-users without shielding them from the internals, or leaving them with a pile of hard to read low level code. I decided, the way to go for 'advanced' methods, is to just provide convenience functions. Make life easier for an end-user that knows what they are doing. Demo's are for helping ferry people along and showing at least one way to do things, but there's no golden ticket one-line generic code-base here. Providing it, would be a mistake to people who would actually rely on using this sort of method...
+Here's a post I kind of debated making... I once read a paper stating that SIPLS was "too complicated" to implement, and used that as an argument to favor other methods. SIPLS is actually pretty simple(almost embarrassingly so), highly effective, and it has statistical guarantees. What's complicated about SIPLS is providing it to end-users without shielding them from the internals, or leaving them with a pile of hard to read low level code. I decided, the way to go for 'advanced' methods, is to just provide convenience functions. Make life easier for an end-user that knows what they are doing. Demo's are for helping ferry people along and showing at least one way to do things, but there's no golden ticket one-line generic code-base here. Providing it, would be a mistake to people who would actually rely on using this sort of method...
 
-### 4-Steps to SISPLS
-1. Break our spectra's columnspace into invervals (the size can be CV'd but below I just picked one), then we CV PLS models inside each interval.
+### 4-Steps to SIPLS
+1. Break the spectra's columnspace into invervals (the size can be CV'd but below I just picked one), then we CV PLS models inside each interval.
 2. On a hold out set(or via pooling), we find the prediction error of our intervals
-3. We reciprocally weight our errors
-4. We apply those weights to future predictions via multiplication and sum the result of each interval model.
+3. Reciprocally weight our errors
+4. Apply those weights to future predictions via multiplication and sum the result of each interval model.
 
 ### 1. Crossvalidate the interval models
 ```julia

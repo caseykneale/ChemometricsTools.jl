@@ -27,4 +27,4 @@ TestSet = lda(TestSet);
 TestPreds = classifier(TestS; Factors  = 2);
 MulticlassStats(TestPreds .- 1, TstLbl , Enc)
 ```
-If you're following along you'll get ~92% F-measure. Not bad. You may also notice this package has a nice collection of performance metrics for classification, regression, and clustering. Anyways, I've gotten 100%'s with more advanced methods but this is a cute way to show off some of the tools currently available.
+If you're following along you'll get a ~92% F-measure depending on your random split. Not bad. You may also notice this package has a nice collection of performance metrics for classification on board. Anyways, I've gotten 100%'s with more advanced methods but this is a cute way to show off some of the tools currently available. If you wanna see the gambit of methods check the classification shootout example.

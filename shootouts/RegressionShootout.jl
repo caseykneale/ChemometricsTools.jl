@@ -1,5 +1,3 @@
-using Pkg
-Pkg.activate(".")
 using ChemometricsTools
 #View the data in the package space
 ChemometricsToolsDatasets()

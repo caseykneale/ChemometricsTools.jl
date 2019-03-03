@@ -1,7 +1,7 @@
 ## Direct Standardization Demo
 The point of this demo is to basically show off that ChemometricsTools contains some base methods for Calibration Transfer. If you don't know what that is, it's basically the subset of Chemometrics that focuses on transfer learning data collected on one instrument to another. This saves time and money for instruments that need to be calibrated but perform routine analysis'.
 
-This demo uses the 2002 pharmaceutical shoot-out data and predicts upon the first property value(pretty sure its API content).
+This demo uses the 2002 pharmaceutical shoot-out data and predicts upon the first property value(pretty sure its API content). The dataset contains the same samples of an unstated pharmaceutical measured on two spectrometers with experimentally determined property values. Our goal will be to use one model but adapt the domain from one of the spectrometers to the other.
 
 First let's look at our linear sources of variation to get a feel for the data,
 ```julia
@@ -40,7 +40,7 @@ for vLv in 5:8
     println("RMSEV: ", RMSE(PLSR1(valid1; Factors = vLv), validy))
 end
 ```
-Kind of hacky, but it works fine, we see that 7 factors is optimal on the hold out set so that's what we'll use from here on,
+Kind of hacky, but it works fine for a demo, we see that 7 factors is optimal on the hold out set so that's what we'll use from here on,
 ```julia
 println("RMSEP: ", RMSE(PLSR1(tst1; Factors = 7), tsty))
 ```
@@ -49,7 +49,8 @@ println("RMSEP: ", RMSE(PLSR1(tst1; Factors = 7), tsty))
 
 
 ### Getting to the point
-So why do we need to do a calibration transfer? Same chemical, same type of measurement, even the same wavelengths recorded. Hah, learn basic analytical chemistry, or at least, do the naive thing, apply this model to the measurements on instrument 2. See what error you get.
+So why do we need to do a calibration transfer? Same chemical, same type of measurements, even the same wavelengths are recorded and compared. Do the naive thing, apply this model to the measurements on instrument 2. See what error you get.
+
 ```julia
 println("RMSEP: ", RMSE(PLSR1(tst2; Factors = 7), tsty))
 ```
@@ -87,4 +88,4 @@ println("RMSEP: ", RMSE(PLSR1(tds2to1; Factors = 7), tsty))
 
 ```> RMSEP: 5.693023386113084```
 
-Viola... So in conclusion we can transform the data from instrument 2 to be similar to that of instrument 1. The errors we see are effectively commensurate between the data sources with this transform, and without it the error is about 2x greater. Maybe the main point here is "look ChemometricsTools has some calibration transfer methods and the tools included work". OSC is also included, and maybe by the time you're reading this a few others.
+Viola... So in conclusion we can transform the data from instrument 2 to be similar to that of instrument 1. The errors we see are effectively commensurate between the data sources with this transform, and without it the error is about 2x greater. Maybe the main point here is "look ChemometricsTools has some calibration transfer methods and the tools included work". OSC, TOP, CORAL, etc is also included.
