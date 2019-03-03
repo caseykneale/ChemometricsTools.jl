@@ -24,7 +24,7 @@ jobs:
       julia: 1.0
       os: linux
       script:
-        - julia --project=ChemometricsTools -e 'using Pkg; Pkg.instantiate()'
+        - julia --project=ChemometricsTools -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();'
         - julia --project=ChemometricsTools --color=yes docs/make.jl
       after_success: skip
 notifications:
