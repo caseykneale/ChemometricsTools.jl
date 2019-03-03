@@ -2,7 +2,6 @@
 
 *A Chemometrics Suite for Julia.*
 
-
 This package offers access to essential chemometrics methods in a convenient and reliable way. It is a lightweight library written for performance and longevity. That being said, it's still a bit of a work in progress and if you find any bugs please make an issue!
 
 ## Installation:

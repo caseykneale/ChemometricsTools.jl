@@ -17,19 +17,19 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#Installation:-1",
+    "page": "Home",
+    "title": "Installation:",
+    "category": "section",
+    "text": "using Pkg\nPkg.add(\"ChemometricsTools\")"
+},
+
+{
     "location": "#Support:-1",
     "page": "Home",
     "title": "Support:",
     "category": "section",
     "text": "This package was written in Julia 1.0 but should run fine in 1.1 or later releases. That\'s the beauty of from scratch code with minimal dependencies."
-},
-
-{
-    "location": "#Installation:-1",
-    "page": "Home",
-    "title": "Installation:",
-    "category": "section",
-    "text": "Unfortunately this is not an official Julia package yet. Until it gets curated here\'s how to install it,Git clone the repository to a directory of your choosingusing Pkg\nLastDir = pwd()\ncd(\"/your/path/here/ChemometricsTools/\")\nPkg.activate(\".\")\nPkg.resolve()\nusing ChemometricsTools\ncd(LastDir)"
 },
 
 {
@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Classification",
     "title": "Classification Demo:",
     "category": "section",
-    "text": "There\'s also a bunch of tools for changes of basis such as: principal components analysis, linear discriminant analysis, orthogonal signal correction, etc. With those kinds of tools we can reduce the dimensions of our data and make classes more separable. So separable that trivial classification methods like a Gaussian discriminant can get us pretty good results. Below is an example analysis performed on mid-infrared spectra of strawberry purees and adulterated strawberry purees (yes fraudulent food items are a common concern).(Image: Raw)Use of Fourier transform infrared spectroscopy and partial least squares regression for the detection of adulteration of strawberry purées. J K Holland, E K Kemsley, R H Wilsonsnv = StandardNormalVariate(Train);\nTrain_pca = PCA(snv(Train);; Factors = 15);\n\nEnc = LabelEncoding(TrnLbl);\nHot = ColdToHot(TrnLbl, Enc);\n\nlda = LDA(Train_pca.Scores , Hot);\nclassifier = GaussianDiscriminant(lda, TrainS, Hot)\nTrainPreds = classifier(TrainS; Factors = 2);(Image: LDA of PCA)Cool right? Well, we can now apply the same transformations to the test set and pull some multivariate Gaussians over the train set classes to see how we do identifying fraudulent puree\'s,TestSet = Train_pca(snv(Test));\nTestSet = lda(TestSet);\nTestPreds = classifier(TestS; Factors  = 2);\nMulticlassStats(TestPreds .- 1, TstLbl , Enc)If you\'re following along you\'ll get ~92% F-measure. Not bad. You may also notice this package has a nice collection of performance metrics for classification, regression, and clustering. Anyways, I\'ve gotten 100%\'s with more advanced methods but this is a cute way to show off some of the tools currently available."
+    "text": "This demo shows an applied solution to a classification problem using real mid-infrared data. If you want to see the gambit of methods included in ChemometricsTools check the classification shootout example. There\'s also a bunch of tools for changes of basis such as: principal components analysis, linear discriminant analysis, orthogonal signal correction, etc. With those kinds of tools we can reduce the dimensions of our data and make classes more separable. So separable that trivial classification methods like a Gaussian discriminant can get us pretty good results. Below is an example analysis performed on mid-infrared spectra of strawberry purees and adulterated strawberry purees (yes fraudulent food items are a common concern).(Image: Raw)Use of Fourier transform infrared spectroscopy and partial least squares regression for the detection of adulteration of strawberry purées. J K Holland, E K Kemsley, R H Wilsonsnv = StandardNormalVariate(Train);\nTrain_pca = PCA(snv(Train);; Factors = 15);\n\nEnc = LabelEncoding(TrnLbl);\nHot = ColdToHot(TrnLbl, Enc);\n\nlda = LDA(Train_pca.Scores , Hot);\nclassifier = GaussianDiscriminant(lda, TrainS, Hot)\nTrainPreds = classifier(TrainS; Factors = 2);(Image: LDA of PCA)Cool right? Well, we can now apply the same transformations to the test set and pull some multivariate Gaussians over the train set classes to see how we do identifying fraudulent puree\'s,TestSet = Train_pca(snv(Test));\nTestSet = lda(TestSet);\nTestPreds = classifier(TestS; Factors  = 2);\nMulticlassStats(TestPreds .- 1, TstLbl , Enc)If you\'re following along you\'ll get a ~92% F-measure depending on your random split. Not bad. You may also notice this package has a nice collection of performance metrics for classification on board. Anyways, I\'ve gotten 100%\'s with more advanced methods but this is a cute way to show off some of the tools currently available."
 },
 
 {
@@ -117,7 +117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Regression",
     "title": "Regression/Training Demo:",
     "category": "section",
-    "text": "There are a few built-in\'s to make training models a snap. Philosophically I decided, that making wrapper functions to perform Cross Validation is not fair to the end-user. There are many cases where we want specialized CV\'s but we don\'t want to write nested for-loops that run for hours then debug them... Similarly, most people don\'t want to spend their time hacking into rigid GridSearch objects, or scouring stack exchange / package documentation. Especially when it\'d be easier to write an equivalent approach that is self documenting from scratch. Instead, I used Julia\'s iterators to make K-Fold validations convenient, below is an example Partial Least Squares Regression CV.#Split our data into two parts one 70% one 30%\n((TrainX,TrainY),(TestX, TestY)) = SplitByProportion(x, yprop, 0.7);\n#Preprocess it\nMSC_Obj = MultiplicativeScatterCorrection(TrainX);\nTrainX = MSC_Obj(TrainX);\nTestX = MSC_Obj(TestX);\n#Begin CV!\nLatentVariables = 22\nErr = repeat([0.0], LatentVariables);\n#Note this is the Julian way to nest two loops\nfor Lv in 1:LatentVariables, (Fold, HoldOut) in KFoldsValidation(20, TrainX, TrainY)\n    PLSR = PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv)\n    Err[Lv] += SSE( PLSR(HoldOut[1]), HoldOut[2] )\nend\nscatter(Err, xlabel = \"Latent Variables\", ylabel = \"Cumulative SSE\", labels = [\"Error\"])\nBestLV = argmin(Err)\nPLSR = PartialLeastSquares(TrainX, TrainY; Factors = BestLV)\nRMSE( PLSR(TestX), TestY )(Image: 20folds)That\'s great right? but, hey that was kind of slow. Knowing what we know about ALS based models, we can do the same operation in linear time with respect to latent factors by computing the most latent variables first and only recomputing the regression coefficients. An example of this is below,Err = repeat([0.0], 22);\nModels = []\nfor Lv in 22:-1:1\n    for ( i, ( Fold, HoldOut ) ) in enumerate(KFoldsValidation(20, TrainX, TrainY))\n        if Lv == 22\n            push!( Models, PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv) )\n        end\n        Err[Lv] += SSE( Models[i]( HoldOut[1]; Factors = Lv), HoldOut[2] )\n    end\nendThis approach is ~5 times faster on a single core( < 2 seconds), pours through 7Gb less data, and makes 1/5th the allocations (on this dataset at least). If you wanted you could distribute the inner loop (using Distributed.jl) and see drastic speed ups!"
+    "text": "This demo shows a few ways to build a PLS regression model and perform cross validation. If you want to see the gambit of regression methods included in ChemometricsTools check the regression shootout example.There are a few built-in\'s to make training models a snap. Philosophically I decided, that making wrapper functions to perform Cross Validation is not fair to the end-user. There are many cases where we want specialized CV\'s but we don\'t want to write nested for-loops that run for hours then debug them... Similarly, most people don\'t want to spend their time hacking into rigid GridSearch objects, or scouring stack exchange / package documentation. Especially when it\'d be easier to write an equivalent approach that is self documenting from scratch. Instead, I used Julia\'s iterators to make K-Fold validations convenient, below is an example Partial Least Squares Regression CV.#Split our data into two parts one 70% one 30%\n((TrainX,TrainY),(TestX, TestY)) = SplitByProportion(x, yprop, 0.7);\n#Preprocess it\nMSC_Obj = MultiplicativeScatterCorrection(TrainX);\nTrainX = MSC_Obj(TrainX);\nTestX = MSC_Obj(TestX);\n#Begin CV!\nLatentVariables = 22\nErr = repeat([0.0], LatentVariables);\n#Note this is the Julian way to nest two loops\nfor Lv in 1:LatentVariables, (Fold, HoldOut) in KFoldsValidation(20, TrainX, TrainY)\n    PLSR = PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv)\n    Err[Lv] += SSE( PLSR(HoldOut[1]), HoldOut[2] )\nend\nscatter(Err, xlabel = \"Latent Variables\", ylabel = \"Cumulative SSE\", labels = [\"Error\"])\nBestLV = argmin(Err)\nPLSR = PartialLeastSquares(TrainX, TrainY; Factors = BestLV)\nRMSE( PLSR(TestX), TestY )(Image: 20folds)That\'s great right? but, hey that was kind of slow. Knowing what we know about ALS based models, we can do the same operation in linear time with respect to latent factors by computing the most latent variables first and only recomputing the regression coefficients. An example of this is below,Err = repeat([0.0], 22);\nModels = []\nfor Lv in 22:-1:1\n    for ( i, ( Fold, HoldOut ) ) in enumerate(KFoldsValidation(20, TrainX, TrainY))\n        if Lv == 22\n            push!( Models, PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv) )\n        end\n        Err[Lv] += SSE( Models[i]( HoldOut[1]; Factors = Lv), HoldOut[2] )\n    end\nendThis approach is ~5 times faster on a single core( < 2 seconds), pours through 7Gb less data, and makes 1/5th the allocations (on this dataset at least). If you wanted you could distribute the inner loop (using Distributed.jl) and see drastic speed ups!"
 },
 
 {
@@ -133,15 +133,15 @@ var documenterSearchIndex = {"docs": [
     "page": "SIPLS",
     "title": "Stacked Interval Partial Least Squares",
     "category": "section",
-    "text": "Here\'s a post I kind of debated making... I once read a paper stating that SIPLS was \"too complicated\" to implement, and used that as an argument to favour other methods. SIPLS is actually pretty simple(almost embarrassingly so), highly effective, and it has statistical guarantees. What\'s complicated about SIPLS is providing it to end-users without shielding them from the internals, or leaving them with a pile of hard to read low level code. I decided, the way to go for \'advanced\' methods, is to just provide convenience functions. Make life easier for an end-user that knows what they are doing. Demo\'s are for helping ferry people along and showing at least one way to do things, but there\'s no golden ticket one-line generic code-base here. Providing it, would be a mistake to people who would actually rely on using this sort of method..."
+    "text": "Here\'s a post I kind of debated making... I once read a paper stating that SIPLS was \"too complicated\" to implement, and used that as an argument to favor other methods. SIPLS is actually pretty simple, highly effective, and it has statistical guarantees. What\'s complicated about SIPLS is providing it to end-users without shielding them from the internals, or leaving them with a pile of hard to read low level code. I decided, the way to go for \'advanced\' methods, is to just provide convenience functions. Make life easier for an end-user that knows what they are doing. Demo\'s are for helping ferry people along and showing at least one way to do things, but there\'s no golden ticket one-line generic code-base here. Providing it, would be a mistake to people who would actually rely on using this sort of method."
 },
 
 {
-    "location": "Demos/SIPLS/#Steps-to-SISPLS-1",
+    "location": "Demos/SIPLS/#Steps-to-SIPLS-1",
     "page": "SIPLS",
-    "title": "4-Steps to SISPLS",
+    "title": "4-Steps to SIPLS",
     "category": "section",
-    "text": "Break our spectra\'s columnspace into invervals (the size can be CV\'d but below I just picked one), then we CV PLS models inside each interval.\nOn a hold out set(or via pooling), we find the prediction error of our intervals\nWe reciprocally weight our errors\nWe apply those weights to future predictions via multiplication and sum the result of each interval model."
+    "text": "Break the spectra\'s columnspace into invervals (the size can be CV\'d but below I just picked one), then we CV PLS models inside each interval.\nOn a hold out set(or via pooling), we find the prediction error of our intervals\nThose errors are then reciprocally weighted\nApply those weights to future predictions via multiplication and sum the result of each interval model."
 },
 
 {
@@ -165,7 +165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "SIPLS",
     "title": "3. Make reciprocal weights",
     "category": "section",
-    "text": "StackedWeights = stackedweights(VErr);We can recycle that same plot recipe to observe what this weighting function does for us. The weights basically make intervals with lower error contribute more to the final stacked(additive) model, (Image: OS)"
+    "text": "StackedWeights = stackedweights(VErr);We can recycle that same plot recipe to observe what this weighting function does for us. After calling the stacked weights function we can see how much each interval will contribute to our additve model. In essence, the weights make the intervals with lower error contribute more to the final stacked model, (Image: OS)"
 },
 
 {
@@ -173,7 +173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "SIPLS",
     "title": "4. Pool predictions on test set and weight results",
     "category": "section",
-    "text": "Results = zeros(size(tst1)[1]);\nfor (model, interval) in enumerate(Intervals)\n    Results += CVModels[model](tst1[:,interval]) .* StackedWeights[model]\nend\n\nRMSE( Results, tsty)> 4.09So the RMSE is about 0.6 units less then that which we can observe from the same dataset using base PLSR in my Calibration Transfer Demo. This is actually really fast to run too. Every line in this script (aside from importing CSV) runs in roughly ~1-2 seconds."
+    "text": "Results = zeros(size(tst1)[1]);\nfor (model, interval) in enumerate(Intervals)\n    Results += CVModels[model](tst1[:,interval]) .* StackedWeights[model]\nend\n\nRMSE( Results, tsty)> 4.09The RMSE from the SIPLS model is ~0.6 units less then that which we can observe from the same dataset using base PLSR in my Calibration Transfer Demo. This is actually really fast to run too. Every line in this script (aside from importing CSV) runs in roughly ~1-2 seconds."
 },
 
 {
@@ -189,7 +189,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Calibration Transfer",
     "title": "Direct Standardization Demo",
     "category": "section",
-    "text": "The point of this demo is to basically show off that ChemometricsTools contains some base methods for Calibration Transfer. If you don\'t know what that is, it\'s basically the subset of Chemometrics that focuses on transfer learning data collected on one instrument to another. This saves time and money for instruments that need to be calibrated but perform routine analysis\'.This demo uses the 2002 pharmaceutical shoot-out data and predicts upon the first property value(pretty sure its API content).First let\'s look at our linear sources of variation to get a feel for the data,pca = PCA(calib1; Factors = 20);\nplot(cumsum(ExplainedVariance(pca)), title = \"Scree plot\", xlabel = \"PC\'s\", ylabel = \"Variance Explained\")(Image: scree)Yea so this isn\'t a true Scree plot, but it has the same information...Looks like after ~5 factors we have garbage w.r.t X decompositions, good to know. So I\'d venture to guess a maximum of 15 Latent Variables for a PLS-1 regression is more than a good enough cut-off for cross-validaiton.MaxLvs = 15\nErr = repeat([0.0], MaxLvs);\nModels = []\nfor Lv in MaxLvs:-1:1\n    for ( i, ( Fold, HoldOut ) ) in enumerate(KFoldsValidation(10, calib1, caliby))\n        if Lv == MaxLvs\n            push!( Models, PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv) )\n        end\n        Err[Lv] += SSE( Models[i]( HoldOut[1]; Factors = Lv), HoldOut[2] )\n    end\nend\n\nscatter(Err, xlabel = \"Latent Variables\", ylabel = \"Cumulative SSE\", labels = [\"Error\"])(Image: cv)Great looks like we can get by with 5-8 LV\'s. Let\'s fine tune our Latent Variables based on the hold out set to make our final PLSR model.PLSR1 = PartialLeastSquares(calib1, caliby; Factors = 8);\nfor vLv in 5:8\n    println(\"LV: \", vLv)\n    println(\"RMSEV: \", RMSE(PLSR1(valid1; Factors = vLv), validy))\nendKind of hacky, but it works fine, we see that 7 factors is optimal on the hold out set so that\'s what we\'ll use from here on,println(\"RMSEP: \", RMSE(PLSR1(tst1; Factors = 7), tsty))> RMSEP: 4.76860402876937"
+    "text": "The point of this demo is to basically show off that ChemometricsTools contains some base methods for Calibration Transfer. If you don\'t know what that is, it\'s basically the subset of Chemometrics that focuses on transfer learning data collected on one instrument to another. This saves time and money for instruments that need to be calibrated but perform routine analysis\'.This demo uses the 2002 pharmaceutical shoot-out data and predicts upon the first property value(pretty sure its API content). The dataset contains the same samples of an unstated pharmaceutical measured on two spectrometers with experimentally determined property values. Our goal will be to use one model but adapt the domain from one of the spectrometers to the other.First let\'s look at our linear sources of variation to get a feel for the data,pca = PCA(calib1; Factors = 20);\nplot(cumsum(ExplainedVariance(pca)), title = \"Scree plot\", xlabel = \"PC\'s\", ylabel = \"Variance Explained\")(Image: scree)Yea so this isn\'t a true Scree plot, but it has the same information...Looks like after ~5 factors we have garbage w.r.t X decompositions, good to know. So I\'d venture to guess a maximum of 15 Latent Variables for a PLS-1 regression is more than a good enough cut-off for cross-validaiton.MaxLvs = 15\nErr = repeat([0.0], MaxLvs);\nModels = []\nfor Lv in MaxLvs:-1:1\n    for ( i, ( Fold, HoldOut ) ) in enumerate(KFoldsValidation(10, calib1, caliby))\n        if Lv == MaxLvs\n            push!( Models, PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv) )\n        end\n        Err[Lv] += SSE( Models[i]( HoldOut[1]; Factors = Lv), HoldOut[2] )\n    end\nend\n\nscatter(Err, xlabel = \"Latent Variables\", ylabel = \"Cumulative SSE\", labels = [\"Error\"])(Image: cv)Great looks like we can get by with 5-8 LV\'s. Let\'s fine tune our Latent Variables based on the hold out set to make our final PLSR model.PLSR1 = PartialLeastSquares(calib1, caliby; Factors = 8);\nfor vLv in 5:8\n    println(\"LV: \", vLv)\n    println(\"RMSEV: \", RMSE(PLSR1(valid1; Factors = vLv), validy))\nendKind of hacky, but it works fine for a demo, we see that 7 factors is optimal on the hold out set so that\'s what we\'ll use from here on,println(\"RMSEP: \", RMSE(PLSR1(tst1; Factors = 7), tsty))> RMSEP: 4.76860402876937"
 },
 
 {
@@ -197,7 +197,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Calibration Transfer",
     "title": "Getting to the point",
     "category": "section",
-    "text": "So why do we need to do a calibration transfer? Same chemical, same type of measurement, even the same wavelengths recorded. Hah, learn basic analytical chemistry, or at least, do the naive thing, apply this model to the measurements on instrument 2. See what error you get.println(\"RMSEP: \", RMSE(PLSR1(tst2; Factors = 7), tsty))>RMSEP: 10.303430504546292The prediction error is about 2 fold, in this case it\'d be hard to argue this is a useful model at all. Especially if you check the residuals. It\'s pretty clear the contributions of variance across multiple instruments are not the same in this case."
+    "text": "So why do we need to do a calibration transfer? Same chemical, same type of measurements, even the same wavelengths are recorded and compared. Do the naive thing, apply this model to the measurements on instrument 2. See what error you get.println(\"RMSEP: \", RMSE(PLSR1(tst2; Factors = 7), tsty))>RMSEP: 10.303430504546292The prediction error is about 2 fold, in this case it\'d be hard to argue this is a useful model at all. Especially if you check the residuals. It\'s pretty clear the contributions of variance across multiple instruments are not the same in this case."
 },
 
 {
@@ -205,7 +205,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Calibration Transfer",
     "title": "Now for calibration transfer!",
     "category": "section",
-    "text": "So let\'s use DirectStandardization. First we\'ll find the optimal number of DirectStandardization Factors to include in our model. We can do that on our hold out set and this should be very fast because we have a hold out set, so we can do this with some inefficient code.Factors = 1:15\nErr = repeat([0.0], length(Factors));\nfor F in Factors\n    DS2to1 = DirectStandardization(calib1, calib2; Factors = F);\n    cds2to1 = DS2to1(valid2; Factors = F)\n    Err[F] = RMSE( PLSR1(cds2to1; Factors = 7), validy )\nend\nscatter(Err, title = \"Transfered Model Validation Error\", xlabel = \"Latent Factors\",\n        ylabel = \"RMSE\", labels = [\"Error\"])(Image: cv)OptimalDSFactor = argmin(Err)\nDS2to1 = DirectStandardization(calib1, calib2; Factors = OptimalDSFactor);\ntds2to1 = DS2to1(tst2; Factors = OptimalDSFactor);Looks like 8 Factors in the DS transfer is pretty good. Lets see how the transferred data compares on the prediction set using the same model,println(\"RMSEP: \", RMSE(PLSR1(tds2to1; Factors = 7), tsty))> RMSEP: 5.693023386113084Viola... So in conclusion we can transform the data from instrument 2 to be similar to that of instrument 1. The errors we see are effectively commensurate between the data sources with this transform, and without it the error is about 2x greater. Maybe the main point here is \"look ChemometricsTools has some calibration transfer methods and the tools included work\". OSC is also included, and maybe by the time you\'re reading this a few others."
+    "text": "So let\'s use DirectStandardization. First we\'ll find the optimal number of DirectStandardization Factors to include in our model. We can do that on our hold out set and this should be very fast because we have a hold out set, so we can do this with some inefficient code.Factors = 1:15\nErr = repeat([0.0], length(Factors));\nfor F in Factors\n    DS2to1 = DirectStandardization(calib1, calib2; Factors = F);\n    cds2to1 = DS2to1(valid2; Factors = F)\n    Err[F] = RMSE( PLSR1(cds2to1; Factors = 7), validy )\nend\nscatter(Err, title = \"Transfered Model Validation Error\", xlabel = \"Latent Factors\",\n        ylabel = \"RMSE\", labels = [\"Error\"])(Image: cv)OptimalDSFactor = argmin(Err)\nDS2to1 = DirectStandardization(calib1, calib2; Factors = OptimalDSFactor);\ntds2to1 = DS2to1(tst2; Factors = OptimalDSFactor);Looks like 8 Factors in the DS transfer is pretty good. Lets see how the transferred data compares on the prediction set using the same model,println(\"RMSEP: \", RMSE(PLSR1(tds2to1; Factors = 7), tsty))> RMSEP: 5.693023386113084Viola... So in conclusion we can transform the data from instrument 2 to be similar to that of instrument 1. The errors we see are effectively commensurate between the data sources with this transform, and without it the error is about 2x greater. Maybe the main point here is \"look ChemometricsTools has some calibration transfer methods and the tools included work\". OSC, TOP, CORAL, etc is also included."
 },
 
 {
@@ -897,7 +897,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/RegressionMetrics/#",
+    "location": "man/regressMetrics/#",
     "page": "Regression Metrics",
     "title": "Regression Metrics",
     "category": "page",
@@ -905,7 +905,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/RegressionMetrics/#Regression-Metrics-API-Reference-1",
+    "location": "man/regressMetrics/#Regression-Metrics-API-Reference-1",
     "page": "Regression Metrics",
     "title": "Regression Metrics API Reference",
     "category": "section",
@@ -913,7 +913,103 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/RegressionMetrics/#Functions-1",
+    "location": "man/regressMetrics/#ChemometricsTools.MAE-Tuple{Any,Any}",
+    "page": "Regression Metrics",
+    "title": "ChemometricsTools.MAE",
+    "category": "method",
+    "text": "MAE( y, yhat )\n\nCalculates Mean Average Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/regressMetrics/#ChemometricsTools.MAPE-Tuple{Any,Any}",
+    "page": "Regression Metrics",
+    "title": "ChemometricsTools.MAPE",
+    "category": "method",
+    "text": "MAPE( y, yhat )\n\nCalculates Mean Average Percent Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/regressMetrics/#ChemometricsTools.ME-Tuple{Any,Any}",
+    "page": "Regression Metrics",
+    "title": "ChemometricsTools.ME",
+    "category": "method",
+    "text": "ME( y, yhat )\n\nCalculates Mean Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/regressMetrics/#ChemometricsTools.MSE-Tuple{Any,Any}",
+    "page": "Regression Metrics",
+    "title": "ChemometricsTools.MSE",
+    "category": "method",
+    "text": "MSE( y, yhat )\n\nCalculates Mean Squared Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/regressMetrics/#ChemometricsTools.PearsonCorrelationCoefficient-Tuple{Any,Any}",
+    "page": "Regression Metrics",
+    "title": "ChemometricsTools.PearsonCorrelationCoefficient",
+    "category": "method",
+    "text": "PearsonCorrelationCoefficient( y, yhat )\n\nCalculates The Pearson Correlation Coefficient from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/regressMetrics/#ChemometricsTools.PercentRMSE-Tuple{Any,Any}",
+    "page": "Regression Metrics",
+    "title": "ChemometricsTools.PercentRMSE",
+    "category": "method",
+    "text": "PercentRMSE( y, yhat )\n\nCalculates Percent Root Mean Squared Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/regressMetrics/#ChemometricsTools.RMSE-Tuple{Any,Any}",
+    "page": "Regression Metrics",
+    "title": "ChemometricsTools.RMSE",
+    "category": "method",
+    "text": "RMSE( y, yhat )\n\nCalculates Root Mean Squared Error from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/regressMetrics/#ChemometricsTools.RSquare-Tuple{Any,Any}",
+    "page": "Regression Metrics",
+    "title": "ChemometricsTools.RSquare",
+    "category": "method",
+    "text": "RSquare( y, yhat )\n\nCalculates R^2 from Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/regressMetrics/#ChemometricsTools.SSE-Tuple{Any,Any}",
+    "page": "Regression Metrics",
+    "title": "ChemometricsTools.SSE",
+    "category": "method",
+    "text": "SSE( y, yhat )\n\nCalculates Sum of Squared Errors from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/regressMetrics/#ChemometricsTools.SSReg-Tuple{Any,Any}",
+    "page": "Regression Metrics",
+    "title": "ChemometricsTools.SSReg",
+    "category": "method",
+    "text": "SSReg( y, yhat )\n\nCalculates Sum of Squared Deviations due to Regression from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/regressMetrics/#ChemometricsTools.SSRes-Tuple{Any,Any}",
+    "page": "Regression Metrics",
+    "title": "ChemometricsTools.SSRes",
+    "category": "method",
+    "text": "SSRes( y, yhat )\n\nCalculates Sum of Squared Residuals from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/regressMetrics/#ChemometricsTools.SSTotal-Tuple{Any}",
+    "page": "Regression Metrics",
+    "title": "ChemometricsTools.SSTotal",
+    "category": "method",
+    "text": "SSTotal( y, yhat )\n\nCalculates Total Sum of Squared Deviations from vectors Y and YHat\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/regressMetrics/#Functions-1",
     "page": "Regression Metrics",
     "title": "Functions",
     "category": "section",
@@ -1009,7 +1105,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/ClassificationMetrics/#",
+    "location": "man/classMetrics/#",
     "page": "Classification Metrics",
     "title": "Classification Metrics",
     "category": "page",
@@ -1017,7 +1113,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/ClassificationMetrics/#Classification-Metrics-API-Reference-1",
+    "location": "man/classMetrics/#Classification-Metrics-API-Reference-1",
     "page": "Classification Metrics",
     "title": "Classification Metrics API Reference",
     "category": "section",
@@ -1025,7 +1121,79 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/ClassificationMetrics/#Functions-1",
+    "location": "man/classMetrics/#ChemometricsTools.ColdToHot-Tuple{Any,ChemometricsTools.ClassificationLabel}",
+    "page": "Classification Metrics",
+    "title": "ChemometricsTools.ColdToHot",
+    "category": "method",
+    "text": "ColdToHot(Y, Schema::ClassificationLabel)\n\nTurns a cold encoded Y vector into a one hot encoded array.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/classMetrics/#ChemometricsTools.HighestVote-Tuple{Any}",
+    "page": "Classification Metrics",
+    "title": "ChemometricsTools.HighestVote",
+    "category": "method",
+    "text": "HighestVote(yhat)\n\nReturns the column index for each row that has the highest value in one hot encoded yhat. Returns a one cold encoded vector.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/classMetrics/#ChemometricsTools.HighestVoteOneHot-Tuple{Any}",
+    "page": "Classification Metrics",
+    "title": "ChemometricsTools.HighestVoteOneHot",
+    "category": "method",
+    "text": "HighestVoteOneHot(yhat)\n\nTurns the highest column-wise value to a 1 and the others to zeros per row in a one hot encoded yhat. Returns a one cold encoded vector.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/classMetrics/#ChemometricsTools.HotToCold-Tuple{Any,ChemometricsTools.ClassificationLabel}",
+    "page": "Classification Metrics",
+    "title": "ChemometricsTools.HotToCold",
+    "category": "method",
+    "text": "HotToCold(Y, Schema::ClassificationLabel)\n\nTurns a one hot encoded Y array into a cold encoded vector.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/classMetrics/#ChemometricsTools.IsColdEncoded-Tuple{Any}",
+    "page": "Classification Metrics",
+    "title": "ChemometricsTools.IsColdEncoded",
+    "category": "method",
+    "text": "IsColdEncoded(Y)\n\nReturns a boolean true if the array Y is cold encoded, and false if not.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/classMetrics/#ChemometricsTools.LabelEncoding-Tuple{Any}",
+    "page": "Classification Metrics",
+    "title": "ChemometricsTools.LabelEncoding",
+    "category": "method",
+    "text": "\"     LabelEncoding(HotOrCold)\n\nDetermines if an Array, Y, is one hot encoded, or cold encoded by it\'s dimensions. Returns a ClassificationLabel object/schema to convert between the formats.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/classMetrics/#ChemometricsTools.MulticlassStats-Tuple{Any,Any,Any}",
+    "page": "Classification Metrics",
+    "title": "ChemometricsTools.MulticlassStats",
+    "category": "method",
+    "text": "MulticlassStats(Y, GT, schema; Microaverage = true)\n\nCalculates many essential classification statistics based on predicted values Y, and ground truth values GT, using the encoding schema. Returns a dictionary of many statistics...\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/classMetrics/#ChemometricsTools.MulticlassThreshold-Tuple{Any}",
+    "page": "Classification Metrics",
+    "title": "ChemometricsTools.MulticlassThreshold",
+    "category": "method",
+    "text": "MulticlassThreshold(yhat; level = 0.5)\n\nEffectively does the same thing as Threshold() but per-row across columns.\n\nWarning this function can allow for no class assignments. HighestVote is preferred\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/classMetrics/#ChemometricsTools.Threshold-Tuple{Any}",
+    "page": "Classification Metrics",
+    "title": "ChemometricsTools.Threshold",
+    "category": "method",
+    "text": "Threshold(yhat; level = 0.5)\n\nFor a binary vector yhat this decides if the label is a 0 or a 1 based on it\'s value relative to a threshold level.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/classMetrics/#Functions-1",
     "page": "Classification Metrics",
     "title": "Functions",
     "category": "section",
@@ -1665,14 +1833,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/FullAPI/#ChemometricsTools.ColdToHot-Tuple{Any,ChemometricsTools.ClassificationLabel}",
-    "page": "Full API",
-    "title": "ChemometricsTools.ColdToHot",
-    "category": "method",
-    "text": "ColdToHot(Y, Schema::ClassificationLabel)\n\nTurns a cold encoded Y vector into a one hot encoded array.\n\n\n\n\n\n"
-},
-
-{
     "location": "man/FullAPI/#ChemometricsTools.ExplainedVariance-Tuple{LDA}",
     "page": "Full API",
     "title": "ChemometricsTools.ExplainedVariance",
@@ -1689,171 +1849,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/FullAPI/#ChemometricsTools.HighestVote-Tuple{Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.HighestVote",
-    "category": "method",
-    "text": "HighestVote(yhat)\n\nReturns the column index for each row that has the highest value in one hot encoded yhat. Returns a one cold encoded vector.\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.HighestVoteOneHot-Tuple{Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.HighestVoteOneHot",
-    "category": "method",
-    "text": "HighestVoteOneHot(yhat)\n\nTurns the highest column-wise value to a 1 and the others to zeros per row in a one hot encoded yhat. Returns a one cold encoded vector.\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.HotToCold-Tuple{Any,ChemometricsTools.ClassificationLabel}",
-    "page": "Full API",
-    "title": "ChemometricsTools.HotToCold",
-    "category": "method",
-    "text": "HotToCold(Y, Schema::ClassificationLabel)\n\nTurns a one hot encoded Y array into a cold encoded vector.\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.IsColdEncoded-Tuple{Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.IsColdEncoded",
-    "category": "method",
-    "text": "IsColdEncoded(Y)\n\nReturns a boolean true if the array Y is cold encoded, and false if not.\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.LabelEncoding-Tuple{Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.LabelEncoding",
-    "category": "method",
-    "text": "\"     LabelEncoding(HotOrCold)\n\nDetermines if an Array, Y, is one hot encoded, or cold encoded by it\'s dimensions. Returns a ClassificationLabel object/schema to convert between the formats.\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.MAE-Tuple{Any,Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.MAE",
-    "category": "method",
-    "text": "MAE( y, yhat )\n\nCalculates Mean Average Error from vectors Y and YHat\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.MAPE-Tuple{Any,Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.MAPE",
-    "category": "method",
-    "text": "MAPE( y, yhat )\n\nCalculates Mean Average Percent Error from vectors Y and YHat\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.ME-Tuple{Any,Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.ME",
-    "category": "method",
-    "text": "ME( y, yhat )\n\nCalculates Mean Error from vectors Y and YHat\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.MSE-Tuple{Any,Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.MSE",
-    "category": "method",
-    "text": "MSE( y, yhat )\n\nCalculates Mean Squared Error from vectors Y and YHat\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.MulticlassStats-Tuple{Any,Any,Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.MulticlassStats",
-    "category": "method",
-    "text": "MulticlassStats(Y, GT, schema; Microaverage = true)\n\nCalculates many essential classification statistics based on predicted values Y, and ground truth values GT, using the encoding schema. Returns a dictionary of many statistics...\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.MulticlassThreshold-Tuple{Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.MulticlassThreshold",
-    "category": "method",
-    "text": "MulticlassThreshold(yhat; level = 0.5)\n\nEffectively does the same thing as Threshold() but per-row across columns.\n\nWarning this function can allow for no class assignments. HighestVote is preferred\n\n\n\n\n\n"
-},
-
-{
     "location": "man/FullAPI/#ChemometricsTools.PCA_NIPALS-Tuple{Any}",
     "page": "Full API",
     "title": "ChemometricsTools.PCA_NIPALS",
     "category": "method",
     "text": "PCA_NIPALS(X; Factors = minimum(size(X)) - 1, tolerance = 1e-7, maxiters = 200)\n\nCompute\'s a PCA from x using the NIPALS algorithm with a user specified number of latent variables(Factors). The tolerance is the minimum change in the F norm before ceasing execution. Returns a PCA object.\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.PearsonCorrelationCoefficient-Tuple{Any,Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.PearsonCorrelationCoefficient",
-    "category": "method",
-    "text": "PearsonCorrelationCoefficient( y, yhat )\n\nCalculates The Pearson Correlation Coefficient from vectors Y and YHat\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.PercentRMSE-Tuple{Any,Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.PercentRMSE",
-    "category": "method",
-    "text": "PercentRMSE( y, yhat )\n\nCalculates Percent Root Mean Squared Error from vectors Y and YHat\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.RMSE-Tuple{Any,Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.RMSE",
-    "category": "method",
-    "text": "RMSE( y, yhat )\n\nCalculates Root Mean Squared Error from vectors Y and YHat\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.RSquare-Tuple{Any,Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.RSquare",
-    "category": "method",
-    "text": "RSquare( y, yhat )\n\nCalculates R^2 from Y and YHat\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.SSE-Tuple{Any,Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.SSE",
-    "category": "method",
-    "text": "SSE( y, yhat )\n\nCalculates Sum of Squared Errors from vectors Y and YHat\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.SSReg-Tuple{Any,Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.SSReg",
-    "category": "method",
-    "text": "SSReg( y, yhat )\n\nCalculates Sum of Squared Deviations due to Regression from vectors Y and YHat\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.SSRes-Tuple{Any,Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.SSRes",
-    "category": "method",
-    "text": "SSRes( y, yhat )\n\nCalculates Sum of Squared Residuals from vectors Y and YHat\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.SSTotal-Tuple{Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.SSTotal",
-    "category": "method",
-    "text": "SSTotal( y, yhat )\n\nCalculates Total Sum of Squared Deviations from vectors Y and YHat\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/FullAPI/#ChemometricsTools.Threshold-Tuple{Any}",
-    "page": "Full API",
-    "title": "ChemometricsTools.Threshold",
-    "category": "method",
-    "text": "Threshold(yhat; level = 0.5)\n\nFor a binary vector yhat this decides if the label is a 0 or a 1 based on it\'s value relative to a threshold level.\n\n\n\n\n\n"
 },
 
 {

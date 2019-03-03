@@ -1,4 +1,6 @@
 # Regression/Training Demo:
+This demo shows a few ways to build a PLS regression model and perform cross validation. If you want to see the gambit of regression methods included in ChemometricsTools check the [regression shootout](https://github.com/caseykneale/ChemometricsTools/blob/master/shootouts/RegressionShootout.jl) example.
+
 There are a few built-in's to make training models a snap. Philosophically I decided, that making wrapper functions to perform Cross Validation is not fair to the end-user. There are many cases where we want specialized CV's but we don't want to write nested for-loops that run for hours then debug them... Similarly, most people don't want to spend their time hacking into rigid GridSearch objects, or scouring stack exchange / package documentation. Especially when it'd be easier to write an equivalent approach that is self documenting from scratch. Instead, I used Julia's iterators to make K-Fold validations convenient, below is an example Partial Least Squares Regression CV.
 
 ```julia
