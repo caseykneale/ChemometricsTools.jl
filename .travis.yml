@@ -5,10 +5,8 @@ os:
 julia:
   - 1.0
   - 1.1
-  - nightly
-# matrix:
-#   allow_failures:
-#     - julia: nightly
+#  - nightly
+
 branches:
   only:
     - master
