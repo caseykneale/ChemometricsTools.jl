@@ -1,25 +1,21 @@
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://caseykneale.github.io/ChemometricsTools/) [![](https://travis-ci.org/caseykneale/ChemometricsTools.svg?branch=master)](https://caseykneale.github.io/ChemometricsTools/)
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://caseykneale.github.io/ChemometricsTools.jl/) [![](https://travis-ci.org/caseykneale/ChemometricsTools.svg?branch=master)](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/src/ChemometricsTools.jl)
 # ChemometricsTools.jl
 This package contains a collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. It is currently richer and more fundamental then any single free chemometrics package available in any other language. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is a pile of applied linear algebra/statistics that is well reasoned by the physics and meaning of chemical measurements. This is somewhat orthogonal to most fields of machine learning (aka "add more layers"). Sometimes chemometricians also get desperate and break out pure machine learning methods. So some of those methods are in this package, but if you want neural networks try [Flux.jl](https://github.com/FluxML/Flux.jl).
 
-## Documentation
-  - [Read the Docs!](https://caseykneale.github.io/ChemometricsTools/)
-  - [Module Source](https://github.com/caseykneale/ChemometricsTools/blob/master/src/ChemometricsTools.jl).
-
 ## Tutorials/Demonstrations:
-  - [Transforms](https://caseykneale.github.io/ChemometricsTools/Demos/Transforms/)
-  - [Pipelines](https://caseykneale.github.io/ChemometricsTools/Demos/Pipelines/)
-  - [Classification](https://caseykneale.github.io/ChemometricsTools/Demos/ClassificationExample/)
-  - [Regression](https://caseykneale.github.io/ChemometricsTools/Demos/RegressionExample/)
-  - [Calibration Transfer: Direct Standardization](https://caseykneale.github.io/ChemometricsTools/Demos/CalibXfer/)
-  - [Stacked Interval Partial Least Squares Regression](https://caseykneale.github.io/ChemometricsTools/Demos/SIPLS/)
-  - [Curve Resolution](https://caseykneale.github.io/ChemometricsTools/Demos/CurveResolution/)
+  - [Transforms](https://caseykneale.github.io/ChemometricsTools.jl/Demos/Transforms/)
+  - [Pipelines](https://caseykneale.github.io/ChemometricsTools.jl/Demos/Pipelines/)
+  - [Classification](https://caseykneale.github.io/ChemometricsTools.jl/Demos/ClassificationExample/)
+  - [Regression](https://caseykneale.github.io/ChemometricsTools.jl/Demos/RegressionExample/)
+  - [Calibration Transfer: Direct Standardization](https://caseykneale.github.io/ChemometricsTools.jl/Demos/CalibXfer/)
+  - [Stacked Interval Partial Least Squares Regression](https://caseykneale.github.io/ChemometricsTools.jl/Demos/SIPLS/)
+  - [Curve Resolution](https://caseykneale.github.io/ChemometricsTools.jl/Demos/CurveResolution/)
 
 ## Shootouts/Modeling Examples:
-  - [Readme](https://github.com/caseykneale/ChemometricsTools/tree/master/shootouts)
-  - [Classification](https://github.com/caseykneale/ChemometricsTools/blob/master/shootouts/ClassificationShootout.jl)
-  - [Regression](https://github.com/caseykneale/ChemometricsTools/blob/master/shootouts/RegressionShootout.jl)
-  - [Fault Detection](https://github.com/caseykneale/ChemometricsTools/blob/master/shootouts/AnomalyShootout.jl)
+  - [Readme](https://github.com/caseykneale/ChemometricsTools.jl/tree/master/shootouts)
+  - [Classification](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/ClassificationShootout.jl)
+  - [Regression](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/RegressionShootout.jl)
+  - [Fault Detection](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/AnomalyShootout.jl)
 
 ### Package Status => Pre-release! (v 0.1.0)
 ChemometricsTools is brand new. Many of the functionality available can reliably be used, the documentation is pretty fleshed out. Continuous Integration isn't in place yet. Betchya anything there are a few bugs still. This is an early release for constructive criticism and spreading awareness.
