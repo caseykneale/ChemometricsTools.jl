@@ -933,7 +933,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Regression Metrics",
     "title": "ChemometricsTools.ME",
     "category": "method",
-    "text": "ME( y, yhat )\n\nCalculates Mean Error from vectors Y and YHat\n\n\n\n\n\n"
+    "text": "ME( y, yhat )\n\nCalculates Mean Error from vectors Y and YHat.\n\n\n\n\n\n"
 },
 
 {
