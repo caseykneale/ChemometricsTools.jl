@@ -17,8 +17,8 @@ This package contains a collection of tools to perform fundamental and advanced 
   - [Regression](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/RegressionShootout.jl)
   - [Fault Detection](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/AnomalyShootout.jl)
 
-### Package Status => Pre-release! (v 0.1.0)
-ChemometricsTools is brand new. Many of the functionality available can reliably be used, the documentation is pretty fleshed out. Continuous Integration isn't in place yet. Betchya anything there are a few bugs still. This is an early release for constructive criticism and spreading awareness.
+### Package Status => Public release! (v 0.2.3) (Fingers crossed)
+ChemometricsTools is brand new, and was recently submitted to be registerred as an official Julia package. Many of the functionality available can reliably be used, the documentation is pretty fleshed out. Continuous Integration isn't in place yet. Betchya anything there are a few bugs still. This is an early release for constructive criticism and spreading awareness.
 
 # Package Highlights
 ### Transforms/Pipelines
