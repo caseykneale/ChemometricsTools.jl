@@ -10,6 +10,7 @@ Default constructor for a Bounds object. Returns a bounds object with a lower bo
 with length of `dims`.
 """
 Bounds(dims) = Bounds( repeat( [ 0 ], dims ), repeat( [ 1 ], dims ) )
+
 """
     Bounds(dims)
 

@@ -12,6 +12,7 @@ Creates a RollingWindow iterator from a number of `samples` and a static `window
 in for loops to iteratively return indices of a dynamic rolling window.
 """
 RollingWindow(samples::Int,windowsize::Int) = RollingWindow(windowsize, samples,samples - windowsize + 1, 1)
+
 """
     RollingWindow(samples::Int,windowsize::Int,skip::Int)
 
@@ -89,7 +90,7 @@ Variance(P::ewma) = (P.lambda / (2.0 - P.lambda) ) * Variance(P.rv)
 """
     Limits(P::ewma; k = 3.0)
 
-This function returns the upper and lower control limits with a `k` span of variance for an EWMA object `P`. 
+This function returns the upper and lower control limits with a `k` span of variance for an EWMA object `P`.
 """
 Limits(P::ewma; k = 3.0) = (P.center + (k * sqrt( Variance( P ) ) ), P.center - (k * sqrt( Variance( P ) ) )  )
 

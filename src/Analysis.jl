@@ -148,7 +148,6 @@ Calculates the explained variance of each singular value in an LDA object.
 """
 ExplainedVariance(lda::LDA) = lda.Values ./ sum(lda.Values)
 
-
 function MatrixInverseSqrt(X, threshold = 1e-6)
     eig = eigen(X)
     diagelems = 1.0 ./ sqrt.( max.( eig.values , 0.0 ) )
@@ -163,6 +162,11 @@ struct CanonicalCorrelationAnalysis
     r
 end
 
+"""
+    CanonicalCorrelationAnalysis(A, B)
+
+Returns a CanonicalCorrelationAnalysis object which contains (U, V, r) from Arrays A and B.
+"""
 function CanonicalCorrelationAnalysis(A, B)
     (Obs,Vars) = size(A);;
     CAA = (1/Obs) .* A * A'
@@ -174,7 +178,7 @@ function CanonicalCorrelationAnalysis(A, B)
     singvaldecomp = LinearAlgebra.svd( CAAInvSqrt * CAB * CBBInvSqrt )
     Aprime = CAAInvSqrt * singvaldecomp.U[ :,1 : maxrank ]
     Bprime = CAAInvSqrt * singvaldecomp.Vt[ :,1 : maxrank ]
-    return CanonicalCorrelationAnalysis(Aprime' * A, V = Bprime' * B, singvaldecomp.S[1 : maxrank] )
+    return CanonicalCorrelationAnalysis(Aprime' * A, Bprime' * B, singvaldecomp.S[1 : maxrank] )
 end
 
 """

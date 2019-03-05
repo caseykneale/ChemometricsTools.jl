@@ -717,7 +717,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Time Series",
     "title": "ChemometricsTools.Limits",
     "category": "method",
-    "text": "Limits(P::ewma; k = 3.0)\n\nThis function returns the upper and lower control limits with a k span of variance for an EWMA object P. \n\n\n\n\n\n"
+    "text": "Limits(P::ewma; k = 3.0)\n\nThis function returns the upper and lower control limits with a k span of variance for an EWMA object P.\n\n\n\n\n\n"
 },
 
 {
@@ -1341,7 +1341,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Clustering",
     "title": "Clustering API Reference",
     "category": "section",
-    "text": ""
+    "text": "##K-means Elbow Recipe  using Plots\n  ExplainedVar = []\n  for K in 1:10\n      km = KMeans( X, K; tolerance = 1e-14, maxiters = 1000 )\n      TCSS = TotalClusterSS( km )\n      WCSS = WithinClusterSS( km )\n      #BCSS = BetweenClusterSS( km )\n      push!(ExplainedVar, WCSS / TCSS)\n  end\n  scatter(ExplainedVar, title = \"Elbow Plot\", ylabel = \"WCSS/TCSS\", xlabel = \"Clusters (#)\", label = \"K-means\" )"
 },
 
 {
@@ -1798,6 +1798,14 @@ var documenterSearchIndex = {"docs": [
     "title": "Full API",
     "category": "page",
     "text": ""
+},
+
+{
+    "location": "man/FullAPI/#ChemometricsTools.CanonicalCorrelationAnalysis-Tuple{Any,Any}",
+    "page": "Full API",
+    "title": "ChemometricsTools.CanonicalCorrelationAnalysis",
+    "category": "method",
+    "text": "CanonicalCorrelationAnalysis(A, B)\n\nReturns a CanonicalCorrelationAnalysis object which contains (U, V, r) from Arrays A and B.\n\n\n\n\n\n"
 },
 
 {

@@ -28,7 +28,7 @@ module ChemometricsTools
     export Transform, PipelineInPlace, Pipeline, QuantileTrim, Center, Scale,
         CenterScale, RangeNorm, Logit, BoxCox
 
-    include("Analysis.jl") #Has Docs : Missing CCA for now
+    include("Analysis.jl") #Has Docs
     export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance,
         findpeaks
 
