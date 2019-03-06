@@ -30,7 +30,7 @@ module ChemometricsTools
 
     include("Analysis.jl") #Has Docs
     export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance,
-        findpeaks
+        findpeaks, RAFFT
 
     include("AnomalyDetection.jl") #Has docs
     export OneClassJKNN, Q, Hotelling, Leverage

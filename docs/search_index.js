@@ -1341,7 +1341,15 @@ var documenterSearchIndex = {"docs": [
     "page": "Clustering",
     "title": "Clustering API Reference",
     "category": "section",
-    "text": "##K-means Elbow Recipe  using Plots\n  ExplainedVar = []\n  for K in 1:10\n      km = KMeans( X, K; tolerance = 1e-14, maxiters = 1000 )\n      TCSS = TotalClusterSS( km )\n      WCSS = WithinClusterSS( km )\n      #BCSS = BetweenClusterSS( km )\n      push!(ExplainedVar, WCSS / TCSS)\n  end\n  scatter(ExplainedVar, title = \"Elbow Plot\", ylabel = \"WCSS/TCSS\", xlabel = \"Clusters (#)\", label = \"K-means\" )"
+    "text": ""
+},
+
+{
+    "location": "man/Clustering/#K-means-Elbow-Plot-Recipe-1",
+    "page": "Clustering",
+    "title": "K-means Elbow Plot Recipe",
+    "category": "section",
+    "text": "  using Plots\n  ExplainedVar = []\n  for K in 1:10\n      km = KMeans( X, K; tolerance = 1e-14, maxiters = 1000 )\n      TCSS = TotalClusterSS( km )\n      WCSS = WithinClusterSS( km )\n      #BCSS = BetweenClusterSS( km )\n      push!(ExplainedVar, WCSS / TCSS)\n  end\n  scatter(ExplainedVar, title = \"Elbow Plot\", ylabel = \"WCSS/TCSS\", xlabel = \"Clusters (#)\", label = \"K-means\" )"
 },
 
 {

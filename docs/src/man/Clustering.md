@@ -1,6 +1,6 @@
 # Clustering API Reference
 
-##K-means Elbow Recipe
+## K-means Elbow Plot Recipe
 ```julia
   using Plots
   ExplainedVar = []
