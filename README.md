@@ -1,5 +1,4 @@
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://caseykneale.github.io/ChemometricsTools.jl/) [![](https://travis-ci.org/caseykneale/ChemometricsTools.svg?branch=master)](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/src/ChemometricsTools.jl)
-# ChemometricsTools.jl
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://caseykneale.github.io/ChemometricsTools.jl/) [![Build Status](https://travis-ci.org/caseykneale/ChemometricsTools.jl.svg?branch=master)](https://travis-ci.org/caseykneale/ChemometricsTools.jl)
 This package contains a collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. It is currently richer and more fundamental then any single free chemometrics package available in any other language. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is a pile of applied linear algebra/statistics that is well reasoned by the physics and meaning of chemical measurements. This is somewhat orthogonal to most fields of machine learning (aka "add more layers"). Sometimes chemometricians also get desperate and break out pure machine learning methods. So some of those methods are in this package, but if you want neural networks try [Flux.jl](https://github.com/FluxML/Flux.jl).
 
 ## Tutorials/Demonstrations:
@@ -45,7 +44,7 @@ Right now I don't have rights to any data; but iris, the Tecator meat data, and 
 Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has pretty much everything covered. Similarly, if you want clustering methods, just install [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I'll add a few supportive odds and ends in here but really, some of the Julia ecosystem is really reliable and well made.
 
 ## ToDo:
-  - Show off advanced preprocessing methods in a demo...
+  - Show off advanced preprocessing methods in a demo...s
   - SIMPLISMA return unique pure var's...
   - Long-term: SIMCA, N-WAY PCA, and N-WAY PLS
 

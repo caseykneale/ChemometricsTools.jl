@@ -210,3 +210,75 @@ function findpeaks( vY; m = 3)
     end #End loop
     return ret
 end
+
+
+
+function RecursiveAlignment(aligned, reference; maxlags::Int = 800, lookahead::Int = 0, minlength::Int = 20, mincorr::Float64 = 0.05)
+    if length(aligned) < minlength
+        return aligned;
+    end
+    #Calculate cross correlation between the spectrum and the reference
+    lagspan = min( length( aligned ) - 1, maxlags )
+    r = StatsBase.crosscor( aligned, reference, -lagspan : lagspan  )
+    maxi = argmax( r ) #Find largest value
+    if r[ maxi ] <= mincorr # is the largest correlation junk?
+        return aligned
+    end
+    lag = (maxi > lagspan/2) ? maxi - lagspan - 1 : maxi - 1;
+
+    if lag == 0
+        if lookahead <= 0
+            return aligned
+        end
+        lookahead -= 1
+    end
+
+    #Pad spectra based on lags
+    if !( ( lag == 0 ) || ( lag >= length( aligned ) ) )
+        if lag > 0
+    	   aligned = vcat( ones( lag ) * aligned[ 1 ], aligned[ 1 : (length(aligned) - lag) ] );
+        elseif lag < 0
+    	   lag = abs( lag );
+    	   aligned = vcat( aligned[ ( lag + 1 ) : length( aligned ) ], ones( lag ) * aligned[ end ] );
+        end
+    end
+    #Find new branch point
+    middle = round( length( aligned ) / 2) |> Int
+    quarter = floor( middle / 4 ) |> Int
+    mini = argmin( aligned[ (middle - quarter ) : ( middle + quarter ) ] ) |> Int
+    midpnt = mini + middle - quarter
+    #Calculate branched components
+    LHS = RecursiveAlignment(aligned[ 1 : midpnt ], reference[ 1 : midpnt ];
+                        maxlags = maxlags, lookahead = lookahead, minlength = minlength, mincorr = mincorr);
+    RHS = RecursiveAlignment(aligned[ (midpnt + 1) : end ], reference[ (midpnt + 1) : end ];
+                        maxlags = maxlags, lookahead = lookahead, minlength = minlength, mincorr = mincorr);
+    return vcat( LHS, RHS )
+end
+
+"""
+    RAFFT(raw, reference; maxlags::Int = 500, lookahead::Int = 1, minlength::Int = 20, mincorr::Float64 = 0.05)
+
+RAFFT corrects shifts in the `raw` spectral bands to be similar to those in a given `reference` spectra through
+the use of "recursive alignment by FFT". It returns an array of corrected spectra/chromatograms. The number of maximum lags can be
+specified, the `lookahead` parameter ensures that additional recursive executions are performed so the first solution
+found is not preemptively accepted, the minimum segment length(`minlength`) can also be specified if FWHM are estimable,
+and the minimum cross correlation(`mincorr`) for a match can dictate whether peaks were found to align or not.
+
+*Note* This method works best with flat baselines because it repeats last known values when padding aligned spectra.
+It is highly efficient, and in my tests does a good job, but other methods definitely exist. Let me know if other peak Alignment
+methods are important for your work-flow, I'll see if I can implement them.
+
+Application of Fast Fourier Transform Cross-Correlation for the Alignment of Large Chromatographic and Spectral Datasets
+Jason W. H. Wong, Caterina Durante, and, Hugh M. Cartwright. Analytical Chemistry 2005 77 (17), 5655-5661
+"""
+function RAFFT(raw, reference; maxlags::Int = 500, lookahead::Int = 1, minlength::Int = 20, mincorr::Float64 = 0.05)
+    corrected = zeros( size( raw ) )
+    for sample in 1 : size( raw )[ 1 ]
+        corrected[ sample, : ] = RecursiveAlignment( raw[ sample, : ], reference;
+                                                    maxlags = maxlags,
+                                                    lookahead = lookahead,
+                                                    minlength = minlength,
+                                                    mincorr = mincorr)
+    end
+    return corrected
+end
