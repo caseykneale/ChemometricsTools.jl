@@ -2,7 +2,6 @@ module ChemometricsTools
     using LinearAlgebra, Statistics, StatsBase, SparseArrays, Plots
     using CSV: read
     using Distributions #Could probably also get rid of this one...
-    using DSP: conv #Ew I wanna get rid of this dependency... One function uses it...
 
     #A generic function that I use everywhere to coerce a vecto dim 0 to a row vector...
     forceMatrix( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, length(a), 1 ) : a
@@ -45,8 +44,8 @@ module ChemometricsTools
     include("Preprocess.jl") #Has Docs
     export FirstDerivative, SecondDerivative, FractionalDerivative, SavitzkyGolay,
         DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection,
-        StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, boxcarScaleMinMax,
-        offsetToZero, ALSSmoother, PerfectSmoother, CORAL, TransferByOrthogonalProjection
+        StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, ScaleMinMax,
+        offsetToZero, boxcar, ALSSmoother, PerfectSmoother, CORAL, TransferByOrthogonalProjection
 
     include("RegressionModels.jl") # Has Docs
     export ClassicLeastSquares, RidgeRegression, PrincipalComponentRegression,

@@ -46,7 +46,8 @@ Right now I don't have rights to any data; but iris, the Tecator meat data, and 
 Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has pretty much everything covered. Similarly, if you want clustering methods, just install [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I'll add a few supportive odds and ends in here but really, some of the Julia ecosystem is really reliable and well made.
 
 ## ToDo:
-  - Show off advanced preprocessing methods in a demo...s
+  - Write dimensionality wrappers for preprocess fn's.
+  - Show off advanced preprocessing methods in a demo...
   - SIMPLISMA return unique pure var's...
   - Long-term: SIMCA, N-WAY PCA, and N-WAY PLS
 

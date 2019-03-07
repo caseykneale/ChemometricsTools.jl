@@ -1,3 +1,5 @@
+using DSP: conv #Ew I wanna get rid of this dependency... One function (SavitskyGolay) uses it...
+
 """
     StandardNormalVariate(X)
 
@@ -69,10 +71,11 @@ parameters control the smoothness. See the reference below for more information.
 
 Paul H. C. Eilers, Hans F.M. Boelens. Baseline Correction with Asymmetric Least Squares Smoothing.  2005
 """
-function ALSSmoother(y; lambda = 100, p = 0.001, maxiters = 10)
+function ALSSmoother(y; lambda = 100, p = 0.001, maxiters::Int = 10)
     m = length(y)
     D = SecondDerivative( sparse( I, m, m )' )';
     w = ones(m);
+    z = zeros(length(y))
     for it in 1 : maxiters
         W = spdiagm(0 => w);
         C = cholesky(W + lambda * D' * D).U;
@@ -95,7 +98,7 @@ function PerfectSmoother(y; lambda = 100)
     m = length(y)
     D = SecondDerivative( sparse( I, m, m )' )';
     w = spdiagm(0 => ones(m));
-    C = cholesky(W + lambda * D' * D).U
+    C = cholesky(w + lambda * D' * D).U
     return C \ (C' \ (w * y))
 end
 
@@ -183,7 +186,7 @@ function FractionalDerivative(Y, X = 1 : length(Y); Order = 0.5)
     for var in 2:Vars
         h = (length(X) > 1) ? X[ var ] - X[ var - 1 ] : X
         for obs in 1 : Obs#This could definitely be broadcasted
-            ddy[ obs, var-1 ] = w[ 1 : var ]' * Y[obs, var : -1: 1 ] ./ (h^Order)
+            ddy[ obs, var - 1 ] = w[ 1 : var ]' * Y[obs, var : -1: 1 ] ./ (h^Order)
         end
     end
     return ddy
@@ -198,16 +201,16 @@ and `Delta` is the order of the derivative.
 
 Savitzky, A.; Golay, M.J.E. (1964). "Smoothing and Differentiation of Data by Simplified Least Squares Procedures". Analytical Chemistry. 36 (8): 1627–39. doi:10.1021/ac60214a047.
 """
-function SavitzkyGolay(X, Delta, PolyOrder, windowsize)
+function SavitzkyGolay(X, Delta, PolyOrder, windowsize::Int)
     @assert (windowsize % 2) == 1
     (Obs,Vars) = size(X)#length(Y
     windowspan = (windowsize - 1) / 2
     basis = ( ( -windowspan ) : windowspan ) .^ ( 0 : PolyOrder )'
     A = ( basis' * basis) \ basis'
     DeltaFac = factorial(Delta)
-    output = DeltaFac * DSP.conv(X[1,:], A[Delta + 1,: ])'
+    output = DeltaFac * conv(X[1,:], A[Delta + 1,: ])'
     for r in 2:Obs
-        output = vcat( output, DeltaFac * DSP.conv(X[r,:], A[Delta + 1,: ])' )
+        output = vcat( output, DeltaFac * conv(X[r,:], A[Delta + 1,: ])' )
     end
     return output
 end
