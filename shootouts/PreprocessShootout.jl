@@ -28,7 +28,7 @@ plot( [ Tecator[1,:], BC', AS, PS, SG' ], xlabel = "bins", ylabel = "Smoothed Si
 
 FD = FirstDerivative(Tecator[1,:]');
 SD = SecondDerivative(Tecator[1,:]');
-HD = FractionalDerivative(convert.(Float64, Tecator[1:2,:]); Order = 1.5);
+HD = FractionalDerivative(convert.(Float64, Tecator[1,:])'; Order = 1.5);
 
-plot( [ FD', SD, HD' ], xlabel = "bins", ylabel = "Differentiated Signal",
-        label = [ "First Derivative", "Second Derivative", "1.5 Derivative" ] )
+plot( [ FD', SD', HD' ], xlabel = "bins", ylabel = "Differentiated Signal",
+        label = [ "First Derivative", "Second Derivative", "1(1/2) Derivative" ] )

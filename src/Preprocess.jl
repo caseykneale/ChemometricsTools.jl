@@ -186,7 +186,7 @@ function FractionalDerivative(Y, X = 1 : length(Y); Order = 0.5)
     for var in 2:Vars
         h = (length(X) > 1) ? X[ var ] - X[ var - 1 ] : X
         for obs in 1 : Obs#This could definitely be broadcasted
-            ddy[ obs, var - 1 ] = w[ 1 : var ]' * Y[obs, var : -1: 1 ] ./ (h^Order)
+            ddy[ obs, var-1 ] = w[ 1 : var ]' * Y[obs, var : -1: 1 ] ./ (h^Order)
         end
     end
     return ddy
