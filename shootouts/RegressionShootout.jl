@@ -8,6 +8,9 @@ Xindices = findall(occursin.( "absorbance", string.(names(DF) ) ) );
 names(DF)[(end - 2) : end]
 Moisture = DF[ 123 ];
 Tecator = convert(Matrix,  DF[:,Xindices]);
+#Let's check the Tecator data for duplicate entries ;)
+length(AssessHealth(Tecator)["Duplicates"])
+#Eeek plenty of duplicates, oh well this is a shoot out not a real analysis...
 Df = 0; #Clear the memory...
 
 

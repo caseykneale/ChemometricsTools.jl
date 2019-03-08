@@ -5,7 +5,8 @@ module ChemometricsTools
 
     #A generic function that I use everywhere to coerce a vecto dim 0 to a row vector...
     forceMatrix( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, length(a), 1 ) : a
-    export forceMatrix
+    forceMatrixT( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, 1, length(a) ) : a
+    export forceMatrix, forceMatrixT
 
     include("InHouseStats.jl") #Has Docs
     export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean, RunningVar,
@@ -29,7 +30,7 @@ module ChemometricsTools
 
     include("Analysis.jl") #Has Docs
     export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, ExplainedVariance,
-        findpeaks, RAFFT
+        findpeaks, RAFFT, AssessHealth
 
     include("AnomalyDetection.jl") #Has docs
     export OneClassJKNN, Q, Hotelling, Leverage

@@ -51,8 +51,10 @@ offsetToZero(X) = X .- reduce(min, X, dims = 2)
     boxcar(X; windowsize = 3, fn = mean)
 
 Applies a boxcar function (`fn`) to each window of size `windowsize` to every row in `X`.
+*Note: the function provided must support a dims argument/parameter.*
 """
 function boxcar(X; windowsize = 3, fn = mean)
+    X = forceMatrixT(X)
     (obs, vars) = size(X)
     @assert windowsize <= vars
     result = zeros(obs, vars - windowsize + 1)
@@ -71,19 +73,24 @@ parameters control the smoothness. See the reference below for more information.
 
 Paul H. C. Eilers, Hans F.M. Boelens. Baseline Correction with Asymmetric Least Squares Smoothing.  2005
 """
-function ALSSmoother(y; lambda = 100, p = 0.001, maxiters::Int = 10)
-    m = length(y)
-    D = SecondDerivative( sparse( I, m, m )' )';
-    w = ones(m);
-    z = zeros(length(y))
-    for it in 1 : maxiters
-        W = spdiagm(0 => w);
-        C = cholesky(W + lambda * D' * D).U;
-        z = C \ (C' \ (w .* y));
-        w[y .> z] .= p;
-        w[y .< z] .+= 1.0 - p;
+function ALSSmoother(X; lambda = 100, p = 0.001, maxiters::Int = 10)
+    X = forceMatrixT(X)
+    (obs, vars) = size(X)
+    output = zeros(obs,vars)
+    for r in 1:obs
+        D = SecondDerivative( sparse( I, vars, vars )' )';
+        w = ones(vars);
+        z = zeros(vars)
+        for it in 1 : maxiters
+            W = spdiagm(0 => w);
+            C = cholesky(W + lambda * D' * D).U;
+            z = C \ (C' \ (w .* X[r,:]));
+            w[ X[r,:] .> z ] .= p;
+            w[ X[r,:] .< z ] .+= 1.0 - p;
+        end
+        output[r,:] = z
     end
-    return z
+    return output
 end
 
 """
@@ -94,12 +101,17 @@ parameter controls the smoothness. See the reference below for more information.
 
 Paul H. C. Eilers. "A Perfect Smoother". Analytical Chemistry, 2003, 75 (14), pp 3631–3636.
 """
-function PerfectSmoother(y; lambda = 100)
-    m = length(y)
-    D = SecondDerivative( sparse( I, m, m )' )';
-    w = spdiagm(0 => ones(m));
-    C = cholesky(w + lambda * D' * D).U
-    return C \ (C' \ (w * y))
+function PerfectSmoother(X; lambda = 100)
+    X = forceMatrixT(X)
+    (obs, vars) = size(X)
+    output = zeros(obs,vars)
+    for r in 1:obs
+        D = SecondDerivative( sparse( I, vars, vars )' )';
+        w = spdiagm(0 => ones(vars));
+        C = cholesky(w + lambda * D' * D).U
+        output[r,:] = C \ (C' \ (w * X[r,:]))
+    end
+    return output
 end
 
 #Pretty sure this is reversible like a transform, but don't have time to solve it
@@ -140,7 +152,7 @@ Uses the finite difference method to compute the first derivative for every row 
 *Note: This operation results in the loss of a column dimension.*
 """
 function FirstDerivative(X)
-    X = (length(size(X)) == 1) ? reshape( X, 1,length(a) ) : X
+    X = forceMatrixT(X)
     Xsize = size(X)
     XNew = zeros( Xsize[ 1 ] , Xsize[ 2 ] - 1)
     for c in 1 : ( Xsize[ 2 ] - 1 )
@@ -156,7 +168,7 @@ Uses the finite difference method to compute the second derivative for every row
 *Note: This operation results in the loss of two columns.*
 """
 function SecondDerivative(X)
-    X = (length(size(X)) == 1) ? reshape( X, 1,length(a) ) : X
+    X = forceMatrixT(X)
     Xsize = size(X)
     XNew = zeros( Xsize[ 1 ], Xsize[ 2 ] - 2 )
     for c in 1 : ( Xsize[ 2 ] - 2 )
@@ -176,6 +188,7 @@ Array `X` is a vector that has the spacing between column-wise entries in `Y`. `
 The Fractional Calculus, by Oldham, K.; and Spanier, J. Hardcover: 234 pages. Publisher: Academic Press, 1974. ISBN 0-12-525550-0
 """
 function FractionalDerivative(Y, X = 1 : length(Y); Order = 0.5)
+    Y = forceMatrixT(Y)
     (Obs,Vars) = size(Y)
     ddy = zeros(Obs,Vars-1)
     w = zeros(Vars)
@@ -203,7 +216,8 @@ Savitzky, A.; Golay, M.J.E. (1964). "Smoothing and Differentiation of Data by Si
 """
 function SavitzkyGolay(X, Delta, PolyOrder, windowsize::Int)
     @assert (windowsize % 2) == 1
-    (Obs,Vars) = size(X)#length(Y
+    X = forceMatrixT(X)
+    (Obs,Vars) = size(X)
     windowspan = (windowsize - 1) / 2
     basis = ( ( -windowspan ) : windowspan ) .^ ( 0 : PolyOrder )'
     A = ( basis' * basis) \ basis'

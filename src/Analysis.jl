@@ -282,3 +282,46 @@ function RAFFT(raw, reference; maxlags::Int = 500, lookahead::Int = 1, minlength
     end
     return corrected
 end
+
+
+
+"""
+    AssessHealth( X )
+
+Returns a somewhat detailed Dict containing information about the 'health' of a dataset. What is included is the following:
+    - PercentMissing: percent of missing entries (includes nothing, inf / nan) in the dataset
+    - EmptyColumns: the columns which have only 1 value
+    - RankEstimate: An estimate of the rank of X
+    - (optional)Duplicates: returns the rows of duplicate observations
+"""
+function AssessHealth( X; checkduplicates = true )
+    (obs, vars) = size( X )
+    NumberMissing = sum( map( x -> isa(x, Missing) || isa(x, Nothing) || isnan(x) || isinf(x), X ) )
+    PercentMissing = NumberMissing / (obs * vars)
+    empties = []
+    for c in 1 : vars
+        if length(unique(X[:,c])) == 1
+            push!(empties, c)
+        end
+    end
+    RankEst = (NumberMissing == 0) ? LinearAlgebra.rank(X) : missing
+    InfoDict = Dict("PercentMissing" => PercentMissing,
+                    "EmptyColumns" => empties,
+                    "RankEstimate" => RankEst)
+    if checkduplicates
+        if NumberMissing == 0
+            dupes = []
+            for o1 in 1:obs
+                for o2 in (o1 + 1):obs
+                    if X[o1,:] == X[o2,:]
+                        push!(dupes, o1)
+                    end
+                end
+            end
+            InfoDict["Duplicates"] = dupes
+        else
+            InfoDict["Duplicates"] = missing
+        end
+    end
+    return InfoDict
+end
