@@ -66,9 +66,9 @@ end
 
 
 """
-    ALSSmoother(y; lambda = 100, p = 0.001, maxiters = 10)
+    ALSSmoother(X; lambda = 100, p = 0.001, maxiters = 10)
 
-Applies an assymetric least squares smoothing function to a vector `y`. The `lambda`, `p`, and `maxiters`
+Applies an assymetric least squares smoothing function to a 2-Array `X`. The `lambda`, `p`, and `maxiters`
 parameters control the smoothness. See the reference below for more information.
 
 Paul H. C. Eilers, Hans F.M. Boelens. Baseline Correction with Asymmetric Least Squares Smoothing.  2005
@@ -94,9 +94,9 @@ function ALSSmoother(X; lambda = 100, p = 0.001, maxiters::Int = 10)
 end
 
 """
-    PerfectSmoother(y; lambda = 100)
+    PerfectSmoother(X; lambda = 100)
 
-Applies an assymetric least squares smoothing function to a vector `y`. The `lambda`
+Applies an assymetric least squares smoothing function to a a 2-Array `X`. The `lambda`
 parameter controls the smoothness. See the reference below for more information.
 
 Paul H. C. Eilers. "A Perfect Smoother". Analytical Chemistry, 2003, 75 (14), pp 3631–3636.
@@ -226,8 +226,10 @@ function SavitzkyGolay(X, Delta, PolyOrder, windowsize::Int)
     for r in 2:Obs
         output = vcat( output, DeltaFac * conv(X[r,:], A[Delta + 1,: ])' )
     end
-    return output
+    offset = ((windowsize - 1) / 2) |> Int
+    return output[:, (offset + 1) : (end - offset)]
 end
+
 
 #Direct Standardization Calibration Transfer Method
 struct DirectStandardizationXform

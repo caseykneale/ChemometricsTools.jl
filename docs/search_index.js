@@ -317,7 +317,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Preprocessing",
     "title": "ChemometricsTools.ALSSmoother",
     "category": "method",
-    "text": "ALSSmoother(y; lambda = 100, p = 0.001, maxiters = 10)\n\nApplies an assymetric least squares smoothing function to a vector y. The lambda, p, and maxiters parameters control the smoothness. See the reference below for more information.\n\nPaul H. C. Eilers, Hans F.M. Boelens. Baseline Correction with Asymmetric Least Squares Smoothing.  2005\n\n\n\n\n\n"
+    "text": "ALSSmoother(X; lambda = 100, p = 0.001, maxiters = 10)\n\nApplies an assymetric least squares smoothing function to a 2-Array X. The lambda, p, and maxiters parameters control the smoothness. See the reference below for more information.\n\nPaul H. C. Eilers, Hans F.M. Boelens. Baseline Correction with Asymmetric Least Squares Smoothing.  2005\n\n\n\n\n\n"
 },
 
 {
@@ -349,11 +349,11 @@ var documenterSearchIndex = {"docs": [
     "page": "Preprocessing",
     "title": "ChemometricsTools.PerfectSmoother",
     "category": "method",
-    "text": "PerfectSmoother(y; lambda = 100)\n\nApplies an assymetric least squares smoothing function to a vector y. The lambda parameter controls the smoothness. See the reference below for more information.\n\nPaul H. C. Eilers. \"A Perfect Smoother\". Analytical Chemistry, 2003, 75 (14), pp 3631–3636.\n\n\n\n\n\n"
+    "text": "PerfectSmoother(X; lambda = 100)\n\nApplies an assymetric least squares smoothing function to a a 2-Array X. The lambda parameter controls the smoothness. See the reference below for more information.\n\nPaul H. C. Eilers. \"A Perfect Smoother\". Analytical Chemistry, 2003, 75 (14), pp 3631–3636.\n\n\n\n\n\n"
 },
 
 {
-    "location": "man/Preprocess/#ChemometricsTools.SavitzkyGolay-NTuple{4,Any}",
+    "location": "man/Preprocess/#ChemometricsTools.SavitzkyGolay-Tuple{Any,Any,Any,Int64}",
     "page": "Preprocessing",
     "title": "ChemometricsTools.SavitzkyGolay",
     "category": "method",
@@ -385,6 +385,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "man/Preprocess/#ChemometricsTools.ScaleMinMax-Tuple{Any}",
+    "page": "Preprocessing",
+    "title": "ChemometricsTools.ScaleMinMax",
+    "category": "method",
+    "text": "ScaleMinMax(X)\n\nScales the columns of X by the Min and Max of each row such that no observation is greater than 1 or less than zero. Returns the scaled array.\n\n\n\n\n\n"
+},
+
+{
     "location": "man/Preprocess/#ChemometricsTools.SecondDerivative-Tuple{Any}",
     "page": "Preprocessing",
     "title": "ChemometricsTools.SecondDerivative",
@@ -401,6 +409,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "man/Preprocess/#ChemometricsTools.boxcar-Tuple{Any}",
+    "page": "Preprocessing",
+    "title": "ChemometricsTools.boxcar",
+    "category": "method",
+    "text": "boxcar(X; windowsize = 3, fn = mean)\n\nApplies a boxcar function (fn) to each window of size windowsize to every row in X. Note: the function provided must support a dims argument/parameter.\n\n\n\n\n\n"
+},
+
+{
     "location": "man/Preprocess/#ChemometricsTools.offsetToZero-Tuple{Any}",
     "page": "Preprocessing",
     "title": "ChemometricsTools.offsetToZero",
@@ -414,22 +430,6 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.DirectStandardizationXform",
     "category": "method",
     "text": "(DSX::DirectStandardizationXform)(X; Factors = length(DSX.pca.Values))\n\nApplies a the transform from a learned direct standardization object DSX to new data X.\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/Preprocess/#ChemometricsTools.ScaleMinMax-Tuple{Any}",
-    "page": "Preprocessing",
-    "title": "ChemometricsTools.ScaleMinMax",
-    "category": "method",
-    "text": "ScaleMinMax(X)\n\nScales the columns of X by the Min and Max of each row such that no observation is greater than 1 or less than zero. Returns the scaled array.\n\n\n\n\n\n"
-},
-
-{
-    "location": "man/Preprocess/#ChemometricsTools.boxcar-Tuple{Any}",
-    "page": "Preprocessing",
-    "title": "ChemometricsTools.boxcar",
-    "category": "method",
-    "text": "boxcar(X; windowsize = 3, fn = mean)\n\nApplies a boxcar function (fn) to each window of size windowsize to every row in X.\n\n\n\n\n\n"
 },
 
 {
@@ -1849,6 +1849,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "man/FullAPI/#ChemometricsTools.AssessHealth-Tuple{Any}",
+    "page": "Full API",
+    "title": "ChemometricsTools.AssessHealth",
+    "category": "method",
+    "text": "AssessHealth( X )\n\nReturns a somewhat detailed Dict containing information about the \'health\' of a dataset. What is included is the following:     - PercentMissing: percent of missing entries (includes nothing, inf / nan) in the dataset     - EmptyColumns: the columns which have only 1 value     - RankEstimate: An estimate of the rank of X     - (optional)Duplicates: returns the rows of duplicate observations\n\n\n\n\n\n"
+},
+
+{
     "location": "man/FullAPI/#ChemometricsTools.ExplainedVariance-Tuple{LDA}",
     "page": "Full API",
     "title": "ChemometricsTools.ExplainedVariance",
@@ -1870,6 +1878,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.PCA_NIPALS",
     "category": "method",
     "text": "PCA_NIPALS(X; Factors = minimum(size(X)) - 1, tolerance = 1e-7, maxiters = 200)\n\nCompute\'s a PCA from x using the NIPALS algorithm with a user specified number of latent variables(Factors). The tolerance is the minimum change in the F norm before ceasing execution. Returns a PCA object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/FullAPI/#ChemometricsTools.RAFFT-Tuple{Any,Any}",
+    "page": "Full API",
+    "title": "ChemometricsTools.RAFFT",
+    "category": "method",
+    "text": "RAFFT(raw, reference; maxlags::Int = 500, lookahead::Int = 1, minlength::Int = 20, mincorr::Float64 = 0.05)\n\nRAFFT corrects shifts in the raw spectral bands to be similar to those in a given reference spectra through the use of \"recursive alignment by FFT\". It returns an array of corrected spectra/chromatograms. The number of maximum lags can be specified, the lookahead parameter ensures that additional recursive executions are performed so the first solution found is not preemptively accepted, the minimum segment length(minlength) can also be specified if FWHM are estimable, and the minimum cross correlation(mincorr) for a match can dictate whether peaks were found to align or not.\n\nNote This method works best with flat baselines because it repeats last known values when padding aligned spectra. It is highly efficient, and in my tests does a good job, but other methods definitely exist. Let me know if other peak Alignment methods are important for your work-flow, I\'ll see if I can implement them.\n\nApplication of Fast Fourier Transform Cross-Correlation for the Alignment of Large Chromatographic and Spectral Datasets Jason W. H. Wong, Caterina Durante, and, Hugh M. Cartwright. Analytical Chemistry 2005 77 (17), 5655-5661\n\n\n\n\n\n"
 },
 
 {
