@@ -87,3 +87,18 @@ end
     @test A == MulticlassStats(HOT, HOT, LEnc)
     @test A == MulticlassStats(CE, HOT, LEnc)
 end
+
+@testset "Distance Measures" begin
+    a = [[1.0,2.0,3.0] [1.0,2.0,3.0]]
+    @test all(EuclideanDistance(a) .== [[0,sqrt(2),sqrt(8)] [sqrt(2),0,sqrt(2)] [sqrt(8),sqrt(2),0]])
+    @test all(ManhattanDistance(a) .== [[0.0,2.0,4.0] [2.0,0.0,2.0] [4.0,2.0,0.0]] )
+end
+
+@testset "FastNNLS Test" begin
+    #Test from Paper
+    a = reshape( [73,87,72,80, 71,74, 2,89,52,46,7 , 71], 4,3)
+    b = [49,67, 68,20];
+    c = FNNLS(a, b)
+    @test all( [0.649, -1e-6, -1e-6] .< c )
+    @test all( c .< [0.651,1e-6,1e-6] )
+end

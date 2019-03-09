@@ -112,23 +112,17 @@ Uses an implementation of Bro et. al's Fast Non-Negative Least Squares on the ma
 We can state whether to pose the problem has a left-hand side problem (`LHS` = true) or a right hand side problem (default).
 Returns regression coefficients in the form of a vector.
 
-*Note: this function does not have guarantees. Use at your own risk for now.*
-Fast Non-Negative Least Squares algorithm based on Bro, R., & de Jong, S. (1997) A fast non-negativity-constrained least squares algorithm. Journal of Chemometrics, 11, 393-401.
+*Note: this function does not perfectly match R's Multiway package.*
+Bro, R., de Jong, S. (1997) A fast non-negativity-constrained least squares algorithm. Journal of Chemometrics, 11, 393-401.
 """
-function FNNLS(A, b; LHS = false,
-                maxiters = 520)
-    if LHS
-        ATA = A * A'
-        ATb = A * b'
-    else
-        ATA = A' * A
-        ATb = A' * b
-    end
-    tolerance = 1e-12*sum(abs.(ATA))*size(ATA)[1]
+function FNNLS(A, b; maxiters = 500)
+    ATA = A' * A
+    ATb = A' * b
+    X = zeros( size( ATA )[ 2 ] )
+    tolerance = eps(Float16) * reduce(max,sum(abs.(ATA), dims = 1)) * prod(size(ATb))
     P = zeros( size( ATA )[ 2 ] ) .|> Int
     R = collect( 1 : length( ATb ) ) .|> Int
     r = zeros( size( ATA )[ 2 ] )
-    X = zeros( 1, size( ATA )[ 2 ] )
     Inds = collect( 1 : length( ATb ) ) .|> Int
     Rinds = collect( 1 : length( ATb ) ) .|> Int
 
@@ -150,7 +144,7 @@ function FNNLS(A, b; LHS = false,
             Select = Inds[(abs.(X) .< tolerance) .& ( P .!= zeroint )]
             R[Select] .= Select
             P[Select] .= zeroint
-            Pinds = Inds[ P .> 0 ] ; Rinds = Inds[ R .> zeroint ]
+            Pinds = Inds[ P .> zeroint ] ; Rinds = Inds[ R .> zeroint ]
             r[Pinds] = Base.inv( ATA[ Pinds, Pinds ]) * ATb[ Pinds ]
             r[Rinds] .= 0.0
             inneriters += 1
@@ -189,7 +183,7 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
         if !isS
             if nonnegative[2]
                 for obs in 1 : size( X )[ 1 ]
-                    C[obs,:] = FNNLS(S, X[obs,:]'; LHS = true)
+                    C[obs,:] = FNNLS(S', X[obs,:])
                 end
             else
                 C = X * LinearAlgebra.pinv(S)

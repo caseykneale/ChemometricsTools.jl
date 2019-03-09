@@ -86,6 +86,7 @@ end
 Creates a Linear kernel from Array `X` and hyperparameter `C`.
 """
 LinearKernel(X, c) =  (X * X') .+ c
+
 """
     LinearKernel(X, Y, c)
 

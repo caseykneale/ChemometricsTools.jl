@@ -23,7 +23,7 @@ using Statistics
 BC = boxcar(Tecator[1,:]; windowsize = 5, fn = mean);
 AS = ALSSmoother(Tecator[1,:]; lambda = 100, p = 0.1, maxiters = 10);
 PS = PerfectSmoother(Tecator[1,:]; lambda = 100);
-SG = SavitzkyGolay(convert.(Float64, Tecator[1,:])', 0, 2, 5);
+SG = SavitzkyGolay(convert.(Float64, Tecator[1,:])', 0, 1, 3);
 
 plot( [ Tecator[1,:], BC', AS', PS', SG' ], xlabel = "bins", ylabel = "Smoothed Signal",
         label = [ "Original", "BC", "AS", "PS", "SG" ], ylim = (2.5,3.75) )
