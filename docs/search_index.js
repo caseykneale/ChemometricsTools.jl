@@ -1461,7 +1461,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Curve Resolution",
     "title": "ChemometricsTools.BTEM",
     "category": "function",
-    "text": "BTEM(X, bands = nothing; Factors = 3, particles = 50, maxiters = 1000)\n\nReturns a single recovered spectra from a 2-Array X, the selected bands, number of Factors, using a Particle Swarm Optimizer.\n\nNote: This is not the function used in the original paper. This will be updated... it was written from memory. Also the original method uses Simulated Annealing not PSO. Band-Target Entropy Minimization (BTEM):  An Advanced Method for Recovering Unknown Pure Component Spectra. Application to the FTIR Spectra of Unstable Organometallic Mixtures. Wee Chew,Effendi Widjaja, and, and Marc Garland. Organometallics 2002 21 (9), 1982-1990. DOI: 10.1021/om0108752\n\n\n\n\n\n"
+    "text": "BTEM(X, bands = nothing; Factors = 3, particles = 50, maxiters = 1000)\n\nReturns a single recovered spectra from a 2-Array X, the selected bands, number of Factors, using a Particle Swarm Optimizer. Note: This is not the function used in the original paper. This will be updated... it was written from memory. Also the original method uses Simulated Annealing not PSO. Band-Target Entropy Minimization (BTEM):  An Advanced Method for Recovering Unknown Pure Component Spectra. Application to the FTIR Spectra of Unstable Organometallic Mixtures. Wee Chew,Effendi Widjaja, and, and Marc Garland. Organometallics 2002 21 (9), 1982-1990. DOI: 10.1021/om0108752\n\n\n\n\n\n"
 },
 
 {
@@ -1469,7 +1469,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Curve Resolution",
     "title": "ChemometricsTools.BTEMobjective",
     "category": "method",
-    "text": "BTEMobjective( a, X )\n\nReturns the scalar BTEM objective function obtained from the linear combination vector a and loadings X.\n\nNote: This is not the function used in the original paper. This will be updated... it was written from memory.\n\n\n\n\n\n"
+    "text": "BTEMobjective( a, X )\n\nReturns the scalar BTEM objective function obtained from the linear combination vector a and loadings X. Note: This is not the function used in the original paper. This will be updated... it was written from memory.\n\n\n\n\n\n"
 },
 
 {
@@ -1477,7 +1477,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Curve Resolution",
     "title": "ChemometricsTools.FNNLS",
     "category": "method",
-    "text": "FNNLS(A, b; LHS = false, maxiters = 520)\n\nUses an implementation of Bro et. al\'s Fast Non-Negative Least Squares on the matrix A and vector b. We can state whether to pose the problem has a left-hand side problem (LHS = true) or a right hand side problem (default). Returns regression coefficients in the form of a vector.\n\nNote: this function does not perfectly match R\'s Multiway package. Bro, R., de Jong, S. (1997) A fast non-negativity-constrained least squares algorithm. Journal of Chemometrics, 11, 393-401.\n\n\n\n\n\n"
+    "text": "FNNLS( A, b; LHS = false, maxiters = 500 )\n\nUses an implementation of Bro et. al\'s Fast Non-Negative Least Squares on the matrix A and vector b. Returns regression coefficients in the form of a vector. Bro, R., de Jong, S. (1997) A fast non-negativity-constrained least squares algorithm. Journal of Chemometrics, 11, 393-401.\n\n\n\n\n\n"
 },
 
 {
@@ -1485,7 +1485,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Curve Resolution",
     "title": "ChemometricsTools.MCRALS",
     "category": "function",
-    "text": "MCRALS(X, C, S = nothing; norm = (false, false), Factors = 1, maxiters = 20, nonnegative = (false, false) )\n\nPerforms Multivariate Curve Resolution using Alternating Least Squares on X taking initial estimates for S or C. S or C can be constrained by their norm, or by nonnegativity using nonnegative arguments. The number of resolved Factors can also be set.\n\nTauler, R. Izquierdo-Ridorsa, A. Casassas, E. Simultaneous analysis of several spectroscopic titrations with self-modelling curve resolution.Chemometrics and Intelligent Laboratory Systems. 18, 3, (1993), 293-300.\n\n\n\n\n\n"
+    "text": "MCRALS(X, C, S = nothing; norm = (false, false), Factors = 1, maxiters = 20, nonnegative = (false, false) )\n\nPerforms Multivariate Curve Resolution using Alternating Least Squares on X taking initial estimates for S or C. S or C can be constrained by their norm, or by nonnegativity using nonnegative arguments. The number of resolved Factors can also be set. Tauler, R. Izquierdo-Ridorsa, A. Casassas, E. Simultaneous analysis of several spectroscopic titrations with self-modelling curve resolution.Chemometrics and Intelligent Laboratory Systems. 18, 3, (1993), 293-300.\n\n\n\n\n\n"
 },
 
 {
@@ -1493,7 +1493,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Curve Resolution",
     "title": "ChemometricsTools.NMF",
     "category": "method",
-    "text": "NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)\n\nPerforms a variation of non-negative matrix factorization on Array X and returns the a 2-Tuple of (Concentration Profile, Spectra)\n\nNote: This is not a coordinate descent based NMF. This is a simple fast version which works well enough for chemical signals Algorithms for non-negative matrix factorization. Daniel D. Lee. H. Sebastian Seung. NIPS\'00 Proceedings of the 13th International Conference on Neural Information Processing Systems. 535-54\n\n\n\n\n\n"
+    "text": "NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)\n\nPerforms a variation of non-negative matrix factorization on Array X and returns the a 2-Tuple of (Concentration Profile, Spectra) Note: This is not a coordinate descent based NMF. This is a simple fast version which works well enough for chemical signals Algorithms for non-negative matrix factorization. Daniel D. Lee. H. Sebastian Seung. NIPS\'00 Proceedings of the 13th International Conference on Neural Information Processing Systems. 535-54\n\n\n\n\n\n"
 },
 
 {
@@ -1501,7 +1501,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Curve Resolution",
     "title": "ChemometricsTools.SIMPLISMA",
     "category": "method",
-    "text": "SIMPLISMA(X; Factors = 1)\n\nPerforms SIMPLISMA on Array X. Returns a tuple of the following form: (Concentraion Profile, Pure Spectral Estimates, Pure Variables)\n\nNote: This is not the traditional SIMPLISMA algorithm presented by Willem Windig. REAL-TIME WAVELET COMPRESSION AND SELF-MODELING CURVE RESOLUTION FOR ION MOBILITY SPECTROMETRY. PhD. Dissertation. 2003. Guoxiang Chen.\n\n\n\n\n\n"
+    "text": "SIMPLISMA(X; Factors = 1, alpha = 0.05, includedvars = 1:size(X)[2], SecondDeriv = true)\n\nPerforms SIMPLISMA on Array X using either the raw spectra or the Second Derivative spectra. alpha can be set to reduce contributions of baseline, and a list of included variables in the determination of pure variables may also be provided. Returns a tuple of the following form: (Concentraion Profile, Pure Spectral Estimates, Pure Variables) W. Windig, Spectral Data Files for Self-Modeling Curve Resolution with Examples Using the SIMPLISMA Approach, Chemometrics and Intelligent Laboratory Systems, 36, 1997, 3-16.\n\n\n\n\n\n"
 },
 
 {
@@ -1817,6 +1817,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "man/FullAPI/#ChemometricsTools.GaussianBand",
+    "page": "Full API",
+    "title": "ChemometricsTools.GaussianBand",
+    "category": "type",
+    "text": "GaussianBand(sigma,amplitude,center)\n\nConstructs a Gaussian kernel generator.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/FullAPI/#ChemometricsTools.GaussianBand-Tuple{Float64}",
+    "page": "Full API",
+    "title": "ChemometricsTools.GaussianBand",
+    "category": "method",
+    "text": "(B::GaussianBand)(X::Float64)\n\nReturns the scalar probability associated with a GaussianBand object (kernel) at a location in space(X).\n\n\n\n\n\n"
+},
+
+{
     "location": "man/FullAPI/#ChemometricsTools.LDA-Tuple{Any,Any}",
     "page": "Full API",
     "title": "ChemometricsTools.LDA",
@@ -1833,6 +1849,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "man/FullAPI/#ChemometricsTools.LorentzianBand",
+    "page": "Full API",
+    "title": "ChemometricsTools.LorentzianBand",
+    "category": "type",
+    "text": "LorentzianBand(gamma,amplitude,center)\n\nConstructs a Lorentzian kernel generator.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/FullAPI/#ChemometricsTools.LorentzianBand-Tuple{Float64}",
+    "page": "Full API",
+    "title": "ChemometricsTools.LorentzianBand",
+    "category": "method",
+    "text": "(B::LorentzianBand)(X::Float64)\n\nReturns the probability associated with a LorentzianBand object (kernel) at a location in space(X).\n\n\n\n\n\n"
+},
+
+{
     "location": "man/FullAPI/#ChemometricsTools.PCA-Tuple{Any}",
     "page": "Full API",
     "title": "ChemometricsTools.PCA",
@@ -1846,6 +1878,30 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.PCA",
     "category": "method",
     "text": "(T::PCA)(Z::Array; Factors = length(T.Values), inverse = false)\n\nCalling a PCA object on new data brings the new data Z into or out of (inverse = true) the PCA basis.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/FullAPI/#ChemometricsTools.Universe-Tuple",
+    "page": "Full API",
+    "title": "ChemometricsTools.Universe",
+    "category": "method",
+    "text": "(U::Universe)(Band...)\n\nA Universe objects internal \"spectra\" can be updated to include the additive contribution of many Band-like objects.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/FullAPI/#ChemometricsTools.Universe-Tuple{Any,Any}",
+    "page": "Full API",
+    "title": "ChemometricsTools.Universe",
+    "category": "method",
+    "text": "Universe(mini, maxi; width = nothing, bins = nothing)\n\nCreates a 1-D discretized segment that starts at mini and ends at maxi. The width of the bins for the discretization can either be provided or inferred from the number of bins. Returns a Universe object.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/FullAPI/#ChemometricsTools.Universe-Tuple{Union{GaussianBand, LorentzianBand}}",
+    "page": "Full API",
+    "title": "ChemometricsTools.Universe",
+    "category": "method",
+    "text": "(U::Universe)(Band::Union{ GaussianBand, LorentzianBand})\n\nA Universe objects internal \"spectra\" can be updated to include the additive contribution of any Band-like object.\n\n\n\n\n\n"
 },
 
 {

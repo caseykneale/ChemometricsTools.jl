@@ -1,8 +1,6 @@
 """
     BTEMobjective( a, X )
-
 Returns the scalar BTEM objective function obtained from the linear combination vector `a` and loadings `X`.
-
 *Note: This is not the function used in the original paper. This will be updated... it was written from memory.*
 """
 function BTEMobjective( a, X )
@@ -17,9 +15,7 @@ end
 
 """
     BTEM(X, bands = nothing; Factors = 3, particles = 50, maxiters = 1000)
-
 Returns a single recovered spectra from a 2-Array `X`, the selected `bands`, number of `Factors`, using a Particle Swarm Optimizer.
-
 *Note: This is not the function used in the original paper. This will be updated... it was written from memory. Also the original method uses Simulated Annealing not PSO.*
 Band-Target Entropy Minimization (BTEM):  An Advanced Method for Recovering Unknown Pure Component Spectra. Application to the FTIR Spectra of Unstable Organometallic Mixtures. Wee Chew,Effendi Widjaja, and, and Marc Garland. Organometallics 2002 21 (9), 1982-1990. DOI: 10.1021/om0108752
 """
@@ -41,9 +37,7 @@ end
 
 """
     NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
-
 Performs a variation of non-negative matrix factorization on Array `X` and returns the a 2-Tuple of (Concentration Profile, Spectra)
-
 *Note: This is not a coordinate descent based NMF. This is a simple fast version which works well enough for chemical signals*
 Algorithms for non-negative matrix factorization. Daniel D. Lee. H. Sebastian Seung. NIPS'00 Proceedings of the 13th International Conference on Neural Information Processing Systems. 535-54
 """
@@ -67,52 +61,56 @@ end
 
 
 """
-    SIMPLISMA(X; Factors = 1)
-
-Performs SIMPLISMA on Array `X`.
+    SIMPLISMA(X; Factors = 1, alpha = 0.05, includedvars = 1:size(X)[2], SecondDeriv = true)
+Performs SIMPLISMA on Array `X` using either the raw spectra or the Second Derivative spectra.
+alpha can be set to reduce contributions of baseline, and a list of included variables in the determination
+of pure variables may also be provided.
 Returns a tuple of the following form: (Concentraion Profile, Pure Spectral Estimates, Pure Variables)
-
-*Note: This is not the traditional SIMPLISMA algorithm presented by Willem Windig.*
-REAL-TIME WAVELET COMPRESSION AND SELF-MODELING CURVE RESOLUTION FOR ION MOBILITY SPECTROMETRY. PhD. Dissertation. 2003. Guoxiang Chen.
+W. Windig, Spectral Data Files for Self-Modeling Curve Resolution with Examples Using the SIMPLISMA Approach, Chemometrics and Intelligent Laboratory Systems, 36, 1997, 3-16.
 """
-function SIMPLISMA(X; Factors = 1)
+function SIMPLISMA(X; Factors = 1, alpha = 0.05, includedvars = 1:size(X)[2], SecondDeriv = true)
+    Xcpy = deepcopy(X)
+    X = X[:,includedvars]
+    if SecondDeriv
+        X = map( x -> max( x, 0.0 ), -SecondDerivative( X ) )
+    end
     (obs, vars) = size(X)
-    PurestVar = ones(Factors) .|> Int
-    Ortho = zeros(obs, Factors)
-    SSE = StatsBase.sum(X .^ 2, dims = 1)
-    e = (SSE .- StatsBase.sum(X, dims = 1).^2) / obs #RSE/SSE
-    PurestVar[1] = argmax(vec(e))
-    Intensity = X[:, PurestVar[1]]
-    Ortho[:,1] = Intensity ./ sqrt( Intensity' * Intensity )#2-norm
-    for F in 2 : Factors
-        proj = sum( (Ortho[:,1:(F-1)]' * X) .^ 2, dims = 1)
-        p = vec(e .* (1.0 .- (proj ./ SSE)))
-        p[PurestVar[1:F]] .= -Inf
-        PurestVar[F] = argmax( p )
-        Intensity = X[:, PurestVar[F]]
-        OrthTmp = Intensity .- sum(proj * (proj' * Intensity'))
-        Ortho[:,F] = OrthTmp ./ sqrt.(OrthTmp' * OrthTmp)
+    Col_Std = Statistics.std(X, dims = 1) .* sqrt( (obs - 1) / obs);
+    Col_Mu = Statistics.mean(X, dims = 1);
+    Robust_Col_Mu = Col_Mu .+ (alpha * reduce(max, Col_Mu) );
+    Norm = sqrt.( ((Col_Std .+ Robust_Col_Mu).^ 2) .+ (Col_Mu .^ 2) )
+    Normed = X ./ Norm
+    normcov = (Normed' * Normed) ./ obs
+    purity = Col_Std ./ Robust_Col_Mu
+    purvarindex = []
+    weights = zeros( vars )
+
+    for i in 1 : (Factors+1)
+       for j in 1 : vars
+            if i > 1
+                weights[j] = LinearAlgebra.det( normcov[ [ j; purvarindex] , [j; purvarindex ]  ] )
+            else
+                weights[j] = LinearAlgebra.det( normcov[ j , j ] )
+            end
+       end
+       purity_Spec = weights .* purity'
+       push!(purvarindex, argmax(purity_Spec)[1])
     end
 
-    C = X[:, PurestVar]
-    S = LinearAlgebra.pinv(C) * X
-    magnitude = vec(sum(S.^2, dims = 2))
-    for F in 1:Factors
-        S[F,:] = (magnitude[F] <= 1e-8) ? (S[F,:] .* 0.0) : (S[F,:] ./ sqrt(magnitude[F]))
-    end
-    S .+= StatsBase.mean(X, dims = 1)
-    return (C, S, PurestVar)
+    pureX = Xcpy[ : , includedvars[purvarindex[1:end]] ]
+    purespectra = pureX \ Xcpy
+    pureabundance = Xcpy / purespectra
+
+    scale = LinearAlgebra.Diagonal(1.0 ./ sum(pureabundance, dims = 2))
+    pureabundance = pureabundance * scale
+    purespectra = Base.inv( scale ) * purespectra
+    return (pureabundance[:,2:end], purespectra[2:end,:], includedvars[purvarindex[2:end]])
 end
 
-
 """
-    FNNLS(A, b; LHS = false, maxiters = 520)
-
+    FNNLS( A, b; LHS = false, maxiters = 500 )
 Uses an implementation of Bro et. al's Fast Non-Negative Least Squares on the matrix `A` and vector `b`.
-We can state whether to pose the problem has a left-hand side problem (`LHS` = true) or a right hand side problem (default).
 Returns regression coefficients in the form of a vector.
-
-*Note: this function does not perfectly match R's Multiway package.*
 Bro, R., de Jong, S. (1997) A fast non-negativity-constrained least squares algorithm. Journal of Chemometrics, 11, 393-401.
 """
 function FNNLS(A, b; maxiters = 500)
@@ -158,11 +156,9 @@ end
 
 """
     MCRALS(X, C, S = nothing; norm = (false, false), Factors = 1, maxiters = 20, nonnegative = (false, false) )
-
 Performs Multivariate Curve Resolution using Alternating Least Squares on `X` taking initial estimates for `S` or `C`.
 S or C can be constrained by their `norm`, or by nonnegativity using `nonnegative` arguments.
 The number of resolved `Factors` can also be set.
-
 Tauler, R. Izquierdo-Ridorsa, A. Casassas, E. Simultaneous analysis of several spectroscopic titrations with self-modelling curve resolution.Chemometrics and Intelligent Laboratory Systems. 18, 3, (1993), 293-300.
 """
 function MCRALS(X, C, S = nothing; norm = (false, false),
@@ -212,3 +208,44 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
     end
     return output
 end
+
+
+#I believe the SIMPLISMA implementation below has errors. It's a super neat algorithm, but it does
+#not display expected behaviour...
+
+# """
+#     SIMPLISMA(X; Factors = 1)
+# Performs SIMPLISMA on Array `X`.
+# Returns a tuple of the following form: (Concentraion Profile, Pure Spectral Estimates, Pure Variables)
+# *Note: This is not the traditional SIMPLISMA algorithm presented by Willem Windig.*
+# REAL-TIME WAVELET COMPRESSION AND SELF-MODELING CURVE RESOLUTION FOR ION MOBILITY SPECTROMETRY. PhD. Dissertation. 2003. Guoxiang Chen.
+# """
+# function SIMPLISMA(X; Factors = 1)
+#     (obs, vars) = size(X)
+#     PurestVar = ones(Factors) .|> Int
+#     Ortho = zeros(obs, Factors)
+#     SSE = StatsBase.sum(X .^ 2, dims = 1)
+#     e = (SSE .- StatsBase.sum(X, dims = 1).^2) / obs #RSE/SSE
+#
+#     PurestVar[1] = argmax(vec(e))
+#     Intensity = X[:, PurestVar[1]]
+#     Ortho[:,1] = Intensity ./ sqrt( Intensity' * Intensity )#2-norm
+#     for F in 2 : Factors
+#         proj = sum( (Ortho[:,1:(F-1)]' * X) .^ 2, dims = 1)
+#         p = vec(e .* ( 1.0 .- ( proj ./ SSE ) ) )
+#         p[PurestVar[1:F]] .= -Inf
+#         PurestVar[F] = argmax( p )
+#         Intensity = X[ : , PurestVar[ F ] ]
+#         OrthTmp = Intensity .- sum(proj * ( proj' * Intensity' ) )
+#         Ortho[:,F] = OrthTmp ./ sqrt.( OrthTmp' * OrthTmp )
+#     end
+#
+#     C = X[:, PurestVar]
+#     S = LinearAlgebra.pinv(C) * X
+#     magnitude = vec( sum( S .^ 2, dims = 2 ) )
+#     for F in 1:Factors
+#         S[F,:] = (magnitude[F] <= 1e-8) ? (S[F,:] .* 0.0) : (S[F,:] ./ sqrt(magnitude[F]))
+#     end
+#     S .+= StatsBase.mean(X, dims = 1)
+#     return (C, S, PurestVar)
+# end

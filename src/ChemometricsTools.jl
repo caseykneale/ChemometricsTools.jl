@@ -76,6 +76,9 @@ module ChemometricsTools
     include("TimeSeries.jl") #Has Docs: Omitted EchoStateNetwork Fns
     export RollingWindow, EchoStateNetwork, TuneRidge, PredictFn, EWMA, Variance, Limits
 
+    include("KernelDensityGenerator.jl") #Has Docs: Omitted EchoStateNetwork Fns
+    export Universe, GaussianBand, LorentzianBand
+
     #Generic function for pulling data from within this package.
     #If enough datasets are provided then the data/dataloading could be a seperate package...
     #This will remain hard-coded until I have atleast 2 datasets that require permissions...
