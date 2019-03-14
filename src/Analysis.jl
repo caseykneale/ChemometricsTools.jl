@@ -66,7 +66,7 @@ end
 Calling a PCA object on new data brings the new data `Z` into or out of (`inverse` = true) the PCA basis.
 
 """
-(T::PCA)(Z::Array; Factors = length(T.Values), inverse = false) = (inverse) ? Z * (Diagonal(T.Values[1:Factors]) * T.Loadings[1:Factors,:]) : Z * (Diagonal( 1 ./ T.Values[1:Factors]) * T.Loadings[1:Factors,:])'
+(T::PCA)(Z::Array; Factors = length(T.Values), inverse = false) = (inverse) ? Z * (Diagonal(T.Values[1:Factors]) * T.Loadings[1:Factors,:]) : Z * (Diagonal( 1.0 ./ T.Values[1:Factors]) * T.Loadings[1:Factors,:])'
 
 """
     ExplainedVariance(PCA::PCA)
