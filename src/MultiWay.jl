@@ -1,3 +1,82 @@
+struct HyperCenter{B} <: Transform
+    Mean::B
+    Mode::Int
+    invertible::Bool
+end
+
+"""
+    HyperCenter(Z, mode = 1)
+
+Acquires the mean of the specified mode in `Z` and returns a transform that will remove those means from any future data.
+"""
+function HyperCenter(Z, mode = 1)
+    Modes = size(Z)
+    Core = Base.permutedims(Z, vcat(mode, setdiff( 1:length(Modes), mode ) ) )
+    Core = reshape( Core , size(Core)[ 1 ], prod( size(Core)[ 2 : end ] ) )
+    return HyperCenter( StatsBase.mean(Core, dims = 2), mode, true )
+end
+
+"""
+    (T::HyperCenter)(Z; inverse = false)
+
+Centers data in Tensor `Z` mode-wise according to learned centers in HyperCenter object `T`.
+"""
+function (T::HyperCenter)(Z; inverse = false)
+    Modes = size(Z)
+    Core = Base.permutedims(Z, vcat(T.Mode, setdiff( 1:length(Modes), T.Mode ) ) )
+    ModesPerm = size(Core)
+    Core = reshape( Core , size(Core)[ 1 ], prod( size(Core)[ 2 : end ] ) )
+    if inverse
+        Core = Core .+ T.Mean
+    else
+        Core = Core .- T.Mean
+    end
+    Core = reshape( Core,  ModesPerm  )
+    Revert = collect(2:length(Modes))
+    splice!(Revert, T.Mode:(T.Mode - 1), [1])
+    return Base.permutedims(Core, Revert )
+end
+
+struct HyperScale{B} <: Transform
+    StdDev::B
+    Mode::Int
+    invertible::Bool
+end
+
+"""
+    HyperScale(Z, mode = 1)
+
+Acquires the standard deviations of the specified mode in `Z` and returns a transform that will scale by those standard deviations from any future data.
+"""
+function HyperScale(Z, mode = 1)
+    Modes = size(Z)
+    Core = Base.permutedims(Z, vcat(mode, setdiff( 1:length(Modes), mode ) ) )
+    Core = reshape( Core , size(Core)[ 1 ], prod( size(Core)[ 2 : end ] ) )
+    return HyperCenter( StatsBase.std(Core, dims = 2), mode, true )
+end
+
+"""
+    (T::HyperScale)(Z; inverse = false)
+
+Scales data in Tensor `Z` mode-wise according to learned standard deviations in HyperScale object `T`.
+"""
+function (T::HyperScale)(Z; inverse = false)
+    Modes = size(Z)
+    Core = Base.permutedims(Z, vcat(T.Mode, setdiff( 1:length(Modes), T.Mode ) ) )
+    ModesPerm = size(Core)
+    Core = reshape( Core , size(Core)[ 1 ], prod( size(Core)[ 2 : end ] ) )
+    if inverse
+        Core = Core .* T.StdDev
+    else
+        Core = Core ./ T.StdDev
+    end
+    Core = reshape( Core,  ModesPerm  )
+    Revert = collect(2:length(Modes))
+    splice!(Revert, T.Mode:(T.Mode - 1), [1])
+    return Base.permutedims(Core, Revert )
+end
+
+
 """
     MPCA(X; Factors = 2)
 
