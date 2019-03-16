@@ -1,27 +1,27 @@
-struct HyperCenter{B} <: Transform
+struct MultiCenter{B} <: Transform
     Mean::B
     Mode::Int
     invertible::Bool
 end
 
 """
-    HyperCenter(Z, mode = 1)
+    MultiCenter(Z, mode = 1)
 
 Acquires the mean of the specified mode in `Z` and returns a transform that will remove those means from any future data.
 """
-function HyperCenter(Z, mode = 1)
+function MultiCenter(Z, mode = 1)
     Modes = size(Z)
     Core = Base.permutedims(Z, vcat(mode, setdiff( 1:length(Modes), mode ) ) )
     Core = reshape( Core , size(Core)[ 1 ], prod( size(Core)[ 2 : end ] ) )
-    return HyperCenter( StatsBase.mean(Core, dims = 2), mode, true )
+    return MultiCenter( StatsBase.mean(Core, dims = 2), mode, true )
 end
 
 """
-    (T::HyperCenter)(Z; inverse = false)
+    (T::MultiCenter)(Z; inverse = false)
 
-Centers data in Tensor `Z` mode-wise according to learned centers in HyperCenter object `T`.
+Centers data in Tensor `Z` mode-wise according to learned centers in MultiCenter object `T`.
 """
-function (T::HyperCenter)(Z; inverse = false)
+function (T::MultiCenter)(Z; inverse = false)
     Modes = size(Z)
     Core = Base.permutedims(Z, vcat(T.Mode, setdiff( 1:length(Modes), T.Mode ) ) )
     ModesPerm = size(Core)
@@ -37,30 +37,30 @@ function (T::HyperCenter)(Z; inverse = false)
     return Base.permutedims(Core, Revert )
 end
 
-struct HyperScale{B} <: Transform
+struct MultiScale{B} <: Transform
     StdDev::B
     Mode::Int
     invertible::Bool
 end
 
 """
-    HyperScale(Z, mode = 1)
+    MultiScale(Z, mode = 1)
 
 Acquires the standard deviations of the specified mode in `Z` and returns a transform that will scale by those standard deviations from any future data.
 """
-function HyperScale(Z, mode = 1)
+function MultiScale(Z, mode = 1)
     Modes = size(Z)
     Core = Base.permutedims(Z, vcat(mode, setdiff( 1:length(Modes), mode ) ) )
     Core = reshape( Core , size(Core)[ 1 ], prod( size(Core)[ 2 : end ] ) )
-    return HyperCenter( StatsBase.std(Core, dims = 2), mode, true )
+    return MultiCenter( StatsBase.std(Core, dims = 2), mode, true )
 end
 
 """
-    (T::HyperScale)(Z; inverse = false)
+    (T::MultiScale)(Z; inverse = false)
 
-Scales data in Tensor `Z` mode-wise according to learned standard deviations in HyperScale object `T`.
+Scales data in Tensor `Z` mode-wise according to learned standard deviations in MultiScale object `T`.
 """
-function (T::HyperScale)(Z; inverse = false)
+function (T::MultiScale)(Z; inverse = false)
     Modes = size(Z)
     Core = Base.permutedims(Z, vcat(T.Mode, setdiff( 1:length(Modes), T.Mode ) ) )
     ModesPerm = size(Core)
@@ -76,9 +76,16 @@ function (T::HyperScale)(Z; inverse = false)
     return Base.permutedims(Core, Revert )
 end
 
+"""
+    MultiNorm(T)
+
+Computes the equivalent of the Froebinius norm on a tensor `T`. Returns a scalar.
+"""
+MultiNorm(T) = sqrt(sum(T .^ 2))
+
 
 """
-    MPCA(X; Factors = 2)
+    MultiPCA(X; Factors = 2)
 
 Performs multiway PCA aka Higher Order SVD aka Tucker, etc. The number of factors decomposed
 can be a scalar(repeated across all modes) or a vector/tuple for each mode.
@@ -87,14 +94,14 @@ Returns a tuple of (Core Tensor, Basis Tensors)
 
 ToDo: Add projection steps, maybe singular values, find multiway dataset to share...
 """
-function MPCA(X; Factors = 2)
+function MultiPCA(X; Factors = 2)
     Modes = size(X)
     Factors = (length(Factors) == 1) ? repeat([Factors], length(Modes)) : Factors
     @assert length( Factors ) == length( Modes )
-    @assert all( Factors .<= reduce( min, Modes ) )
+    @assert all( Factors .<= Modes)
     Order = length(Modes)
     Loadings = [zeros(Modes[N], Factors[N]) for N in 1 : length(Modes) ]
-    for n in 1:Order
+    for n in 1 : Order
         resize = (n, setdiff( 1 : Order, n) )
         unfold = reshape( Base.permutedims( X, vcat(resize[1],resize[2]) ), Modes[ resize[ 1 ] ], prod( Modes[ resize[ 2 ] ] ) )
         svdres = LinearAlgebra.svd(unfold)
@@ -110,6 +117,5 @@ function MPCA(X; Factors = 2)
         newshape = Tuple(vcat(collect(Factors[1:i]), collect(Modes[ ( i + 1 ) : end])))
         Core = reshape( Core,  newshape  )
     end
-    Core = Base.permutedims(Core, reverse( modes ) )
-    return (Core, Loadings)
+    return (Core, Loadings, MultiNorm(Core) / MultiNorm(X))
 end

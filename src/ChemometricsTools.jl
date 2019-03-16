@@ -76,10 +76,10 @@ module ChemometricsTools
     include("TimeSeries.jl") #Has Docs: Omitted EchoStateNetwork Fns
     export RollingWindow, EchoStateNetwork, TuneRidge, PredictFn, EWMA, Variance, Limits
 
-    include("MultiWay.jl") #Has Docs: Omitted EchoStateNetwork Fns
-    export MPCA
+    include("MultiWay.jl") #Has Docss
+    export MultiCenter, MultiScale, MultiNorm, MultiPCA
 
-    include("KernelDensityGenerator.jl") #Has Docs: Omitted EchoStateNetwork Fns
+    include("KernelDensityGenerator.jl") #Has Docs
     export Universe, GaussianBand, LorentzianBand
 
     #Generic function for pulling data from within this package.
