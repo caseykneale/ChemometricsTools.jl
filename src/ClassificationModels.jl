@@ -94,7 +94,7 @@ function ( model::GaussianDiscriminant )( Z; Factors = size(model.ProjectedClass
     for class in 1 : ClassNumber
         MeanCentered = Projected .- model.ProjectedClassMeans[class, 1:Factors]'
         ProjClassCov = model.ProjectedClassCovariances[ class ][1:Factors, 1:Factors]
-        scalar = 1.0 / sqrt( ( 2.0 * pi )^Factors * LinearAlgebra.det( ProjClassCov ) )
+        scalar = 1.0 / sqrt( ( 2.0 * pi )^Factors * LinearAlgebra.det( ProjClassCov ) + 1e-9)
         for obs in 1 : size(Z)[1]
             PDF = scalar * exp(-0.5 * MeanCentered[obs,:]' * Base.inv( ProjClassCov ) * MeanCentered[obs,:] )
             YHat[obs, class] = model.pi[class] .* PDF

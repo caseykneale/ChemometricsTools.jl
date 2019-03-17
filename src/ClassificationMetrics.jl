@@ -89,7 +89,6 @@ function MulticlassStats(Y, GT, schema; Microaverage = true)
         FP = StatsBase.mean(FP); FN = StatsBase.mean(FN)
         Precision = TP / ( TP + FP )
         Recall = TP / ( TP + FN )
-        Sensitivity = TP / ( TP + FN )
         Specificity = TN / ( TN + FP )
         Accuracy = ( TP + TN ) / ( TP + TN + FP + FN )
         FMeasure = 2.0 * ( ( Precision * Recall ) / ( Precision + Recall ) )
@@ -97,14 +96,13 @@ function MulticlassStats(Y, GT, schema; Microaverage = true)
         FNR = FN / ( FN + TP )
         return Dict("ConfusionMatrix" => ConfusionMatrix,
                     "TP" => TP, "FP" => FP, "TN" => TN, "FN" => FN,
-                    "Sensitivity" => Sensitivity,   "Specificity" => Specificity,
+                    "Specificity" => Specificity,
                     "Precision" => Precision,       "Recall" => Recall,
                     "Accuracy" => Accuracy,         "FMeasure" => FMeasure,
                     "FAR" => FAR,                   "FNR" => FNR )
     else #Macro Average
         Precision = StatsBase.mean(TP ./ ( TP .+ FP ))
         Recall = StatsBase.mean(TP ./ ( TP .+ FN ))
-        Sensitivity = StatsBase.mean(TP ./ ( TP .+ FN ))
         Specificity = StatsBase.mean(TN ./ ( TN .+ FP ))
         Accuracy = StatsBase.mean(( TP .+ TN ) ./ ( TP .+ TN .+ FP .+ FN ))
         FMeasure = StatsBase.mean(2.0 .* ( ( Precision .* Recall ) ./ ( Precision .+ Recall ) ))
@@ -112,7 +110,7 @@ function MulticlassStats(Y, GT, schema; Microaverage = true)
         FNR = StatsBase.mean(FN ./ ( FN .+ TP ))
         return Dict("ConfusionMatrix" => ConfusionMatrix,
                     "TP" => TP, "FP" => FP, "TN" => TN, "FN" => FN,
-                    "Sensitivity" => Sensitivity,   "Specificity" => Specificity,
+                    "Specificity" => Specificity,
                     "Precision" => Precision,       "Recall" => Recall,
                     "Accuracy" => Accuracy,         "FMeasure" => FMeasure,
                     "FAR" => FAR,                   "FNR" => FNR )

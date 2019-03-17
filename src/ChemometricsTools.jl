@@ -10,7 +10,7 @@ module ChemometricsTools
 
     include("InHouseStats.jl") #Has Docs
     export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean, RunningVar,
-        Variance, Mean, rbinomial
+        Variance, Mean, rbinomial, Skewness, SampleSkewness
 
     include("ClassificationMetrics.jl") #Has Docs
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,

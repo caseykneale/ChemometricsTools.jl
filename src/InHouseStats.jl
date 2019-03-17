@@ -122,3 +122,25 @@ Mean(rv::RunningVar) = rv.m.mu
 Returns the current mean inside of a RunningMean object.
 """
 Mean(rm::RunningMean) = rm.mu
+
+"""
+    Skewness(X)
+
+returns a measure of skewness for a population vector `X`.
+
+Joanes, D. N., and C. A. Gill. 1998. “Comparing Measures of Sample Skewness and Kurtosis”. The Statistician 47(1): 183–189.
+"""
+Skewness(X) = (sum( (X .- Statistics.mean(X)) .^ 3) / length(X)) / (Statistics.var(X) ^ (1.5))
+
+"""
+    SampleSkewness(X)
+
+returns a measure of skewness for vector `X` that is corrected for a sample of the population.
+
+Joanes, D. N., and C. A. Gill. 1998. “Comparing Measures of Sample Skewness and Kurtosis”. The Statistician 47(1): 183–189.
+"""
+function SampleSkewness(X)
+    N = length(X)
+    @assert N > 2
+    return ( sqrt( N * (N - 1) ) / (N - 2) ) * Skewness( X )
+end
