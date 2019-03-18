@@ -82,6 +82,9 @@ module ChemometricsTools
     include("KernelDensityGenerator.jl") #Has Docs
     export Universe, GaussianBand, LorentzianBand
 
+    include("SimpleGAs.jl") #No Docs yet :(
+    export Lifeform, SinglePointCrossOver, Mutate
+
     #Generic function for pulling data from within this package.
     #If enough datasets are provided then the data/dataloading could be a seperate package...
     #This will remain hard-coded until I have atleast 2 datasets that require permissions...
