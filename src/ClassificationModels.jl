@@ -45,6 +45,38 @@ function ( model::KNN )( Z; K = 1 )
     end
     return Predictions
 end
+
+"""
+    ProbabilisticNeuralNetwork( X, Y )
+
+Stores data for a PNN. `Y` Must be one hot encoded.
+
+Returns a PNN classification model.
+"""
+struct ProbabilisticNeuralNetwork{ a, b }
+    X::a
+    Y::b
+end
+
+"""
+    (PNN::ProbabilisticNeuralNetwork)(X; sigma = 0.1)
+
+Returns a 1 hot encoded inference from `X` with a probabilistic neural network.
+"""
+function (PNN::ProbabilisticNeuralNetwork)(X; sigma = 0.1)
+    (TrainObs, Classes) = size(PNN.Y)
+    Score = zeros(size(X)[1], Classes)
+
+    #rbf = CauchyKernel(X, PNN.X, sigma)
+    rbf = GaussianKernel(X, PNN.X, sigma)
+    for class in 1:Classes
+        classinds = findall(PNN.Y[:,class] .== 1.0)
+        Score[:, class] = sum( rbf[ classinds , : ], dims = 1 ) / length(classinds)
+    end
+    return Score
+end
+
+
 #Generalized Gaussian Discriminant Analysis
 struct GaussianDiscriminant
     Basis::Union{PCA, LDA}

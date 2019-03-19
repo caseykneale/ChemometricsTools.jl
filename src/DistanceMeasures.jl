@@ -113,3 +113,23 @@ function GaussianKernel(X, Y, sigma)
     Gamma = -1.0 / (2.0 * sigma^2)
     return exp.( SquareEuclideanDistance(Y, X) .* Gamma  )
 end
+
+
+"""
+    CauchyKernel(X, sigma)
+
+Creates a Cauchy kernel from Array `X` using hyperparameters `sigma`.
+"""
+function CauchyKernel(X, sigma)
+    return 1.0 ./ ( (pi * sigma) .* (1.0 .+ ( SquareEuclideanDistance(X) ./ sigma) .^ 2  ) )
+end
+
+
+"""
+    CauchyKernel(X, Y, sigma)
+
+Creates a Cauchy kernel from Arrays `X` and `Y` using hyperparameters `sigma`.
+"""
+function CauchyKernel(X, Y, sigma)
+    return 1.0 ./ ( (pi * sigma) .* (1.0 .+ ( SquareEuclideanDistance(Y, X) ./ sigma) .^ 2  ) )
+end
