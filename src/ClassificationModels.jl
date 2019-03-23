@@ -76,7 +76,6 @@ function (PNN::ProbabilisticNeuralNetwork)(X; sigma = 0.1)
     return Score
 end
 
-
 #Generalized Gaussian Discriminant Analysis
 struct GaussianDiscriminant
     Basis::Union{PCA, LDA}

@@ -29,7 +29,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "Support:",
     "category": "section",
-    "text": "This package was written in Julia 1.0 but should run fine in 1.1 or later releases. That\'s the beauty of from scratch code with minimal dependencies."
+    "text": "This package was written in Julia 1.0.3 but should run fine in 1.1 or later releases. That\'s the beauty of from scratch code with minimal dependencies."
 },
 
 {
@@ -641,6 +641,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "man/Training/#ChemometricsTools.LeaveOneOut-Tuple{Any,Any}",
+    "page": "Training",
+    "title": "ChemometricsTools.LeaveOneOut",
+    "category": "method",
+    "text": "LeaveOneOut(x, y)\n\nReturns a KFoldsValidation iterator with leave one out folds. Because it\'s an iterator it can be used in for loops, see the tutorials for pragmatic examples. The iterator returns a 2-Tuple of 2-Tuples which have the  following form: ((TrainX,TrainY),(ValidateX,ValidateY).\n\n\n\n\n\n"
+},
+
+{
     "location": "man/Training/#ChemometricsTools.Shuffle!-Tuple{Any,Any}",
     "page": "Training",
     "title": "ChemometricsTools.Shuffle!",
@@ -1089,6 +1097,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "man/ClassificationModels/#ChemometricsTools.ProbabilisticNeuralNetwork",
+    "page": "Classification Models",
+    "title": "ChemometricsTools.ProbabilisticNeuralNetwork",
+    "category": "type",
+    "text": "ProbabilisticNeuralNetwork( X, Y )\n\nStores data for a PNN. Y Must be one hot encoded.\n\nReturns a PNN classification model.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/ClassificationModels/#ChemometricsTools.ProbabilisticNeuralNetwork-Tuple{Any}",
+    "page": "Classification Models",
+    "title": "ChemometricsTools.ProbabilisticNeuralNetwork",
+    "category": "method",
+    "text": "(PNN::ProbabilisticNeuralNetwork)(X; sigma = 0.1)\n\nReturns a 1 hot encoded inference from X with a probabilistic neural network.\n\n\n\n\n\n"
+},
+
+{
     "location": "man/ClassificationModels/#ChemometricsTools.MultinomialSoftmaxRegression-Tuple{Any,Any}",
     "page": "Classification Models",
     "title": "ChemometricsTools.MultinomialSoftmaxRegression",
@@ -1173,7 +1197,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Classification Metrics",
     "title": "ChemometricsTools.MulticlassStats",
     "category": "method",
-    "text": "MulticlassStats(Y, GT, schema; Microaverage = true)\n\nCalculates many essential classification statistics based on predicted values Y, and ground truth values GT, using the encoding schema. Returns a dictionary of many statistics...\n\n\n\n\n\n"
+    "text": "MulticlassStats(Y, GT, schema; Microaverage = true)\n\nCalculates many essential classification statistics based on predicted values Y, and ground truth values GT, using the encoding schema. Returns a tuple whose first entry is a dictionary of averaged statistics, and whose second entry is a dictionary of the form \"Class\" => Statistics Dictionary ...\n\n\n\n\n\n"
 },
 
 {
@@ -1182,6 +1206,14 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.MulticlassThreshold",
     "category": "method",
     "text": "MulticlassThreshold(yhat; level = 0.5)\n\nEffectively does the same thing as Threshold() but per-row across columns.\n\nWarning this function can allow for no class assignments. HighestVote is preferred\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/classMetrics/#ChemometricsTools.StatsFromTFPN-NTuple{4,Any}",
+    "page": "Classification Metrics",
+    "title": "ChemometricsTools.StatsFromTFPN",
+    "category": "method",
+    "text": "StatsFromTFPN(TP, TN, FP, FN)\n\nCalculates many essential classification statistics based on the numbers of True Positive(TP), True Negative(TN),  False Positive(FP), and False Negative(FN) examples.\n\n\n\n\n\n"
 },
 
 {
@@ -1393,6 +1425,78 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "man/MultiWay/#",
+    "page": "MultiWay",
+    "title": "MultiWay",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "man/MultiWay/#Multiway-API-Reference-1",
+    "page": "MultiWay",
+    "title": "Multiway API Reference",
+    "category": "section",
+    "text": ""
+},
+
+{
+    "location": "man/MultiWay/#ChemometricsTools.MultiCenter",
+    "page": "MultiWay",
+    "title": "ChemometricsTools.MultiCenter",
+    "category": "type",
+    "text": "MultiCenter(Z, mode = 1)\n\nAcquires the mean of the specified mode in Z and returns a transform that will remove those means from any future data.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/MultiWay/#ChemometricsTools.MultiCenter-Tuple{Any}",
+    "page": "MultiWay",
+    "title": "ChemometricsTools.MultiCenter",
+    "category": "method",
+    "text": "(T::MultiCenter)(Z; inverse = false)\n\nCenters data in Tensor Z mode-wise according to learned centers in MultiCenter object T.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/MultiWay/#ChemometricsTools.MultiScale",
+    "page": "MultiWay",
+    "title": "ChemometricsTools.MultiScale",
+    "category": "type",
+    "text": "MultiScale(Z, mode = 1)\n\nAcquires the standard deviations of the specified mode in Z and returns a transform that will scale by those standard deviations from any future data.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/MultiWay/#ChemometricsTools.MultiScale-Tuple{Any}",
+    "page": "MultiWay",
+    "title": "ChemometricsTools.MultiScale",
+    "category": "method",
+    "text": "(T::MultiScale)(Z; inverse = false)\n\nScales data in Tensor Z mode-wise according to learned standard deviations in MultiScale object T.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/MultiWay/#ChemometricsTools.MultiNorm-Tuple{Any}",
+    "page": "MultiWay",
+    "title": "ChemometricsTools.MultiNorm",
+    "category": "method",
+    "text": "MultiNorm(T)\n\nComputes the equivalent of the Froebinius norm on a tensor T. Returns a scalar.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/MultiWay/#ChemometricsTools.MultiPCA-Tuple{Any}",
+    "page": "MultiWay",
+    "title": "ChemometricsTools.MultiPCA",
+    "category": "method",
+    "text": "MultiPCA(X; Factors = 2)\n\nPerforms multiway PCA aka Higher Order SVD aka Tucker, etc. The number of factors decomposed can be a scalar(repeated across all modes) or a vector/tuple for each mode.\n\nReturns a tuple of (Core Tensor, Basis Tensors)\n\nToDo: Add projection steps, maybe singular values, find multiway dataset to share...\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/MultiWay/#Functions-1",
+    "page": "MultiWay",
+    "title": "Functions",
+    "category": "section",
+    "text": "Modules = [ChemometricsTools]\nPages   = [\"MultiWay.jl\"]"
+},
+
+{
     "location": "man/AnomalyDetection/#",
     "page": "Anomaly Detection",
     "title": "Anomaly Detection",
@@ -1585,6 +1689,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "man/Stats/#ChemometricsTools.SampleSkewness-Tuple{Any}",
+    "page": "Stats.",
+    "title": "ChemometricsTools.SampleSkewness",
+    "category": "method",
+    "text": "SampleSkewness(X)\n\nreturns a measure of skewness for vector X that is corrected for a sample of the population.\n\nJoanes, D. N., and C. A. Gill. 1998. “Comparing Measures of Sample Skewness and Kurtosis”. The Statistician 47(1): 183–189.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/Stats/#ChemometricsTools.Skewness-Tuple{Any}",
+    "page": "Stats.",
+    "title": "ChemometricsTools.Skewness",
+    "category": "method",
+    "text": "Skewness(X)\n\nreturns a measure of skewness for a population vector X.\n\nJoanes, D. N., and C. A. Gill. 1998. “Comparing Measures of Sample Skewness and Kurtosis”. The Statistician 47(1): 183–189.\n\n\n\n\n\n"
+},
+
+{
     "location": "man/Stats/#ChemometricsTools.Update!-Tuple{RunningMean,Any}",
     "page": "Stats.",
     "title": "ChemometricsTools.Update!",
@@ -1654,6 +1774,22 @@ var documenterSearchIndex = {"docs": [
     "title": "ChemometricsTools.Kernel",
     "category": "method",
     "text": "(K::Kernel)(X)\n\nThis is a convenience function to allow for one-line construction of kernels from a Kernel object K and new data X.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/Dists/#ChemometricsTools.CauchyKernel-Tuple{Any,Any,Any}",
+    "page": "Distance Measures",
+    "title": "ChemometricsTools.CauchyKernel",
+    "category": "method",
+    "text": "CauchyKernel(X, Y, sigma)\n\nCreates a Cauchy kernel from Arrays X and Y using hyperparameters sigma.\n\n\n\n\n\n"
+},
+
+{
+    "location": "man/Dists/#ChemometricsTools.CauchyKernel-Tuple{Any,Any}",
+    "page": "Distance Measures",
+    "title": "ChemometricsTools.CauchyKernel",
+    "category": "method",
+    "text": "CauchyKernel(X, sigma)\n\nCreates a Cauchy kernel from Array X using hyperparameters sigma.\n\n\n\n\n\n"
 },
 
 {
@@ -1798,6 +1934,30 @@ var documenterSearchIndex = {"docs": [
     "title": "Functions",
     "category": "section",
     "text": "Modules = [ChemometricsTools]\nPages   = [\"PSO.jl\"]"
+},
+
+{
+    "location": "man/GeneticAlgorithms/#",
+    "page": "Genetic Algorithms",
+    "title": "Genetic Algorithms",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "man/GeneticAlgorithms/#Genetic-Algorithms-API-Reference-1",
+    "page": "Genetic Algorithms",
+    "title": "Genetic Algorithms API Reference",
+    "category": "section",
+    "text": ""
+},
+
+{
+    "location": "man/GeneticAlgorithms/#Functions-1",
+    "page": "Genetic Algorithms",
+    "title": "Functions",
+    "category": "section",
+    "text": "Modules = [ChemometricsTools]\nPages   = [\"SimpleGAs.jl\"]"
 },
 
 {

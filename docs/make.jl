@@ -34,11 +34,13 @@ makedocs(
 						 "Tree Methods" => "man/Trees.md",
 						 "Ensemble Models" => "man/Ensemble.md",
 						 "Clustering" => "man/Clustering.md",
+						 "MultiWay" => "man/MultiWay.md",
 						 "Anomaly Detection" => "man/AnomalyDetection.md",
 						 "Curve Resolution" => "man/CurveResolution.md",
 						 "Stats." => "man/Stats.md",
 						 "Distance Measures" => "man/Dists.md",
 						 "PSO" => "man/PSO.md",
+						 "Genetic Algorithms" => "man/GeneticAlgorithms.md",
 		    			],
 			 "Full API" => "man/FullAPI.md",
 		]

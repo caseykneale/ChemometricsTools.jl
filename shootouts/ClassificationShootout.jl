@@ -1,3 +1,9 @@
+using Pkg
+#Pkg.rm("ChemometricsTools")
+pwd()
+cd("ChemometricsTools.jl/")
+Pkg.activate(".")
+
 using ChemometricsTools
 #View the data in the package space
 ChemometricsToolsDatasets()
@@ -32,13 +38,18 @@ models = ( knn, ldagd, mnsr, gnb, ct, rf );
 modelnames = ( :knn, :ldagd, :mnsr, :gnb, :ct, :rf );
 TrainingF1s = Dict()
 for ( name, model ) in zip(modelnames, models)
-    TrainingF1s[name] = MulticlassStats( model(TrainX), TrainY, Encoding )["FMeasure"]
+    TrainingF1s[name] = MulticlassStats( model(TrainX), TrainY, Encoding )[1]["FMeasure"]
 end
+
 TrainingF1s
+
 
 HoldOutF1s = Dict()
 for ( name, model ) in zip(modelnames, models)
-    HoldOutF1s[name] = MulticlassStats( model(TestX), TestY, Encoding )["FMeasure"]
+    HoldOutF1s[name] = MulticlassStats( model(TestX), TestY, Encoding )[1]["FMeasure"]
 end
 
 HoldOutF1s
+
+#Let's check specifically the random forest classification model for the virginica class
+MulticlassStats( rf(TestX), TestY, Encoding )[2]["virginica"]

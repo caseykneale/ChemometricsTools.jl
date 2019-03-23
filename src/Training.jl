@@ -46,7 +46,15 @@ function KFoldsValidation(K::Int, x, y)
     Remainder = observations % K
     KFoldsValidation( K, floor(size( x )[ 1 ] / K), observations, Remainder, x, forceMatrix(y))
 end
-LeaveOneOut(x,y) = KFoldsValidation( size( x )[ 1 ], 1, size( x )[ 1 ], 0, x, forceMatrix(y) )
+
+"""
+    LeaveOneOut(x, y)
+
+Returns a KFoldsValidation iterator with leave one out folds. Because it's an iterator it can be used in for loops,
+see the tutorials for pragmatic examples. The iterator returns a 2-Tuple of 2-Tuples which have the
+ following form: ``` ((TrainX,TrainY),(ValidateX,ValidateY) ```.
+"""
+LeaveOneOut(x, y) = KFoldsValidation( size( x )[ 1 ], 1, size( x )[ 1 ], 0, x, forceMatrix(y) )
 
 
 function Base.iterate( iter::KFoldsValidation, state = (0,0) )

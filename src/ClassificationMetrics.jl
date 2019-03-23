@@ -59,11 +59,38 @@ function HotToCold(Y, Schema::ClassificationLabel)
     return Output
 end
 
+
+"""
+    StatsFromTFPN(TP, TN, FP, FN)
+
+Calculates many essential classification statistics based on the numbers of True Positive(`TP`), True Negative(`TN`),
+ False Positive(`FP`), and False Negative(`FN`) examples.
+"""
+function StatsFromTFPN(TP, TN, FP, FN)
+    ConfusionMatrix = reshape( [TP, FP, FN, TN], 2, 2 )
+    Precision = TP / ( TP + FP )
+    Recall = TP / ( TP + FN )
+    Specificity = TN / ( TN + FP )
+    Accuracy = ( TP + TN ) / ( TP + TN + FP + FN )
+    FMeasure = 2.0 * ( ( Precision * Recall ) / ( Precision + Recall ) )
+    FAR = FP / ( FP + TN )
+    FNR = FN / ( FN + TP )
+    Prevalence = TP + FN
+    return Dict("ConfusionMatrix" => ConfusionMatrix,
+                "TP" => TP, "FP" => FP, "TN" => TN, "FN" => FN,
+                "Specificity" => Specificity,
+                "Precision" => Precision,       "Recall" => Recall,
+                "Accuracy" => Accuracy,         "FMeasure" => FMeasure,
+                "FAR" => FAR,                   "FNR" => FNR,
+                "Prevalence" => Prevalence )
+end
+
 """
     MulticlassStats(Y, GT, schema; Microaverage = true)
 
 Calculates many essential classification statistics based on predicted values `Y`, and ground truth values `GT`, using
-the encoding `schema`. Returns a dictionary of many statistics...
+the encoding `schema`. Returns a tuple whose first entry is a dictionary of averaged statistics, and whose second
+entry is a dictionary of the form "Class" => Statistics Dictionary ...
 """
 function MulticlassStats(Y, GT, schema; Microaverage = true)
     Y = forceMatrix(Y)
@@ -84,37 +111,33 @@ function MulticlassStats(Y, GT, schema; Microaverage = true)
         TN[c] = sum(ConfusionMatrix) - TP[c] - FP[c] - FN[c]
     end
 
-    if Microaverage
-        TP = StatsBase.mean(TP); TN = StatsBase.mean(TN)
-        FP = StatsBase.mean(FP); FN = StatsBase.mean(FN)
-        Precision = TP / ( TP + FP )
-        Recall = TP / ( TP + FN )
-        Specificity = TN / ( TN + FP )
-        Accuracy = ( TP + TN ) / ( TP + TN + FP + FN )
-        FMeasure = 2.0 * ( ( Precision * Recall ) / ( Precision + Recall ) )
-        FAR = FP / ( FP + TN )
-        FNR = FN / ( FN + TP )
-        return Dict("ConfusionMatrix" => ConfusionMatrix,
-                    "TP" => TP, "FP" => FP, "TN" => TN, "FN" => FN,
-                    "Specificity" => Specificity,
-                    "Precision" => Precision,       "Recall" => Recall,
-                    "Accuracy" => Accuracy,         "FMeasure" => FMeasure,
-                    "FAR" => FAR,                   "FNR" => FNR )
-    else #Macro Average
-        Precision = StatsBase.mean(TP ./ ( TP .+ FP ))
-        Recall = StatsBase.mean(TP ./ ( TP .+ FN ))
-        Specificity = StatsBase.mean(TN ./ ( TN .+ FP ))
-        Accuracy = StatsBase.mean(( TP .+ TN ) ./ ( TP .+ TN .+ FP .+ FN ))
-        FMeasure = StatsBase.mean(2.0 .* ( ( Precision .* Recall ) ./ ( Precision .+ Recall ) ))
-        FAR = StatsBase.mean(FP ./ ( FP .+ TN ))
-        FNR = StatsBase.mean(FN ./ ( FN .+ TP ))
-        return Dict("ConfusionMatrix" => ConfusionMatrix,
-                    "TP" => TP, "FP" => FP, "TN" => TN, "FN" => FN,
-                    "Specificity" => Specificity,
-                    "Precision" => Precision,       "Recall" => Recall,
-                    "Accuracy" => Accuracy,         "FMeasure" => FMeasure,
-                    "FAR" => FAR,                   "FNR" => FNR )
+    #Compute Class-wise statistics.
+    #Make a dictionary which contains for each class, a dictionary of statistics.
+    ClasswiseStats = Dict()
+    for class in 1 : schema.LabelCount
+        ClasswiseStats[schema.ToCold[class]] = StatsFromTFPN(TP[class], TN[class], FP[class], FN[class])
     end
+    GlobalStats = Dict()
+    if Microaverage
+         TP = StatsBase.mean( TP ); TN = StatsBase.mean( TN )
+         FP = StatsBase.mean( FP ); FN = StatsBase.mean( FN )
+         GlobalStats = StatsFromTFPN( TP, TN, FP, FN ) 
+    else #Macro Average
+        Precision = StatsBase.mean( TP ./ ( TP .+ FP ) )
+        Recall = StatsBase.mean( TP ./ ( TP .+ FN ) )
+        Specificity = StatsBase.mean( TN ./ ( TN .+ FP ) )
+        Accuracy = StatsBase.mean( ( TP .+ TN ) ./ ( TP .+ TN .+ FP .+ FN ) )
+        FMeasure = StatsBase.mean( 2.0 .* ( ( Precision .* Recall ) ./ ( Precision .+ Recall ) ) )
+        FAR = StatsBase.mean( FP ./ ( FP .+ TN ) )
+        FNR = StatsBase.mean( FN ./ ( FN .+ TP ) )
+        GlobalStats = Dict( "ConfusionMatrix" => ConfusionMatrix,
+                            "TP" => TP, "FP" => FP, "TN" => TN, "FN" => FN,
+                            "Specificity" => Specificity,
+                            "Precision" => Precision,       "Recall" => Recall,
+                            "Accuracy" => Accuracy,         "FMeasure" => FMeasure,
+                            "FAR" => FAR,                   "FNR" => FNR )
+    end
+    return (GlobalStats, ClasswiseStats)
 end
 
 #Voting Schemes

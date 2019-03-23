@@ -14,7 +14,7 @@ module ChemometricsTools
 
     include("ClassificationMetrics.jl") #Has Docs
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
-        Threshold, MulticlassThreshold, HighestVote
+        Threshold, MulticlassThreshold, HighestVote, StatsFromTFPN
 
     include("RegressionMetrics.jl") #Has Docs
     export ME, MAE, MAPE, SSE, MSE, RMSE, SSTotal, SSReg, SSRes, RSquare,
@@ -22,7 +22,7 @@ module ChemometricsTools
 
     include("DistanceMeasures.jl") #Has Docs
     export SquareEuclideanDistance, EuclideanDistance, ManhattanDistance,
-        GaussianKernel, LinearKernel, Kernel
+        GaussianKernel, CauchyKernel, LinearKernel, Kernel
 
     include("Transformations.jl") #Has Docs: Box Cox Omitted for now...
     export Transform, PipelineInPlace, Pipeline, QuantileTrim, Center, Scale,
@@ -36,7 +36,7 @@ module ChemometricsTools
     export OneClassJKNN, Q, Hotelling, Leverage
 
     include("ClassificationModels.jl") #Has docs
-    export KNN, GaussianDiscriminant, LogisticRegression, MultinomialSoftmaxRegression,
+    export KNN, ProbabilisticNeuralNetwork, GaussianDiscriminant, LogisticRegression, MultinomialSoftmaxRegression,
         GaussianNaiveBayes, HighestVoteOneHot
 
     include("Clustering.jl") #Has Docs

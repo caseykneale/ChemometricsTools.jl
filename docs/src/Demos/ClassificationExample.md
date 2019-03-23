@@ -5,7 +5,6 @@ This demo shows an applied solution to a classification problem using real mid-i
 
 *Use of Fourier transform infrared spectroscopy and partial least squares regression for the detection of adulteration of strawberry purées. J K Holland, E K Kemsley, R H Wilson*
 
-
 ```julia
 snv = StandardNormalVariate(Train);
 Train_pca = PCA(snv(Train);; Factors = 15);
