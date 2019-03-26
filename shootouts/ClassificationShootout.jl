@@ -1,9 +1,8 @@
-using Pkg
-#Pkg.rm("ChemometricsTools")
-pwd()
-cd("ChemometricsTools.jl/")
-Pkg.activate(".")
-
+# using Pkg
+# #Pkg.rm("ChemometricsTools")
+# pwd()
+# cd("ChemometricsTools.jl/")
+# Pkg.activate(".")
 using ChemometricsTools
 #View the data in the package space
 ChemometricsToolsDatasets()

@@ -1209,6 +1209,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "man/classMetrics/#ChemometricsTools.StatsDictToDataFrame-Tuple{Any,Any}",
+    "page": "Classification Metrics",
+    "title": "ChemometricsTools.StatsDictToDataFrame",
+    "category": "method",
+    "text": "StatsDictToDataFrame(DictOfStats, schema)\n\nConverts a dictionary of statistics which is returned from MulticlassStats into a labelled dataframe. This is an intermediate step for automated report generation.\n\n\n\n\n\n"
+},
+
+{
     "location": "man/classMetrics/#ChemometricsTools.StatsFromTFPN-NTuple{4,Any}",
     "page": "Classification Metrics",
     "title": "ChemometricsTools.StatsFromTFPN",
@@ -1485,7 +1493,7 @@ var documenterSearchIndex = {"docs": [
     "page": "MultiWay",
     "title": "ChemometricsTools.MultiPCA",
     "category": "method",
-    "text": "MultiPCA(X; Factors = 2)\n\nPerforms multiway PCA aka Higher Order SVD aka Tucker, etc. The number of factors decomposed can be a scalar(repeated across all modes) or a vector/tuple for each mode.\n\nReturns a tuple of (Core Tensor, Basis Tensors)\n\nToDo: Add projection steps, maybe singular values, find multiway dataset to share...\n\n\n\n\n\n"
+    "text": "MultiPCA(X; Factors = 2)\n\nPerforms multiway PCA aka Higher Order SVD aka Tucker, etc. The number of factors decomposed can be a scalar(repeated across all modes) or a vector/tuple for each mode.\n\nReturns a tuple of (Core Tensor, Basis Tensors)\n\n\n\n\n\n"
 },
 
 {

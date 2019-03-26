@@ -91,8 +91,6 @@ Performs multiway PCA aka Higher Order SVD aka Tucker, etc. The number of factor
 can be a scalar(repeated across all modes) or a vector/tuple for each mode.
 
 Returns a tuple of (Core Tensor, Basis Tensors)
-
-ToDo: Add projection steps, maybe singular values, find multiway dataset to share...
 """
 function MultiPCA(X; Factors = 2)
     Modes = size(X)

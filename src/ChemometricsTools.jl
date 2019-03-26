@@ -1,5 +1,5 @@
 module ChemometricsTools
-    using LinearAlgebra, Statistics, StatsBase, SparseArrays, Plots
+    using DataFrames, LinearAlgebra, Statistics, StatsBase, SparseArrays, Plots
     using CSV: read
     using Distributions #Could probably also get rid of this one...
 
@@ -14,7 +14,7 @@ module ChemometricsTools
 
     include("ClassificationMetrics.jl") #Has Docs
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
-        Threshold, MulticlassThreshold, HighestVote, StatsFromTFPN
+        Threshold, MulticlassThreshold, HighestVote, StatsFromTFPN, StatsDictToDataFrame
 
     include("RegressionMetrics.jl") #Has Docs
     export ME, MAE, MAPE, SSE, MSE, RMSE, SSTotal, SSReg, SSRes, RSquare,

@@ -18,8 +18,8 @@ This package contains a collection of tools to perform fundamental and advanced 
   - [Regression](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/RegressionShootout.jl)
   - [Fault Detection](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/AnomalyShootout.jl)
 
-### Package Status => "Stable" Public release! (v 0.3.7)
-ChemometricsTools is brand new, and was recently accepted to be registered as an official Julia package! Yep, so you can  ```Pkg.add("ChemometricsTools")``` to install it. The git repo has the most stable version right now, I fixed a lot of bugs since 0.2.3, but soon the package will be up to date. In 0.3.7 almost all of the functionality available can reliably be used/abused, and the documentation is pretty fleshed out. Betchya anything there are a few bugs in the package still so please file issues when you find them.
+### Package Status => "Bug-fix" Public release! (v 0.4.2)
+ChemometricsTools is pretty darn new, and was recently accepted to be registered as an official Julia package! Yep, so you can  ```Pkg.add("ChemometricsTools")``` to install it. The git repo has the most stable version right now, I fixed a lot of bugs since 0.2.3. In 0.4.2 almost all of the functionality available can reliably be used/abused, and the documentation is getting there, but it's hard to keep up with all the features I've been adding. There's probably a few bugs looming, but I haven't found anything too unusual yet! Some pretty big plans for v0.5.0, but I've personally been testing this package doing some work with a fellow analytical chemist.
 
 # Package Highlights
 ### Transforms/Pipelines
@@ -34,7 +34,7 @@ ChemometricsTools offers easy to use iterators for K-folds validation's, and mov
 This package features dozens of regression performance metrics, and a few built in plots (Bland Altman, QQ, Interval Overlays etc) are included. The list of regression methods currently includes: CLS, Ridge, Kernel Ridge, LS-SVM, PCR, PLS(1/2), ELM's, Regression Trees, Random Forest... More to come. Chemometricians love regressions!
 
 ### Classification Modeling
-In-house classification encodings (one cold/one hot), and easy to retrieve global or multiclass performance statistics. ChemometricsTools currently includes: LDA/PCA with Gaussian discriminants, logistic regression, PLS-DA, K-NN, Gaussian Naive Bayes, Classification Trees, Random Forest, and more to come.
+In-house classification encodings (one cold/one hot), and easy to retrieve global or multiclass performance statistics. ChemometricsTools currently includes: LDA/PCA with Gaussian discriminants, logistic regression, PLS-DA, K-NN, Gaussian Naive Bayes, Classification Trees, Random Forest, Probabilistic Neural Networks, and more to come.
 
 ## Specialized tools?
 This package has tools for specialized fields of analysis'. For instance, fractional derivatives for the electrochemists (and the adventurous), a handful of smoothing methods for spectroscopists, curve resolution for forensics, process fault detection methods, etc. There are certainly plans for other tools for analyzing chemical data that packages in other languages have seemingly left out. Stay tuned.

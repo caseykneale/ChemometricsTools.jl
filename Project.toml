@@ -1,11 +1,12 @@
 name = "ChemometricsTools"
 uuid = "a9718f02-dbee-5ae5-ad0e-dfbd07fa387b"
 authors = ["caseykneale "]
-version = "0.3.7"
+version = "0.4.2"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 DocumenterTools = "35a29f4d-8980-5a13-9543-d66fff28ecb8"

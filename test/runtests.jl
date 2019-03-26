@@ -82,7 +82,7 @@ end
     @test HOT == [[1,0,0,1,0,0] [0,1,0,0,1,0] [0,0,1,0,0,1]]
     COLD = HotToCold([[1,0,0,1,0,0] [0,1,0,0,1,0] [0,0,1,0,0,1]], LEnc)
     A = MulticlassStats(COLD, CE, LEnc)
-    @test A["Accuracy"] == 1.0
+    @test A[1][:Global]["Accuracy"] == 1.0
     @test A == MulticlassStats(HOT, CE, LEnc)
     @test A == MulticlassStats(HOT, HOT, LEnc)
     @test A == MulticlassStats(CE, HOT, LEnc)

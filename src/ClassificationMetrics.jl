@@ -121,7 +121,7 @@ function MulticlassStats(Y, GT, schema; Microaverage = true)
     if Microaverage
          TP = StatsBase.mean( TP ); TN = StatsBase.mean( TN )
          FP = StatsBase.mean( FP ); FN = StatsBase.mean( FN )
-         GlobalStats = StatsFromTFPN( TP, TN, FP, FN ) 
+         GlobalStats = Dict(:Global => StatsFromTFPN( TP, TN, FP, FN ) )
     else #Macro Average
         Precision = StatsBase.mean( TP ./ ( TP .+ FP ) )
         Recall = StatsBase.mean( TP ./ ( TP .+ FN ) )
@@ -130,15 +130,57 @@ function MulticlassStats(Y, GT, schema; Microaverage = true)
         FMeasure = StatsBase.mean( 2.0 .* ( ( Precision .* Recall ) ./ ( Precision .+ Recall ) ) )
         FAR = StatsBase.mean( FP ./ ( FP .+ TN ) )
         FNR = StatsBase.mean( FN ./ ( FN .+ TP ) )
-        GlobalStats = Dict( "ConfusionMatrix" => ConfusionMatrix,
+        GlobalStats = Dict(:Global => Dict( "ConfusionMatrix" => ConfusionMatrix,
                             "TP" => TP, "FP" => FP, "TN" => TN, "FN" => FN,
                             "Specificity" => Specificity,
                             "Precision" => Precision,       "Recall" => Recall,
                             "Accuracy" => Accuracy,         "FMeasure" => FMeasure,
-                            "FAR" => FAR,                   "FNR" => FNR )
+                            "FAR" => FAR,                   "FNR" => FNR ) )
     end
     return (GlobalStats, ClasswiseStats)
 end
+
+
+"""
+    StatsDictToDataFrame(DictOfStats, schema)
+
+Converts a dictionary of statistics which is returned from `MulticlassStats` into a labelled dataframe.
+This is an intermediate step for automated report generation.
+"""
+function StatsDictToDataFrame(ClasswiseStats, schema)
+    ClassName = repeat( [ "No Name" ], schema.LabelCount );
+    StatsList = [ "FMeasure", "Accuracy", "Specificity", "Precision", "Recall", "FAR", "FNR" ];
+    daf = DataFrame( :Statistics => StatsList);
+    for ( encode, lblname ) in schema.ToCold
+        ClassName[ encode ] = lblname
+        ClassStats = zeros( length(StatsList) );
+        for (i, stat) in enumerate( StatsList )
+            ClassStats[ i ] = ClasswiseStats[ lblname ][ stat ]
+        end
+        daf[ Symbol( lblname ) ] = ClassStats
+    end
+    return daf
+end
+
+
+"""
+    StatsToDataFrame(stats, schema, filepath, name)
+
+Converts the 2-Tuple returned from `MulticlassStats()` (`stats`) to a CSV file with a specified `name`
+in a specified `filepath` using the prescribed encoding `schema`.
+
+The statistics associated with the global analysis will end in a file name  of "-global.csv"
+and the local statistics for each class will end in a file named "-classwise.csv"
+"""
+#Hard coded for now... V0.5.0 should be more generic...
+function StatsToCSVs(Stats, schema, filepath, name)
+    globaldf = StatsDictToDataFrame(Stats[1], schema)
+    localdf = StatsDictToDataFrame(Stats[2], schema)
+    CSV.write(Base.joinpath(filepath, name * "-global.csv"), globaldf)
+    CSV.write(Base.joinpath(filepath, name * "-classwise.csv"), localdf)
+end
+
+#V0.5.0 should release a LaTeX report generator...
 
 #Voting Schemes
 """
