@@ -92,6 +92,7 @@ Returns an LDA object.
 """
 function LDA(X, Y; Factors = 1)
     (Obs, ClassNumber) = size( Y )
+    @assert Factors < ClassNumber
     Variables = size( X )[ 2 ]
     #Instantiate some variables...
     ClassMeans = zeros( ClassNumber, Variables )
@@ -104,19 +105,22 @@ function LDA(X, Y; Factors = 1)
         ClassSize[class] = sum(Members)
         ClassMeans[class,:] = StatsBase.mean(X[Members,:], dims = 1)
     end
-    GlobalMean = StatsBase.mean(ClassMeans, dims = 1)
+    GlobalMean = StatsBase.mean(X, dims = 1)
 
     for class in 1 : ClassNumber
         Members = Y[ :, class ] .== 1
         #calculate the between class covariance matrix
-        Diff = (ClassMeans[class,:] .- GlobalMean)
-        BetweenCovariance .+= (1.0 / (ClassSize[class] - 1.0)) .* ( Diff * Diff' )
+        Diff = ClassMeans[class,:] .- GlobalMean'
+        BetweenCovariance .+= ClassSize[class] .* ( Diff * Diff' )
         #calculate the within class covariance matrix
-        MeanCentered = X[Members,:] .- ClassMeans[class, : ]'
-        WithinCovariance .+= (1.0 / (ClassSize[class] - 1.0)) * ( MeanCentered' * MeanCentered  )
+        for member in findall(Members .== true)
+            MeanCentered = X[member,:] .- ClassMeans[class, : ]
+            WithinCovariance .+= ( MeanCentered * MeanCentered' )
+        end
     end
     #Calculate the discriminant axis'
-    eig = LinearAlgebra.eigen(Base.inv(WithinCovariance) * BetweenCovariance)
+    #eig = LinearAlgebra.eigen(Base.inv(WithinCovariance) * BetweenCovariance)
+    eig = LinearAlgebra.eigen(WithinCovariance \ BetweenCovariance)
     if any( imag.( eig.values ) .> 1e-1)
         println("Warning: Some eigenvalues found to have complex contributions > 0.1")
     end
@@ -124,10 +128,10 @@ function LDA(X, Y; Factors = 1)
     ReVals = real.(eig.values)
     Sorted = sortperm( ReVals, rev = true)
     Contributions = ReVals[Sorted] .>= 1e-9
-    Loadings = real.(eig.vectors[:, Sorted[ Contributions][1:Factors] ] )
+    Loadings = real.(eig.vectors[:,Sorted[ Contributions ][1:Factors] ] )
     #Project the X data into the LDA basis
     Scores = X * Loadings
-    return LDA( Scores, Loadings, ReVals[ Sorted[ Contributions][1:Factors] ] )
+    return LDA( Scores, Loadings, ReVals[ Sorted[ Contributions][1:Factors] ])
 end
 
 """
@@ -146,7 +150,7 @@ end
 Calculates the explained variance of each singular value in an LDA object.
 
 """
-ExplainedVariance(lda::LDA) = lda.Values ./ sum(lda.Values)
+ExplainedVariance(lda::LDA) = (lda.Values .^ 2) ./ sum(lda.Values .^ 2)
 
 function MatrixInverseSqrt(X, threshold = 1e-6)
     eig = eigen(X)
