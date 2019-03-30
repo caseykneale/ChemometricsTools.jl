@@ -112,6 +112,7 @@ end
     ( model::GaussianDiscriminant )( Z; Factors = size(model.ProjectedClassMeans)[2] )
 
 Returns a 1 hot encoded inference from `Z` using a GaussianDiscriminant object.
+This function enforces positive definiteness in the class covariance matrices.
 """
 function ( model::GaussianDiscriminant )( Z; Factors = size(model.ProjectedClassMeans)[2] )
     MaximumLatentFactors = size(model.ProjectedClassMeans)[2]
@@ -154,17 +155,6 @@ function ( model::GaussianDiscriminant )( Z; Factors = size(model.ProjectedClass
     end
     return YHat
 end
-
-# [R, err] = cholcov(sigma, 0);
-#
-#     if err
-#         error('%s', 'sigma is not both symmetric and positive definite');
-#     end
-#
-#     X0 = bsxfun(@minus, X, mu) / R;
-#     d = min(size(X));
-#     slogdet = sum(log(diag(R)));
-#     p = exp(-0.5 * sum(X0 .^ 2, 2) - slogdet - 0.5 * d * log(2 * pi));
 
 """
     ConfidenceEllipse(cov, mean, confidence, axis = [1,2]; pointestimate = 180 )
