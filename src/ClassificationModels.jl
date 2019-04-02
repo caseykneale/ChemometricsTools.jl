@@ -151,7 +151,7 @@ function ( model::GaussianDiscriminant )( Z; Factors = size(model.ProjectedClass
 
     end
     if warn == true
-        println("Warning: some class covariance matrices were not positive definite. \n This usually means a few classes have low rank. An approximation was performed.")
+        println("Warning: some class covariance matrices were not positive definite. \n This usually means a few classes have low rank. The Null Space was removed.")
     end
     return YHat
 end
@@ -277,9 +277,6 @@ function (gnb::GaussianNaiveBayes)(X)
     return Predictions
 end
 
-
-
-
 struct linearperceptron{ a, b }
     W::a
     Loss::b
@@ -288,9 +285,9 @@ end
 """
     LinearPerceptron(X, Y; LearningRate = 1e-3, MaxIters = 5000)
 
-Returns a LinearPerceptron classification model object from `X` and one hot encoded `Y`.
+Returns a batch trained LinearPerceptron classification model object from `X` and one hot encoded `Y`.
 """
-function LinearPerceptron(X, Y; LearningRate = 1e-3, MaxIters = 5000)
+function LinearPerceptronBatch(X, Y; LearningRate = 1e-3, MaxIters = 5000)
     W = zeros( size( X )[ 2 ], size( Y )[ 2 ] )
     Loss = zeros( MaxIters )
     for iter in 1 : MaxIters
@@ -305,6 +302,28 @@ function LinearPerceptron(X, Y; LearningRate = 1e-3, MaxIters = 5000)
         W .+= LearningRate .* ( X' * Err )
     end
     return linearperceptron( W, Loss )
+end
+
+
+"""
+    LinearPerceptronsgd(X, Y; LearningRate = 1e-3, MaxIters = 5000)
+
+Returns a SGD trained LinearPerceptron classification model object from `X` and one hot encoded `Y`.
+"""
+function LinearPerceptronSGD(X, Y; LearningRate = 1e-3, MaxIters = 5000)
+    W = zeros( size( X )[ 2 ], size( Y )[ 2 ] )
+    Loss = zeros( MaxIters )
+    Err = zeros(1, size(Y)[2])
+    for iter in 1 : MaxIters, obs in 1:size(X)[1]
+        YHat = X[obs,:]' * W
+        Err = Y[obs,:]' .- YHat
+        if argmax(YHat) == argmax(Y[obs,:])
+            Err .= 0.0
+        end
+        Loss[iter] += sum(Err .^ 2)
+        W .+= LearningRate .* ( X[obs,:] * Err )
+    end
+    return ChemometricsTools.linearperceptron( W, Loss )
 end
 
 """

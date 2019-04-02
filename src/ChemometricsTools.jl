@@ -37,7 +37,7 @@ module ChemometricsTools
 
     include("ClassificationModels.jl") #Has docs
     export KNN, ProbabilisticNeuralNetwork, GaussianDiscriminant, LogisticRegression, MultinomialSoftmaxRegression,
-        GaussianNaiveBayes, HighestVoteOneHot, ConfidenceEllipse, LinearPerceptron
+        GaussianNaiveBayes, HighestVoteOneHot, ConfidenceEllipse, LinearPerceptronSGD, LinearPerceptronBatch 
 
     include("Clustering.jl") #Has Docs
     export TotalClusterSS, WithinClusterSS, BetweenClusterSS, KMeansClustering, KMeans
