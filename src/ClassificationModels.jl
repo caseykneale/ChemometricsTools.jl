@@ -276,3 +276,40 @@ function (gnb::GaussianNaiveBayes)(X)
     end
     return Predictions
 end
+
+
+
+
+struct linearperceptron{ a, b }
+    W::a
+    Loss::b
+end
+
+"""
+    LinearPerceptron(X, Y; LearningRate = 1e-3, MaxIters = 5000)
+
+Returns a LinearPerceptron classification model object from `X` and one hot encoded `Y`.
+"""
+function LinearPerceptron(X, Y; LearningRate = 1e-3, MaxIters = 5000)
+    W = zeros( size( X )[ 2 ], size( Y )[ 2 ] )
+    Loss = zeros( MaxIters )
+    for iter in 1 : MaxIters
+        YHat = X * W
+        Err = Y .- YHat
+        for obs in 1:size(X)[1]
+            if argmax(YHat[obs,:]) == argmax(Y[obs,:])
+                Err[obs,:] .= 0.0
+            end
+        end
+        Loss[iter] = sum(Err .^ 2)
+        W .+= LearningRate .* ( X' * Err )
+    end
+    return linearperceptron( W, Loss )
+end
+
+"""
+    (L::linearperceptron)(X)
+
+Returns a 1 hot encoded inference from `X` using a LinearPerceptron object.
+"""
+(L::linearperceptron)(X) = X * L.W
