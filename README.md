@@ -18,8 +18,14 @@ This package contains a collection of tools to perform fundamental and advanced 
   - [Regression](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/RegressionShootout.jl)
   - [Fault Detection](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/AnomalyShootout.jl)
 
-### Package Status => "Bug-fix" Public release! (v 0.4.2)
-ChemometricsTools is pretty darn new, and was recently accepted to be registered as an official Julia package! Yep, so you can  ```Pkg.add("ChemometricsTools")``` to install it. The git repo has the most stable version right now, I fixed a lot of bugs since 0.2.3. In 0.4.2 almost all of the functionality available can reliably be used/abused, and the documentation is getting there, but it's hard to keep up with all the features I've been adding. There's probably a few bugs looming, but I haven't found anything too unusual yet! Some pretty big plans for v0.5.0, but I've personally been testing this package doing some work with a fellow analytical chemist.
+### Package Status => "Feature-fix" Public release! (v 0.4.4)
+ChemometricsTools is pretty new, and was recently accepted to be registered as an official Julia package! Yep, so you can  ```Pkg.add("ChemometricsTools")``` to install it. The git repo's master branch has the most stable version right now, I fixed a lot of bugs since 0.2.3. In 0.4.4 almost all of the functionality available can reliably be used/abused, and the documentation is getting there, but it's hard to keep up with all the features I've been adding. There's probably still a few bugs. Some interesting plans for v0.5.0, but I've personally been testing this package doing some work with a fellow analytical chemist.
+
+### Version Release Strategy
+< 0.3.0 : Mapping functionality, prototyping
+*< 0.5.0 : Testing via actual usage on real data, look for missing essentials*
+< 0.7.5 : Public input (find those bugs!). Complete docs with examples. Adequate Unit Tests.
+< 1.0.0 : Focus on performance, stability, generalizability, lock down the package syntax.
 
 # Package Highlights
 ### Transforms/Pipelines
