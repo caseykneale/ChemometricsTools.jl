@@ -37,7 +37,7 @@ module ChemometricsTools
 
     include("ClassificationModels.jl") #Has docs
     export KNN, ProbabilisticNeuralNetwork, GaussianDiscriminant, LogisticRegression, MultinomialSoftmaxRegression,
-        GaussianNaiveBayes, HighestVoteOneHot, ConfidenceEllipse, LinearPerceptronSGD, LinearPerceptronBatch 
+        GaussianNaiveBayes, HighestVoteOneHot, ConfidenceEllipse, LinearPerceptronSGD, LinearPerceptronBatch
 
     include("Clustering.jl") #Has Docs
     export TotalClusterSS, WithinClusterSS, BetweenClusterSS, KMeansClustering, KMeans
@@ -83,7 +83,7 @@ module ChemometricsTools
     export Universe, GaussianBand, LorentzianBand
 
     include("SimpleGAs.jl") #No Docs yet :(
-    export Lifeform, SinglePointCrossOver, Mutate
+    export BinaryLifeform, Lifeform, SinglePointCrossOver, Mutate
 
     #Generic function for pulling data from within this package.
     #If enough datasets are provided then the data/dataloading could be a seperate package...

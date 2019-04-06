@@ -88,7 +88,7 @@ end
 """
     LSSVM( X, Y, Penalty; KernelParameter = 0.0, KernelType = "linear" )
 
-Makes a LSSVM model of the form `Y` = A`K` with a bias term using a user specified Kernel("Linear", or "Guassian") and has an L2 `Penalty`.
+Makes a LSSVM model of the form `Y` = A`K` with a bias term using a user specified Kernel("linear", or "gaussian") and has an L2 `Penalty`.
 Returns a LSSVM Wrapper for a CLS object.
 """
 function LSSVM( X, Y, Penalty; KernelParameter = 0.0, KernelType = "linear" )
