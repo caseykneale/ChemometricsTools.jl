@@ -99,7 +99,7 @@ function InClassAdjacencyMatrix(DistanceMatrix, YHOT, K = 1)
             k = length(ClassInstances)
         end
         NN = sortperm( DistanceMatrix[ rowx, ClassInstances ] )[ 1 : k ]
-        Result[ rowx, NN ] .+= 1
+        Result[ rowx, NN ] .= 1#.+= 1
     end
     return Result
 end
@@ -114,8 +114,12 @@ function OutOfClassAdjacencyMatrix(DistanceMatrix, YHOT, K = 1)
     for rowx in 1 : ( size( DistanceMatrix )[ 1 ] )
         ClassNumber = findfirst( YHOT[ rowx, : ] .== 1 )
         ClassInstances = findall( YHOT[ :, ClassNumber ] .== 0 )
-        NN = sortperm( DistanceMatrix[ rowx, ClassInstances ] )[ 1:K ]
-        Result[ rowx, NN ] .+= 1
+        k = K
+        if length(ClassInstances) < K
+            k = length(ClassInstances)
+        end
+        NN = sortperm( DistanceMatrix[ rowx, ClassInstances ] )[ 1 : k ]
+        Result[ rowx, NN ] .= 1#.+= 1
     end
     return Result
 end

@@ -189,10 +189,8 @@ function HLDA(X, YHOT; K = 1, Factors = 2)
     end
     Loadings = real.(Decomp.vectors[ : , Sorted[ Contributions ][ 1 : Factors ] ] )
 
-    return LDA( X * Loadings,  Loadings, Sorted[ Contributions ][ 1 : Factors ] )
+    return LDA( X * Loadings,  Loadings, ReVals[ Sorted[ Contributions][1:Factors] ] )
 end
-
-
 
 function MatrixInverseSqrt(X, threshold = 1e-6)
     eig = eigen(X)
