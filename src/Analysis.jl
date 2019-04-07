@@ -82,13 +82,11 @@ struct LDA
     Values::Array
 end
 
-
 """
     LDA(X, Y; Factors = 1)
 
 Compute's a LinearDiscriminantAnalysis transform from `x` with a user specified number of latent variables(`Factors`).
 Returns an LDA object.
-
 """
 function LDA(X, Y; Factors = 1)
     (Obs, ClassNumber) = size( Y )
@@ -152,6 +150,50 @@ Calculates the explained variance of each singular value in an LDA object.
 """
 ExplainedVariance(lda::LDA) = (lda.Values .^ 2) ./ sum(lda.Values .^ 2)
 
+"""
+    HLDA(X, YHOT; K = 1, Factors = 1)
+
+Compute's a Hierarchical LinearDiscriminantAnalysis transform from `x` with a user
+specified number of latent variables(`Factors`). The adjacency matrices are created
+from `K` nearest neighbors.
+
+Returns an LDA object.
+*Note: this can be used with any other LDA functions such as Gaussian discriminants
+or explained variance*.
+
+Lu D, Ding C, Xu J, Wang S. Hierarchical Discriminant Analysis. Sensors (Basel).
+2018 Jan 18;18(1). pii: E279. doi: 10.3390/s18010279.
+"""
+function HLDA(X, YHOT; K = 1, Factors = 2)
+    Dist = SquareEuclideanDistance( X )
+    ICAM = OutOfClassAdjacencyMatrix(Dist, YHOT, K)
+    ICD = LinearAlgebra.Diagonal(sum( ICAM, dims = 1) )
+    ICS = ICD .- ICAM
+
+    Decomp = eigen(X' * ICS * X)
+    ReVals = real.(Decomp.values)
+    Sorted = sortperm( ReVals, rev = false)
+    Loadings = real.(Decomp.vectors[ : , Sorted[ 1:Factors ] ] )
+
+    Dist = SquareEuclideanDistance( X * Loadings[:,1:Factors] )
+    OCAM = InClassAdjacencyMatrix(Dist, YHOT, K)
+    OCD = LinearAlgebra.Diagonal(sum( OCAM, dims = 1) )
+    OCS = OCD .- OCAM
+
+    Decomp = eigen(X' * OCS * X)
+    ReVals = real.(Decomp.values)
+    Sorted = sortperm( ReVals, rev = true)
+    Contributions = ReVals[Sorted] .>= 1e-16
+    if Factors > sum(Contributions)
+        Factors = sum(Contributions)
+    end
+    Loadings = real.(Decomp.vectors[ : , Sorted[ Contributions ][ 1 : Factors ] ] )
+
+    return LDA( X * Loadings,  Loadings, Sorted[ Contributions ][ 1 : Factors ] )
+end
+
+
+
 function MatrixInverseSqrt(X, threshold = 1e-6)
     eig = eigen(X)
     diagelems = 1.0 ./ sqrt.( max.( eig.values , 0.0 ) )
@@ -170,6 +212,7 @@ end
     CanonicalCorrelationAnalysis(A, B)
 
 Returns a CanonicalCorrelationAnalysis object which contains (U, V, r) from Arrays A and B.
+Currently Untested for correctness but should compute....
 """
 function CanonicalCorrelationAnalysis(A, B)
     (Obs,Vars) = size(A);;

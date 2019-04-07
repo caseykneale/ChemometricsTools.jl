@@ -22,7 +22,8 @@ module ChemometricsTools
 
     include("DistanceMeasures.jl") #Has Docs
     export SquareEuclideanDistance, EuclideanDistance, ManhattanDistance,
-        GaussianKernel, CauchyKernel, LinearKernel, Kernel
+        GaussianKernel, CauchyKernel, LinearKernel, Kernel, NearestNeighbors,
+        AdjacencyMatrix, InClassAdjacencyMatrix, OutOfClassAdjacencyMatrix
 
     include("Transformations.jl") #Has Docs: Box Cox Omitted for now...
     export Transform, PipelineInPlace, Pipeline, QuantileTrim, Center, Scale,
@@ -121,6 +122,5 @@ module ChemometricsTools
         read( Base.joinpath( datapath, readdir(datapath)[file] ) )
     end
     export ChemometricsToolsDataset, ChemometricsToolsDatasets
-    #ToDo: Add more unit tests to test/runtests.jl...
 
 end # module

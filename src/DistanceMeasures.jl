@@ -53,6 +53,75 @@ function ManhattanDistance(X, Y)
     return Result
 end
 
+
+"""
+    NearestNeighbors(DistanceMatrix, N)
+
+Returns a matrix of dimensions DistanceMatrix rows, by N columns. Basically this
+goes through each row and finds the ones corresponding column which has the smallest distance.
+"""
+function NearestNeighbors(DistanceMatrix, N)
+    Result = zeros( size( DistanceMatrix )[ 1 ], N )
+    for rowx in 1 : ( size( DistanceMatrix )[ 1 ] )
+        Result[rowx, :] = sortperm( DistanceMatrix[ rowx, : ] )[ 1 : N ]
+    end
+    return Result
+end
+
+"""
+    NearestNeighbors(DistanceMatrix)
+
+Returns the nearest neighbor adjacency matrix from a given `DistanceMatrix`.
+"""
+function AdjacencyMatrix(DistanceMatrix)
+    Result = zeros( size( DistanceMatrix )[ 1 ], N )
+    for rowx in 1 : ( size( DistanceMatrix )[ 1 ] )
+        NN = sortperm( DistanceMatrix[ rowx, : ] )[ 1 : N ]
+        Result[ rowx, : ] = NN
+        #Result[ : , rowx] = NN
+    end
+    return Result
+end
+
+"""
+    InClassAdjacencyMatrix(DistanceMatrix, YHOT, K = 1)
+
+Computes the in class Adjacency matrix with K nearest neighbors.
+"""
+function InClassAdjacencyMatrix(DistanceMatrix, YHOT, K = 1)
+    Result = zeros( size( DistanceMatrix ) )
+    for rowx in 1 : ( size( DistanceMatrix )[ 1 ] )
+        ClassNumber = findfirst( YHOT[ rowx, : ] .== 1 )
+        ClassInstances = findall( YHOT[ :, ClassNumber ] .== 1 )
+        ClassInstances = setdiff(ClassInstances, rowx)
+        k = K
+        if length(ClassInstances) < K
+            k = length(ClassInstances)
+        end
+        NN = sortperm( DistanceMatrix[ rowx, ClassInstances ] )[ 1 : k ]
+        Result[ rowx, NN ] .+= 1
+    end
+    return Result
+end
+
+"""
+    OutOfClassAdjacencyMatrix(DistanceMatrix, YHOT, K = 1)
+
+Computes the out of class Adjacency matrix with K nearest neighbors.
+"""
+function OutOfClassAdjacencyMatrix(DistanceMatrix, YHOT, K = 1)
+    Result = zeros( size( DistanceMatrix ) )
+    for rowx in 1 : ( size( DistanceMatrix )[ 1 ] )
+        ClassNumber = findfirst( YHOT[ rowx, : ] .== 1 )
+        ClassInstances = findall( YHOT[ :, ClassNumber ] .== 0 )
+        NN = sortperm( DistanceMatrix[ rowx, ClassInstances ] )[ 1:K ]
+        Result[ rowx, NN ] .+= 1
+    end
+    return Result
+end
+
+
+
 #Kernels
 struct Kernel
     params::Union{Float64, Tuple}
