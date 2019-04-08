@@ -291,7 +291,7 @@ function LinearPerceptronBatch(X, Y; LearningRate = 1e-3, MaxIters = 5000)
     W = zeros( size( X )[ 2 ], size( Y )[ 2 ] )
     Loss = zeros( MaxIters )
     for iter in 1 : MaxIters
-        YHat = X * W
+        YHat = map(x -> (x > 0.0) ? 1.0 : 0.0, X * W)
         Err = Y .- YHat
         for obs in 1:size(X)[1]
             if argmax(YHat[obs,:]) == argmax(Y[obs,:])
@@ -315,7 +315,8 @@ function LinearPerceptronSGD(X, Y; LearningRate = 1e-3, MaxIters = 5000)
     Loss = zeros( MaxIters )
     Err = zeros(1, size(Y)[2])
     for iter in 1 : MaxIters, obs in 1:size(X)[1]
-        YHat = X[obs,:]' * W
+        #YHat = X[obs,:]' * W
+        YHat = map(x -> (x > 0.0) ? 1.0 : 0.0, X[obs,:]' * W)
         Err = Y[obs,:]' .- YHat
         if argmax(YHat) == argmax(Y[obs,:])
             Err .= 0.0
