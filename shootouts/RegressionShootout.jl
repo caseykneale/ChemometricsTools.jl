@@ -1,3 +1,6 @@
+#using Pkg
+#pwd()
+#Pkg.activate(".")
 using ChemometricsTools
 #View the data in the package space
 ChemometricsToolsDatasets()
@@ -15,7 +18,7 @@ Df = 0; #Clear the memory...
 
 
 using Plots
-plot(Tecator', legend = false, ylabel = "Absorbance", xlabel = "bins")
+#plot(Tecator', legend = false, ylabel = "Absorbance", xlabel = "bins")
 
 
 #Shuffle the set, because the classes are ordered
@@ -27,20 +30,20 @@ TrainX = msc(TrainX);
 TestX = msc(TestX);
 
 #Can't have spectra and not plot it!
-plot(TrainX', legend = false, ylabel = "Absorbance", xlabel = "bins")
+#plot(TrainX', legend = false, ylabel = "Absorbance", xlabel = "bins")
 
 
 #Let the shoot out begin!
-@time cls = ClassicLeastSquares( TrainX[:, [5, 25, 45, 60, 90] ], TrainY; Bias = true )
-@time rr = RidgeRegression( TrainX, TrainY, 0.1; Bias = true )
-@time krr = KernelRidgeRegression( TrainX, TrainY, 0.01; KernelParameter = 1.0, KernelType = "gaussian" )
+@time cls   = ClassicLeastSquares( TrainX[:, [5, 25, 45, 60, 90] ], TrainY; Bias = true )
+@time rr    = RidgeRegression( TrainX, TrainY, 0.1; Bias = true )
+@time krr   = KernelRidgeRegression( TrainX, TrainY, 0.01; KernelParameter = 1.0, KernelType = "gaussian" )
 @time lssvm = LSSVM( TrainX, TrainY, 0.01; KernelParameter = 1.0, KernelType = "gaussian" )
 pca = PCA(TrainX;Factors = 4);
-@time pcr = PrincipalComponentRegression(pca, TrainY )
-@time plsr = PartialLeastSquares( TrainX, TrainY; Factors = 4, tolerance = 1e-8, maxiters = 200 )
-@time elm = ExtremeLearningMachine(TrainX, TrainY, 11; ActivationFn = sigmoid)
-@time rt = RegressionTree( TrainX, TrainY; gainfn = ssd, maxdepth = 15, minbranchsize = 5)
-@time rf = RandomForest(TrainX, TrainY, :regression; gainfn = ssd, trees = 100,
+@time pcr   = PrincipalComponentRegression(pca, TrainY )
+@time plsr  = PartialLeastSquares( TrainX, TrainY; Factors = 4, tolerance = 1e-8, maxiters = 200 )
+@time elm   = ExtremeLearningMachine(TrainX, TrainY, 11; ActivationFn = sigmoid)
+@time rt    = RegressionTree( TrainX, TrainY; gainfn = ssd, maxdepth = 15, minbranchsize = 5)
+@time rf    = RandomForest(TrainX, TrainY, :regression; gainfn = ssd, trees = 100,
                        maxdepth = 15,  minbranchsize = 5,
                        samples = 0.7, maxvars = nothing)
 

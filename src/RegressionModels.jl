@@ -18,12 +18,23 @@ end
 Makes a ClassicLeastSquares regression model of the form `Y` = A`X` with or without a `Bias` term. Returns a CLS object.
 """
 function ClassicLeastSquares( X, Y; Bias = false )
-    Z = (Bias) ? hcat( repeat( [ 1 ], size( X )[ 1 ] ), X ) : X
+    Z = (Bias) ? hcat( ones( size( X )[ 1 ] ), X ) : X
+    return ClassicLeastSquares(Base.inv(Z' * Z) * Z' * Y, Bias)
+end
+
+"""
+    OrdinaryLeastSquares( X, Y; Bias = false )
+
+Makes a ClassicLeastSquares regression model of the form `Y` = A`X` with or without a `Bias` term. Returns a CLS object.
+This is a wrapper function for CLS, because most other fields refer to this as OLS.
+"""
+function OrdinaryLeastSquares( X, Y; Bias = false )
+    Z = (Bias) ? hcat( ones( size( X )[ 1 ] ), X ) : X
     return ClassicLeastSquares(Base.inv(Z' * Z) * Z' * Y, Bias)
 end
 
 function PredictFn(X, M::Union{ClassicLeastSquares, RidgeRegression})
-    Z = ( M.Bias ) ? hcat( repeat( [ 1 ], size( X )[ 1 ] ), X ) : X
+    Z = ( M.Bias ) ? hcat( ones(size( X )[ 1 ] ), X ) : X
     return Z * M.Coefficients
 end
 """
@@ -40,7 +51,7 @@ Makes a RidgeRegression model of the form `Y` = A`X` with or without a `Bias` te
 """
 function RidgeRegression( X, Y, Penalty; Bias = false )
     Y = forceMatrix(Y)
-    Z = (Bias) ? hcat( repeat( [ 1 ], size( X )[ 1 ] ), X ) : X
+    Z = (Bias) ? hcat( ones( size( X )[ 1 ] ), X ) : X
     return RidgeRegression( ClassicLeastSquares( Base.inv( (Z' * Z) .+ (Penalty .* Diagonal( ones( size(Z)[2] ) ) ) ) * Z' * Y, Bias) )
 end
 
@@ -80,8 +91,8 @@ end
 
 function formatlssvminput(X)
     Y = zeros(size(X) .+ 1)
-    Y[1,1] = 1.0
-    Y[2:end,2:end] .= X
+    Y[ 1, 1 ] = 1.0
+    Y[ 2:end, 2:end ] .= X
     return Y
 end
 

@@ -83,3 +83,29 @@ function IntervalOverlay(Spectra, Intervals, Err)
     end
     return a
 end
+
+"""
+    DiscriminantAnalysisPlot(DA, GD, YHot, LblEncoding, UnlabeledData, Axis = [1,2], Confidence = 0.90)
+
+...
+"""
+function DiscriminantAnalysisPlot(DA, GD, YHot, LblEncoding, UnlabeledData, Axis = [1,2], Confidence = 0.90)
+    @assert all(Axis .<= size(Data)[2])
+    A = []
+    for c in 1:size(filterYHOT)[2]
+        whichrows = filterYHOT[:,c] .== 1.0
+        if c == 1
+            A = scatter(DA.scores[whichrows,Axis[1]], DA.scores[whichrows,Axis[2]],  label = LblEncoding.ToCold[c])
+        else
+            scatter!(A, DA.scores[whichrows,Axis[1]], DA.scores[whichrows,Axis[2]],  label = LblEncoding.ToCold[c])
+        end
+        elipse = ConfidenceEllipse(GD.ProjectedClassCovariances[c], GD.ProjectedClassMeans[c,:],
+                    Confidence, Axis; pointestimate = 180 );
+        plot!(elipse[:,1], elipse[:,2], label = "", color = :black, linestyle = :dash, linewidth = 2);
+    end
+    exvar = round.(ExplainedVariance(DA) .* 1000) /10
+    scatter!(A, UnlabeledData[:,Axis[1]], UnlabeledData[:,Axis[2]], color = :black, label = "", markershape = :hexagon,
+            xaxis = "DA $(Ax[1]) [$(exvar[Ax[1]]) %]", yaxis = "DA $(Ax[2]) [$(exvar[Ax[2]]) %]",
+            legend = :topleft);
+    return A
+end

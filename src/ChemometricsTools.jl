@@ -51,7 +51,7 @@ module ChemometricsTools
         offsetToZero, boxcar, ALSSmoother, PerfectSmoother, CORAL, TransferByOrthogonalProjection
 
     include("RegressionModels.jl") # Has Docs
-    export ClassicLeastSquares, RidgeRegression, PrincipalComponentRegression,
+    export ClassicLeastSquares, OrdinaryLeastSquares, RidgeRegression, PrincipalComponentRegression,
         PartialLeastSquares, KernelRidgeRegression, LSSVM, ExtremeLearningMachine, PredictFn, sigmoid
 
     include("Trees.jl") #Has Docs: Omitted StumpOrNode & StumpOrNodeRegress
