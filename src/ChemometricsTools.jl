@@ -76,7 +76,8 @@ module ChemometricsTools
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay
 
     include("TimeSeries.jl") #Has Docs: Omitted EchoStateNetwork Fns
-    export RollingWindow, EchoStateNetwork, TuneRidge, PredictFn, EWMA, Variance, Limits
+    export RollingWindow, EchoStateNetwork, TuneRidge, PredictFn, EWMA, Variance, Limits, update,
+        SimpleAverage, NaiveForecast, update!, update
 
     include("MultiWay.jl") #Has Docss
     export MultiCenter, MultiScale, MultiNorm, MultiPCA

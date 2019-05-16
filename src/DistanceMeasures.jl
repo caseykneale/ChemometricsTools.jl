@@ -10,7 +10,7 @@ SquareEuclideanDistance(X) = ( sum(X .^ 2, dims = 2) .+ sum(X .^ 2, dims = 2)') 
 
 Returns the Grahm aka the euclidean distance matrix of `X`.
 """
-EuclideanDistance(X) = sqrt.(SquareEuclideanDistance(X))
+EuclideanDistance(X) = sqrt.(abs.(SquareEuclideanDistance(X)))
 
 """
     SquareEuclideanDistance(X, Y)
@@ -24,7 +24,7 @@ SquareEuclideanDistance(X, Y) = ( sum(X .^ 2, dims = 2) .+ sum(Y .^ 2, dims = 2)
 
 Returns the euclidean distance matrix of X and Y such that the columns are the samples in Y.
 """
-EuclideanDistance(X, Y) = sqrt.(SquareEuclideanDistance(X, Y))
+EuclideanDistance(X, Y) = sqrt.(abs.(SquareEuclideanDistance(X, Y)))
 
 """
     ManhattanDistance(X)

@@ -94,6 +94,70 @@ This function returns the upper and lower control limits with a `k` span of vari
 """
 Limits(P::ewma; k = 3.0) = (P.center + (k * sqrt( Variance( P ) ) ), P.center - (k * sqrt( Variance( P ) ) )  )
 
+
+mutable struct NaiveForecaster
+    lastval::Float64
+end
+"""
+    NaiveForecaster( univariate::Array )
+
+Makes a forecaster model that simply predicts the last value it has seen for all future values.
+"""
+NaiveForecast(univariate::Array) = NaiveForecaster( last( univariate ) )
+"""
+    update!( model::NaiveForecaster, newdata::Float64 )
+
+Makes a forecast model that simply predicts the last value it has seen for all future values.
+"""
+update!( model::NaiveForecaster, newdata::Float64 ) = model.lastval .= newdata
+
+"""
+    update( model::NaiveForecaster, newdata::Float64 )
+
+returns an updated forecast model that simply predicts the last value it has seen for all future values.
+"""
+update(model::NaiveForecaster, newdata::Float64) = return NaiveForecaster( newdata )
+
+"""
+    (nf::NaiveForecaster)()
+
+Predicts with a naive forecaster model.
+"""
+(nf::NaiveForecaster)() = nf.lastval
+
+mutable struct SimpleAverage
+    runmean::RunningMean
+end
+"""
+    SimpleAverage( univariate )
+"""
+SimpleAverage(initial::Float64) = SimpleAverage( RunningMean( initial) )
+
+"""
+    SimpleAverage( univariate::Array )
+"""
+function SimpleAverage(univariate::Array)
+    rm = RunningMean( univariate[1])
+    for i in 2:length(univariate)
+        Update!( rm, univariate[ i ] )
+    end
+    return SimpleAverage( rm )
+end
+"""
+    Update( model::naiveforecaster, newdata::Float64 )
+"""
+function Update(model::SimpleAverage, newdata::Float64)
+    return Update!( model.runmean, newdata )
+end
+
+"""
+    (sa::SimpleAverage)()
+
+Predicts with a naive forecaster model.
+"""
+(sa::SimpleAverage)() = sa.runmean.mu
+
+
 struct EchoStateNetwork
     Winput::Array
     W::Array
@@ -105,6 +169,13 @@ struct EchoStateNetwork
     bias
 end
 
+"""
+    EchoStateNetwork(X, Y, Reservoir = 1000;
+                        L2 = 1e-8, alpha = 0.25, SpectralRadius = 1.00, Sparsity = 0.99, Noise = -1.00,
+                        bias = true, burnin = 0)
+
+    Currently untested.
+"""
 function EchoStateNetwork(X, Y, Reservoir = 1000;
                         L2 = 1e-8, alpha = 0.25, SpectralRadius = 1.00, Sparsity = 0.99, Noise = -1.00,
                         bias = true, burnin = 0)

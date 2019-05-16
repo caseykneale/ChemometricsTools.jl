@@ -54,7 +54,7 @@ function Update!(RM::RunningMean, x)
 end
 
 """
-    Update!(RM::RunningMean, x)
+    Update(RM::RunningMean, x)
 
 Adds new observation(`x`) to a RunningMean object(`RM`) and returns the new object.
 """
