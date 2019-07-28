@@ -78,3 +78,13 @@ end
     @test all( [0.649, -1e-6, -1e-6] .< c )
     @test all( c .< [0.651,1e-6,1e-6] )
 end
+
+@testset "MonotonicRegression Test" begin
+    #Compared with isoreg from R
+    a = MonotoneRegression( [1,0,4,3,3,5,4,2,0] .+ 0.0)
+    b = MonotoneRegression( [1,0,4,3,3,5,4,2,3] .+ 0.0)
+    c = MonotoneRegression( [1,0,0,0,1] .+ 0.0)
+    @test sum(a - [0.5, 0.5, 3, 3, 3, 3, 3, 3, 3]) < 1e-8
+    @test sum(b - [0.5, 0.5, 3.33333333333, 3.3333333333, 3.333333333333, 3.5, 3.5, 3.5, 3.5]) < 1e-8
+    @test all(c .== [0.25,0.25,0.25,0.25,1.0]) || all(c .== [1.0,0.25,0.25,0.25,0.25])
+end

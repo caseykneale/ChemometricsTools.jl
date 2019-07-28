@@ -10,7 +10,7 @@ module ChemometricsTools
 
     include("InHouseStats.jl") #Has Docs
     export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean, RunningVar,
-        Variance, Mean, rbinomial, Skewness, SampleSkewness
+        Variance, Mean, rbinomial, Skewness, SampleSkewness, PermutedVectorPair
 
     include("ClassificationMetrics.jl") #Has Docs
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,
@@ -52,7 +52,8 @@ module ChemometricsTools
 
     include("RegressionModels.jl") # Has Docs
     export ClassicLeastSquares, OrdinaryLeastSquares, RidgeRegression, PrincipalComponentRegression,
-        PartialLeastSquares, KernelRidgeRegression, LSSVM, ExtremeLearningMachine, PredictFn, sigmoid
+        PartialLeastSquares, KernelRidgeRegression, LSSVM, ExtremeLearningMachine, PredictFn, sigmoid,
+        MonotoneRegression
 
     include("Trees.jl") #Has Docs: Omitted StumpOrNode & StumpOrNodeRegress
     export OneHotOdds, entropy, gini, ssd, ClassificationTree, RegressionTree, CART
@@ -70,7 +71,8 @@ module ChemometricsTools
     export PSO, Particle, Bounds
 
     include("CurveResolution.jl") #Has Docs
-    export BTEMobjective, BTEM, NMF, SIMPLISMA, MCRALS, FNNLS
+    export BTEMobjective, BTEM, NMF, SIMPLISMA, MCRALS, FNNLS, UnimodalFixedUpdate,
+        UnimodalUpdate
 
     include("PlottingTools.jl") #Has Docs
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay

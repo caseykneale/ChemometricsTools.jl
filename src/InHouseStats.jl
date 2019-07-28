@@ -144,3 +144,29 @@ function SampleSkewness(X)
     @assert N > 2
     return ( sqrt( N * (N - 1) ) / (N - 2) ) * Skewness( X )
 end
+
+#This was written for an algorithm and didn't fit in anywhere so for now it's kept
+#but it may not have use...
+struct PermutedVectorPair{A,B,C}
+    vec1::A
+    vec2::B
+    operation::C
+    i::Int
+    length::Int
+end
+
+function PermutedVectorPair(vec1, vec2; op = +)
+    return PermutedVectorPair(vec1, vec2, op, 1, length(vec2))
+end
+
+function Base.iterate(iterator::PermutedVectorPair, state = 1)
+    if state > iterator.length
+        return nothing
+    else
+        return ( broadcast(iterator.operation, iterator.vec1, iterator.vec2[state]) , state + 1)
+    end
+end
+
+# for i in PermutedVectorPair([1,2,3],ones(10) )
+#     println(i)
+# end

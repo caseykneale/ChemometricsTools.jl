@@ -248,3 +248,95 @@ PredictFn(X, M::ELM) = M.Fn.(X * M.Reservoir) * M.Coefficients;
 Makes an inference from `X` using a ELM object.
 """
 (M::ELM)(X) = PredictFn(X, M)
+
+mutable struct block
+    value::Float64 #Avg value
+    weight::Float64
+    size::Int32
+    previous::Int32
+    next::Int32
+end
+
+"""
+    MonotoneRegression(x, w = nothing)
+
+Performs a monotone/isotonic regression on a vector x. This can be weighted
+with a vector w.
+
+Exceedingly Simple Monotone Regression. Jan de Leeuw. Version 02, March 30, 2017
+"""
+function MonotoneRegression(x, w = nothing)
+    bins = length(x)
+    x = copy(x)
+    if isa(w, Nothing)
+        w = ones(bins)
+    end
+    bins = bins + 1
+    blocks = [ block(x[i], w[i], 1, i-1, i+1) for i in 1:(bins-1)]
+    #I have a one off error somewhere an easy solution is just to pad
+    push!(blocks, block( 0.0, w[end], 1, bins-1, bins+1) )
+    active = 1
+    continue_reg = true
+    while( continue_reg )
+        upsatisfied = false
+        next = blocks[active].next
+        if next == bins
+            upsatisfied = true
+        elseif (blocks[next].value > blocks[active].value)
+            upsatisfied = true
+        end
+        if !upsatisfied
+            ww = blocks[active].weight + blocks[next].weight
+            nextnext = blocks[next].next
+            wxactive = blocks[active].weight * blocks[active].value
+            wxnext = blocks[next].weight * blocks[next].value
+            blocks[active].value = (wxactive + wxnext) / ww
+            blocks[active].weight = ww
+            blocks[active].size += blocks[next].size
+            blocks[active].next = nextnext
+            if nextnext < bins
+                blocks[nextnext].previous = active
+            end
+            blocks[next].size = 0
+        end
+        downsatisfied = false
+        previous = blocks[active].previous
+
+        if previous == 0
+            downsatisfied = true
+        elseif blocks[previous].value < blocks[active].value
+            downsatisfied = true
+        end
+        if !downsatisfied
+            ww = blocks[active].weight + blocks[previous].weight
+            previousprevious = blocks[previous].previous
+            wxactive = blocks[active].weight * blocks[active].value
+            wxprevious = blocks[previous].weight * blocks[previous].value
+            blocks[active].value = (wxactive + wxprevious) / ww
+            blocks[active].weight = ww
+            blocks[active].size += blocks[previous].size
+            blocks[active].previous = previousprevious
+            if previousprevious > 0
+                blocks[previousprevious].next = active
+            end
+            blocks[previous].size = 0
+        end
+        if (blocks[active].next == bins) && (downsatisfied)
+            continue_reg = false
+        end
+        if (upsatisfied && downsatisfied)
+            active = next
+        end
+    end
+    k = 1
+    for i in 1:bins
+        blksize = blocks[i].size;
+        if (blksize > 0) && (i < (bins - 1) )
+            for j in 1 : blksize
+                x[k] = blocks[i].value;
+                k += 1
+            end
+        end
+    end
+    return x
+end
