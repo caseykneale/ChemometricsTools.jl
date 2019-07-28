@@ -218,8 +218,8 @@ function CanonicalCorrelationAnalysis(A, B)
     CBB = (1/Obs) .* B * B'
     CAB = (1/Obs) .* A * B'
     maxrank = min( LinearAlgebra.rank( A ), LinearAlgebra.rank( B ) )
-    CAAInvSqrt = MatrixInverseSqrt(CAA)
-    CBBInvSqrt = MatrixInverseSqrt(CBB)
+    CAAInvSqrt = CAA ^ -0.5#MatrixInverseSqrt()
+    CBBInvSqrt = CBB ^ -0.5#MatrixInverseSqrt()
     singvaldecomp = LinearAlgebra.svd( CAAInvSqrt * CAB * CBBInvSqrt )
     Aprime = CAAInvSqrt * singvaldecomp.U[ :,1 : maxrank ]
     Bprime = CAAInvSqrt * singvaldecomp.Vt[ :,1 : maxrank ]

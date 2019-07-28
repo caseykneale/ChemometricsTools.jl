@@ -27,6 +27,19 @@ function Universe(mini, maxi; width = nothing, bins = nothing)
 end
 
 """
+    SpectralArray(Universes::Array{Universe,1})
+
+Takes an array of Universe types and returns a 2-Array of the spectra.
+"""
+function SpectralArray(Universes::Array{Universe,1})
+    RetArray = zeros( length(Universes), length(Universes[1].spectra) )
+    for (spectra, uni) in enumerate(Universes)
+        RetArray[ spectra, : ] = uni.spectra
+    end
+    return RetArray
+end
+
+"""
     GaussianBand(sigma,amplitude,center)
 
 Constructs a Gaussian kernel generator.

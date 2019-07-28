@@ -83,7 +83,7 @@ module ChemometricsTools
     export MultiCenter, MultiScale, MultiNorm, MultiPCA
 
     include("KernelDensityGenerator.jl") #Has Docs
-    export Universe, GaussianBand, LorentzianBand
+    export Universe, SpectralArray, GaussianBand, LorentzianBand
 
     include("SimpleGAs.jl") #No Docs yet :(
     export BinaryLifeform, Lifeform, SinglePointCrossOver, Mutate
@@ -107,6 +107,7 @@ module ChemometricsTools
         dircontents = [ f for f in dircontents if f != "Readme.md" ]
         return Dict( (1:length(dircontents)) .=> dircontents )
     end
+
     function ChemometricsToolsDataset(filename::String)
         if filename == "tecator.csv"
             println(TecatorStatement)
@@ -117,6 +118,7 @@ module ChemometricsTools
             println("Don't load the markdown Readme as a csv... You're better than this.")
         end
     end
+
     function ChemometricsToolsDataset(file::Int)
         if readdir(datapath)[file] == "tecator.csv"
             println(TecatorStatement)

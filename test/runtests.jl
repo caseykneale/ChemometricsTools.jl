@@ -1,33 +1,9 @@
 #!/usr/bin/env julia
-
 #Start Test Script
 using ChemometricsTools
 using Test
 #Pkg.test("ChemometricsTools")
 #Pkg.test()
-
-#FNNLS tests...
-# a = reshape( [73,111,52,87, 7,4, 46,72,27,80,89 , 71], 4,3)
-# b = [96,7, 68,10]
-# FNNLS(a, b)
-
-# a = randn(4,4);
-# b = randn(4);
-# x = FNNLS( a,  b)
-#
-# #Torture test...
-# counterrs = 0
-# for i in 1:10000
-#     a = randn(4,4);
-#     b = randn(4);
-#     x = FNNLS( a,  b)
-#     if any(x .< -1e-2)
-#         counterrs += 1
-#     end
-# end
-# counterrs
-
-
 
 @testset "Transformations" begin
     simplearray = [[1,2,3] [1,2,3]];
