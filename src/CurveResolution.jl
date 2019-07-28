@@ -228,7 +228,7 @@ This function performs a unimodal least squares regression for a matrix A and b 
 
 Bro R., Sidiropoulos N. D.. Least Squares Algorithms Under Unimodality and Non-Negativity Constraints.Journal of Chemometrics, June 3, 1997
 """
-function UnimodalLeastSquares(A, b; max_iters = 1000)
+function UnimodalLeastSquares(A, b; maxiters = 1000, fixed = false)
     (obs, vars) = size( A )
     obspreds = size( b )
     (obs, preds) = (length(obspreds) > 1) ? obspreds : (obspreds, 1)
@@ -236,16 +236,16 @@ function UnimodalLeastSquares(A, b; max_iters = 1000)
     #Obs x Vars * Vars x Preds = Obs x Preds
     iter = 0
     LastB = copy(B) * Inf
-    while (sum((LastB .- B) .^ 2) / sum(B .^ 2) > 1e-15) && (iter < max_iters)
+    while (sum((LastB .- B) .^ 2) / sum(B .^ 2) > 1e-15) && (iter < maxiters)
         LastB = copy(B)
         for var in 1:vars
             Cols = vcat(collect.([1:(var-1), (var+1):vars])...)
-            y = b - ( X[:,Cols] * B[Cols,:] )
-            beta = LinearAlgebra.pinv(X[ :, var ]) * y
+            y = b - ( A[:,Cols] * B[Cols,:] )
+            beta = LinearAlgebra.pinv(A[ :, var ]) * y
             if length(beta) == 1
                 B[var, :] = beta
             else
-                B[var, :] = UnimodalFixedUpdate( beta' )
+                B[var, :] = (fixed) ? UnimodalFixedUpdate( beta' ) : UnimodalUpdate( beta' )
             end
         end
         iter += 1
@@ -254,16 +254,19 @@ function UnimodalLeastSquares(A, b; max_iters = 1000)
 end
 
 """
-    MCRALS(X, C, S = nothing; norm = (false, false), Factors = 1, maxiters = 20, nonnegative = (false, false) )
+    MCRALS(X, C, S = nothing; norm = (false, false), Factors = 1, maxiters = 20, constraintiters = 500, nonnegative = (false, false), unimodalS = false  )
 Performs Multivariate Curve Resolution using Alternating Least Squares on `X` taking initial estimates for `S` or `C`.
-S or C can be constrained by their `norm`, or by nonnegativity using `nonnegative` arguments.
+S or C can be constrained by their `norm`, or by nonnegativity using `nonnegative` arguments. S can be constrained by
+unimodality(EXPERIMENTAL).
+
 The number of resolved `Factors` can also be set.
 
 Tauler, R. Izquierdo-Ridorsa, A. Casassas, E. Simultaneous analysis of several spectroscopic titrations with self-modelling curve resolution.Chemometrics and Intelligent Laboratory Systems. 18, 3, (1993), 293-300.
 """
 function MCRALS(X, C, S = nothing; norm = (false, false),
-                Factors = 1, maxiters = 20,
-                nonnegative = (false, false) )
+                Factors = 1, maxiters = 20, constraintiters = 500,
+                nonnegative = (false, false),
+                unimodalS = false, fixedunimodal = false )
     @assert all( isa.( [ C , S ], Nothing ) ) == false
     lowestErr = Inf
     err = zeros(maxiters)
@@ -279,7 +282,7 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
         if !isS
             if nonnegative[2]
                 for obs in 1 : size( X )[ 1 ]
-                    C[obs,:] = FNNLS(S', X[obs,:])
+                    C[obs,:] = FNNLS(S', X[obs,:]; maxiters = constraintiters)
                 end
             else
                 C = X * LinearAlgebra.pinv(S)
@@ -289,9 +292,15 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
             D = C * S
         end
         if !isC
-            if nonnegative[1]
+            if unimodalS
+                S = UnimodalLeastSquares(C, X; maxiters = constraintiters, fixed = fixedunimodal)
+                if nonnegative[1]
+                    #There may be a better way to do this but the paper states force positivity...
+                    S = map(x -> (x < 0.0) ? 0.0 : x, S)
+                end
+            elseif nonnegative[1]
                 for var in 1:size(X)[2]
-                    S[:,var] = FNNLS(C, vec(X[:,var]))
+                    S[:,var] = FNNLS(C, vec(X[:,var]); maxiters = constraintiters)
                 end
             else
                 S = LinearAlgebra.pinv(C) * X

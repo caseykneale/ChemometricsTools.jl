@@ -155,6 +155,11 @@ struct PermutedVectorPair{A,B,C}
     length::Int
 end
 
+"""
+    PermutedVectorPair(vec1, vec2; op = +)
+
+Returns an iterator which applies each element in vec2 to vec1 via the user selected operator(op)
+"""
 function PermutedVectorPair(vec1, vec2; op = +)
     return PermutedVectorPair(vec1, vec2, op, 1, length(vec2))
 end
