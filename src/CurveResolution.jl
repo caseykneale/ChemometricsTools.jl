@@ -162,7 +162,7 @@ This is faster then UnimodalUpdate() but, is less accurate.
 
 Bro R., Sidiropoulos N. D.. Least Squares Algorithms Under Unimodality and Non-Negativity Constraints
 """
-function UnimodalFixedUpdate(x)
+function UnimodalFixedUpdate(x::Array{Float64,1})
     bins = length(x)
     if bins == 1
         return x
@@ -190,8 +190,8 @@ This is slower then UnimodalUpdate() but, is more accurate.
 
 Bro R., Sidiropoulos N. D.. Least Squares Algorithms Under Unimodality and Non-Negativity Constraints. Journal of Chemometrics, June 3, 1997
 """
-function UnimodalUpdate(x)
-    bins = length(x);
+function UnimodalUpdate(x::Array{Float64,1})
+    bins = length(x)
     if bins == 1
         return x
     end
@@ -214,7 +214,7 @@ function UnimodalUpdate(x)
         end
         SSE = sum(abs2.(b .- x))
         if SSE < BestSSE
-            bestB = b#deepcopy(b)
+            bestB = copy(b)
             BestSSE = SSE
         end
     end
@@ -228,20 +228,21 @@ This function performs a unimodal least squares regression for a matrix A and b 
 
 Bro R., Sidiropoulos N. D.. Least Squares Algorithms Under Unimodality and Non-Negativity Constraints.Journal of Chemometrics, June 3, 1997
 """
-function UnimodalLeastSquares(A, b; maxiters = 1000, fixed = false)
+function UnimodalLeastSquares(  A::Union{Array{Float64,1}, Array{Float64,2}},
+                                b::Union{Array{Float64,1}, Array{Float64,2}};
+                                maxiters::Int = 500, fixed::Bool = false)
     (obs, vars) = size( A )
     obspreds = size( b )
     (obs, preds) = (length(obspreds) > 1) ? obspreds : (obspreds, 1)
-    B = randn( vars, preds );
+    B = randn( vars, preds )
     #Obs x Vars * Vars x Preds = Obs x Preds
     iter = 0
-    LastB = B .* Inf
-    while (sum(abs2.(LastB .- B) ) / sum(abs2.( B )) > 1e-15) && (iter < maxiters)
-        LastB = B
+    LastB = ones( vars, preds ) .* Inf
+    while (sum(abs2.(LastB .- B) ) / sum(abs2.( B )) > 1e-11) && (iter < maxiters)
+        LastB[:,:] = B
         for var in 1:vars
             Cols = vcat(collect.([1:(var-1), (var+1):vars])...)
-            y = b - ( A[:,Cols] * B[Cols,:] )
-            beta = LinearAlgebra.pinv(A[ :, var ]) * y
+            beta = LinearAlgebra.pinv(A[ :, var ]) * (b - ( A[:,Cols] * B[Cols,:] ))
             if length(beta) == 1
                 B[var, :] = beta
             else
@@ -262,7 +263,9 @@ The number of resolved `Factors` can also be set.
 
 Tauler, R. Izquierdo-Ridorsa, A. Casassas, E. Simultaneous analysis of several spectroscopic titrations with self-modelling curve resolution.Chemometrics and Intelligent Laboratory Systems. 18, 3, (1993), 293-300.
 """
-function MCRALS(X, C, S = nothing;
+function MCRALS(X::Union{Array{Float64,1}, Array{Float64,2}},
+                C::Union{Nothing, Array{Float64,1}, Array{Float64,2}},
+                S::Union{Nothing, Array{Float64,1}, Array{Float64,2}} = nothing;
                 Factors::Int = 1, maxiters::Int = 20, constraintiters::Int = 50,
                 norm::Tuple{Bool,Bool} = (false, false),
                 nonnegative::Tuple{Bool,Bool} = (false, false),

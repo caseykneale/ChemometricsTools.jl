@@ -2,7 +2,7 @@ module ChemometricsTools
     using DataFrames, LinearAlgebra, Statistics, StatsBase, SparseArrays, Plots
     using CSV: read
     using Distributions #Could probably also get rid of this one...
-
+    using Dates
     #A generic function that I use everywhere to coerce a vecto dim 0 to a row vector...
     forceMatrix( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, length(a), 1 ) : a
     forceMatrixT( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, 1, length(a) ) : a
@@ -72,7 +72,7 @@ module ChemometricsTools
 
     include("CurveResolution.jl") #Has Docs
     export BTEMobjective, BTEM, NMF, SIMPLISMA, MCRALS, FNNLS, UnimodalFixedUpdate,
-        UnimodalUpdate
+        UnimodalUpdate, UnimodalLeastSquares
 
     include("PlottingTools.jl") #Has Docs
     export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay

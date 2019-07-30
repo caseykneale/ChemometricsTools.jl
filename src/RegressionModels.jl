@@ -265,10 +265,10 @@ with a vector w.
 
 Exceedingly Simple Monotone Regression. Jan de Leeuw. Version 02, March 30, 2017
 """
-function MonotoneRegression(x, w = nothing)
+function MonotoneRegression(x::Array{Float64,1}, w = nothing)
     bins = length(x)
-    #x = x
-    retx = zeros(bins)
+    retx = ones(bins)
+    retx[:] = x[:]
     if isa(w, Nothing)
         w = ones(bins)
     end
@@ -283,7 +283,7 @@ function MonotoneRegression(x, w = nothing)
         next = blocks[active].next
         if next == bins
             upsatisfied = true
-        elseif (blocks[next].value > blocks[active].value)
+        elseif blocks[next].value > blocks[active].value
             upsatisfied = true
         end
         if !upsatisfied
@@ -332,11 +332,9 @@ function MonotoneRegression(x, w = nothing)
     k = 1
     for i in 1:bins
         blksize = blocks[i].size;
-        if (blksize > 0) && (i < (bins - 1) )
-            for j in 1 : blksize
-                retx[k] = blocks[i].value;
-                k += 1
-            end
+        if (blksize > 0) && (i < bins )
+            retx[k:(k+(blksize-1))] .= blocks[i].value;
+            k += blksize
         end
     end
     return retx
