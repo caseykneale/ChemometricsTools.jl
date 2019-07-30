@@ -1,3 +1,4 @@
+using Dates
 """
     IsColdEncoded(Y)
 
@@ -172,7 +173,6 @@ in a specified `filepath` using the prescribed encoding `schema`.
 The statistics associated with the global analysis will end in a file name  of "-global.csv"
 and the local statistics for each class will end in a file named "-classwise.csv"
 """
-#Hard coded for now... V0.5.0 should be more generic...
 function StatsToCSVs(Stats, schema, filepath, name)
     globaldf = StatsDictToDataFrame(Stats[1], schema)
     localdf = StatsDictToDataFrame(Stats[2], schema)
@@ -180,9 +180,47 @@ function StatsToCSVs(Stats, schema, filepath, name)
     CSV.write(Base.joinpath(filepath, name * "-classwise.csv"), localdf)
 end
 
-#V0.5.0 should release a LaTeX report generator...
+"""
+    StatsToLaTeX(Stats, schema, filepath, name)
 
-#Voting Schemes
+Converts the 2-Tuple returned from `MulticlassStats()` (`stats`) to a LaTeX report file with a specified `name`
+in a specified `filepath` using the prescribed encoding `schema`.
+
+The statistics associated with the global analysis will end in a file name  of "-global.tex"
+and the local statistics for each class will end in a file named "-classwise.tex"
+"""
+function DataFrameToLaTeX(df)
+    (Rows, Columns) = size(df)
+    ColmFormat = reduce(*, ["c" for i in 1:Columns])
+    ColmNames = join(string.(names(df))," & ")
+    retstr = "\\begin{table}[h] \n" *
+             "\t\\begin{tabular}{$ColmFormat} \n" *
+             "\t\t $ColmNames \\\\ \\hline \n"
+
+    TableInterior = [ "\t\t " * join(string.(values(df[row,:])), " & ") * " \\\\ \n" for row in 1:Rows]
+    TableInterior = reduce(*, TableInterior)
+
+    retstr *=   TableInterior *
+                "\t \\end{tabular} \n"*
+                "\\end{table}\n"
+end
+
+# using DataFrames
+# df = DataFrame(A = randn(15), B = randn(15), C = randn(15), D = randn(15));
+# println(DataFrameToLaTeX(df));
+
+
+function StatsToLaTeX(Stats, schema, filepath, name)
+    TimeStamp = Dates.format(now(), "mm-dd-YYYY HH:MM")
+    Start = "\\documentclass[]{report}\n" *
+            "% Report Generated from ChemometricsTools.jl ($TimeStamp)\n" *
+            "\\begin{document}\n"
+    End = "\end{document}"
+#     globaldf = StatsDictToDataFrame(Stats[1], schema)
+#     localdf = StatsDictToDataFrame(Stats[2], schema)
+#
+end
+
 """
     Threshold(yhat; level = 0.5)
 

@@ -37,7 +37,7 @@ ssd(split,mean) = sum( ( split .- mean ) .^ 2 )
 
 #ssd(split) = sum( ( split .- mean( split ) ) .^ 2 )
 
-#The following functions are internal methods. 
+#The following functions are internal methods.
 #I have concerns about some of the performance here...
 #Ideas:
 #       sortedinds = sortperm(  x[ sortedinds , var ]  )
@@ -234,7 +234,6 @@ end
     (M::CART)(x)
 
 This is a universal CART object predict function.
-
 """
 
 function (M::CART)(x)

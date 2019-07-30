@@ -267,7 +267,8 @@ Exceedingly Simple Monotone Regression. Jan de Leeuw. Version 02, March 30, 2017
 """
 function MonotoneRegression(x, w = nothing)
     bins = length(x)
-    x = copy(x)
+    #x = x
+    retx = zeros(bins)
     if isa(w, Nothing)
         w = ones(bins)
     end
@@ -333,10 +334,10 @@ function MonotoneRegression(x, w = nothing)
         blksize = blocks[i].size;
         if (blksize > 0) && (i < (bins - 1) )
             for j in 1 : blksize
-                x[k] = blocks[i].value;
+                retx[k] = blocks[i].value;
                 k += 1
             end
         end
     end
-    return x
+    return retx
 end

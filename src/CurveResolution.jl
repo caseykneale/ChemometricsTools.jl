@@ -200,22 +200,22 @@ function UnimodalUpdate(x)
     bRight = reverse(MonotoneRegression(reverse(x)))
     (SSE, BestSSE) = (Inf, Inf)
     (b, bestB) = (zeros( bins ),zeros( bins )) #Dummy initialization
-    for (indx, value) in enumerate(bRight .+ bLeft )
+    for (indx, value) in enumerate( bRight .+ bLeft )
         if indx == 1
             bRightFine = reverse(MonotoneRegression(reverse(x[(indx+1):end])))
             b = [ x[indx]; bRightFine ]
         elseif indx == bins
             bLeftFine = MonotoneRegression(x[1:(indx-1)])
             b = [ bLeftFine; x[indx] ]
-        elseif (x[indx] >= (value / 2.0)) #&& (indx > 1) && (indx < bins)
+        elseif (x[indx] >= (value / 2.0))
             bLeftFine = MonotoneRegression(x[1:(indx-1)])
             bRightFine = reverse(MonotoneRegression(reverse(x[(indx+1):end])))
             b = [ bLeftFine; x[indx]; bRightFine ]
         end
-        SSE = sum( (b .- x) .^ 2)
+        SSE = sum(abs2.(b .- x))
         if SSE < BestSSE
-            bestB = deepcopy(b);
-            BestSSE = SSE;
+            bestB = b#deepcopy(b)
+            BestSSE = SSE
         end
     end
     return bestB
@@ -235,9 +235,9 @@ function UnimodalLeastSquares(A, b; maxiters = 1000, fixed = false)
     B = randn( vars, preds );
     #Obs x Vars * Vars x Preds = Obs x Preds
     iter = 0
-    LastB = copy(B) * Inf
-    while (sum((LastB .- B) .^ 2) / sum(B .^ 2) > 1e-15) && (iter < maxiters)
-        LastB = copy(B)
+    LastB = B .* Inf
+    while (sum(abs2.(LastB .- B) ) / sum(abs2.( B )) > 1e-15) && (iter < maxiters)
+        LastB = B
         for var in 1:vars
             Cols = vcat(collect.([1:(var-1), (var+1):vars])...)
             y = b - ( A[:,Cols] * B[Cols,:] )
@@ -254,21 +254,22 @@ function UnimodalLeastSquares(A, b; maxiters = 1000, fixed = false)
 end
 
 """
-    MCRALS(X, C, S = nothing; norm = (false, false), Factors = 1, maxiters = 20, constraintiters = 500, nonnegative = (false, false), unimodalS = false  )
+    MCRALS(X, C, S = nothing; norm = (false, false), Factors = 1, maxiters = 20, constraintiters = 500, nonnegative = (false, false), unimodalS = false, fixedunimodal = false  )
 Performs Multivariate Curve Resolution using Alternating Least Squares on `X` taking initial estimates for `S` or `C`.
-S or C can be constrained by their `norm`, or by nonnegativity using `nonnegative` arguments. S can be constrained by
-unimodality(EXPERIMENTAL).
+S or C can be constrained by their `norm`, or by nonnegativity using `nonnegative` arguments. S can be constrained by unimodality(EXPERIMENTAL).
 
 The number of resolved `Factors` can also be set.
 
 Tauler, R. Izquierdo-Ridorsa, A. Casassas, E. Simultaneous analysis of several spectroscopic titrations with self-modelling curve resolution.Chemometrics and Intelligent Laboratory Systems. 18, 3, (1993), 293-300.
 """
-function MCRALS(X, C, S = nothing; norm = (false, false),
-                Factors = 1, maxiters = 20, constraintiters = 500,
-                nonnegative = (false, false),
-                unimodalS = false, fixedunimodal = false )
+function MCRALS(X, C, S = nothing;
+                Factors::Int = 1, maxiters::Int = 20, constraintiters::Int = 50,
+                norm::Tuple{Bool,Bool} = (false, false),
+                nonnegative::Tuple{Bool,Bool} = (false, false),
+                unimodalS::Bool = false, fixedunimodal::Bool = false )
     @assert all( isa.( [ C , S ], Nothing ) ) == false
     lowestErr = Inf
+    elements = prod( size(X) )
     err = zeros(maxiters)
     D = X
     isC = isa(C, Nothing)
@@ -287,7 +288,9 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
             else
                 C = X * LinearAlgebra.pinv(S)
             end
-            C ./= norm[1] ? sum(C, dims = 2) : 1.0
+            if norm[1]
+                C ./= sum(C, dims = 2)
+            end
             isC = false
             D = C * S
         end
@@ -295,8 +298,7 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
             if unimodalS
                 S = UnimodalLeastSquares(C, X; maxiters = constraintiters, fixed = fixedunimodal)
                 if nonnegative[1]
-                    #There may be a better way to do this but the paper states force positivity...
-                    S = map(x -> (x < 0.0) ? 0.0 : x, S)
+                    S[S .< 0.0] .= 0.0
                 end
             elseif nonnegative[1]
                 for var in 1:size(X)[2]
@@ -305,11 +307,13 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
             else
                 S = LinearAlgebra.pinv(C) * X
             end
-            S ./= norm[2] ? sum(S, dims = 1) : 1.0
+            if norm[2]
+                S ./= sum(S, dims = 1)
+            end
             isS = false
             D = C * S
         end
-        err[iter] = sum( ( X .- D ) .^ 2 ) / prod(size(X))
+        err[iter] = sum(abs2.(X .- D)) / elements
         if err[iter] < lowestErr
             lowestErr = err[iter]
             output = (C, S, err)
@@ -317,7 +321,6 @@ function MCRALS(X, C, S = nothing; norm = (false, false),
     end
     return output
 end
-
 
 #I believe the SIMPLISMA implementation below has errors. It's a super neat algorithm, but it does
 #not display expected behaviour...

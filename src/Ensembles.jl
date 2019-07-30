@@ -89,7 +89,6 @@ function (RF::RandomForest)(X)
     (Obs, Vars) = size(X)
     Predictions = zeros(Obs, RF.ensemble[1].MaxClasses)
     Trees = length(RF.ensemble)
-    #Make good use of a running mean for leaner memory consumption and minimual fn calls...
     for tree in 1 : Trees
         Predictions .+= RF.ensemble[tree](X)
     end
