@@ -149,9 +149,10 @@ end
 Converts a dictionary of statistics which is returned from `MulticlassStats` into a labelled dataframe.
 This is an intermediate step for automated report generation.
 """
-function StatsDictToDataFrame(ClasswiseStats)
+function StatsDictToDataFrame(ClasswiseStats; digits = 4,
+                                StatsList = [   "FMeasure", "Accuracy", "Specificity",
+                                                "Precision", "Recall", "FAR", "FNR" ])
     ClassName = repeat( [ "No Name" ], length(ClasswiseStats) );
-    StatsList = [ "FMeasure", "Accuracy", "Specificity", "Precision", "Recall", "FAR", "FNR" ];
     daf = DataFrame( :Statistics => StatsList)
     for (j, ( classnames, stats )) in enumerate(ClasswiseStats)
         if typeof(classnames) == Symbol
@@ -160,7 +161,7 @@ function StatsDictToDataFrame(ClasswiseStats)
         ClassName[ j ] = classnames
         ClassStats = zeros( length(StatsList) );
         for (i, stat) in enumerate( StatsList )
-            ClassStats[ i ] = stats[ stat ]
+            ClassStats[ i ] = round( stats[ stat ]; sigdigits = digits )
         end
         daf[ Symbol( classnames ) ] = ClassStats
     end
@@ -206,15 +207,19 @@ function DataFrameToLaTeX( df; caption = "")
     return retstr
 end
 
-function StatsToLaTeX(Stats, filepath, name)
-    globaldf = StatsDictToDataFrame(Stats[1])
-    localdf = StatsDictToDataFrame(Stats[2])
+function StatsToLaTeX(Stats, filepath, name, digits = 3; Comment = "",
+                        StatsList = [   "FMeasure", "Accuracy", "Specificity",
+                                        "Precision", "Recall", "FAR", "FNR" ])
+    globaldf = StatsDictToDataFrame(Stats[1]; digits = digits, StatsList = StatsList)
+    localdf = StatsDictToDataFrame(Stats[2]; digits = digits, StatsList = StatsList)
+
     TimeStamp = Dates.format(now(), "mm-dd-YYYY HH:MM")
     ReportStr = "\\documentclass[]{report}\n" *
                 "% Report Generated from ChemometricsTools.jl ($TimeStamp)\n" *
-                "\\begin{document}\n"
-    ReportStr *= DataFrameToLaTeX( globaldf; caption = "Global Classification Statistics" )
-    ReportStr *= DataFrameToLaTeX( localdf; caption = "Local Classification Statistics" )
+                "% $Comment" *
+                "\n\\begin{document}\n"
+    ReportStr *= DataFrameToLaTeX( globaldf; caption = "Global Classification Statistics." )
+    ReportStr *= DataFrameToLaTeX( localdf; caption = "Classwise Classification Statistics." )
     ReportStr *= "\n\\end{document}"
     open( filepath * name * ".tex", "w" ) do f
         write( f, ReportStr )
