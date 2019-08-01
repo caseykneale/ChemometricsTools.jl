@@ -1,4 +1,5 @@
 using Dates
+using CSV
 """
     IsColdEncoded(Y)
 
@@ -148,21 +149,23 @@ end
 Converts a dictionary of statistics which is returned from `MulticlassStats` into a labelled dataframe.
 This is an intermediate step for automated report generation.
 """
-function StatsDictToDataFrame(ClasswiseStats, schema)
-    ClassName = repeat( [ "No Name" ], schema.LabelCount );
+function StatsDictToDataFrame(ClasswiseStats)
+    ClassName = repeat( [ "No Name" ], length(ClasswiseStats) );
     StatsList = [ "FMeasure", "Accuracy", "Specificity", "Precision", "Recall", "FAR", "FNR" ];
-    daf = DataFrame( :Statistics => StatsList);
-    for ( encode, lblname ) in schema.ToCold
-        ClassName[ encode ] = lblname
+    daf = DataFrame( :Statistics => StatsList)
+    for (j, ( classnames, stats )) in enumerate(ClasswiseStats)
+        if typeof(classnames) == Symbol
+            classnames = string(classnames)
+        end
+        ClassName[ j ] = classnames
         ClassStats = zeros( length(StatsList) );
         for (i, stat) in enumerate( StatsList )
-            ClassStats[ i ] = ClasswiseStats[ lblname ][ stat ]
+            ClassStats[ i ] = stats[ stat ]
         end
-        daf[ Symbol( lblname ) ] = ClassStats
+        daf[ Symbol( classnames ) ] = ClassStats
     end
     return daf
 end
-
 
 """
     StatsToDataFrame(stats, schema, filepath, name)
@@ -173,9 +176,9 @@ in a specified `filepath` using the prescribed encoding `schema`.
 The statistics associated with the global analysis will end in a file name  of "-global.csv"
 and the local statistics for each class will end in a file named "-classwise.csv"
 """
-function StatsToCSVs(Stats, schema, filepath, name)
-    globaldf = StatsDictToDataFrame(Stats[1], schema)
-    localdf = StatsDictToDataFrame(Stats[2], schema)
+function StatsToCSVs(Stats, filepath, name)
+    globaldf = StatsDictToDataFrame(Stats[1])
+    localdf = StatsDictToDataFrame(Stats[2])
     CSV.write(Base.joinpath(filepath, name * "-global.csv"), globaldf)
     CSV.write(Base.joinpath(filepath, name * "-classwise.csv"), localdf)
 end
@@ -198,22 +201,22 @@ function DataFrameToLaTeX( df; caption = "")
 
     retstr *= TableInterior *
               "\t \\end{tabular} \n"
-    retstr *= (length(caption) > 0) ? "\\t\\caption{$caption}" : ""
+    retstr *= (length(caption) > 0) ? "\t \\caption{$caption} \n" : ""
     retstr *= "\\end{table}\n"
     return retstr
 end
 
-function StatsToLaTeX(Stats, schema, filepath, name)
-    globaldf = StatsDictToDataFrame(Stats[1], schema)
-    localdf = StatsDictToDataFrame(Stats[2], schema)
+function StatsToLaTeX(Stats, filepath, name)
+    globaldf = StatsDictToDataFrame(Stats[1])
+    localdf = StatsDictToDataFrame(Stats[2])
     TimeStamp = Dates.format(now(), "mm-dd-YYYY HH:MM")
     ReportStr = "\\documentclass[]{report}\n" *
                 "% Report Generated from ChemometricsTools.jl ($TimeStamp)\n" *
                 "\\begin{document}\n"
     ReportStr *= DataFrameToLaTeX( globaldf; caption = "Global Classification Statistics" )
-    ReportStr *= DataFrameToLaTeX( globaldf; caption = "Local Classification Statistics" )
-    ReportStr *= "\end{document}"
-    open( filepath * "name.tex", "w" ) do f
+    ReportStr *= DataFrameToLaTeX( localdf; caption = "Local Classification Statistics" )
+    ReportStr *= "\n\\end{document}"
+    open( filepath * name * ".tex", "w" ) do f
         write( f, ReportStr )
     end
 end

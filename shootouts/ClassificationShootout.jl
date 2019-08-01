@@ -1,6 +1,3 @@
-# using Pkg
-# pwd()
-# Pkg.activate(".")
 using ChemometricsTools
 #View the data in the package space
 ChemometricsToolsDatasets()
@@ -35,18 +32,21 @@ models = ( knn, ldagd, mnsr, gnb, ct, rf );
 modelnames = ( :knn, :ldagd, :mnsr, :gnb, :ct, :rf );
 TrainingF1s = Dict()
 for ( name, model ) in zip(modelnames, models)
-    TrainingF1s[name] = MulticlassStats( model(TrainX), TrainY, Encoding )[1]["FMeasure"]
+    TrainingF1s[name] = MulticlassStats( model(TrainX), TrainY, Encoding )[1][:Global]["FMeasure"]
 end
 
 TrainingF1s
 
-
 HoldOutF1s = Dict()
 for ( name, model ) in zip(modelnames, models)
-    HoldOutF1s[name] = MulticlassStats( model(TestX), TestY, Encoding )[1]["FMeasure"]
+    HoldOutF1s[name] = MulticlassStats( model(TestX), TestY, Encoding )[1][:Global]["FMeasure"]
 end
 
 HoldOutF1s
 
 #Let's check specifically the random forest classification model for the virginica class
-MulticlassStats( rf(TestX), TestY, Encoding )[2]["virginica"]
+RFStats = MulticlassStats( rf(TestX), TestY, Encoding );
+RFStats[2]["virginica"]
+
+StatsToCSVs(RFStats, "/home/caseykneale/Desktop/", "RFStats")
+StatsToLaTeX(RFStats, "/home/caseykneale/Desktop/", "RFStats")
