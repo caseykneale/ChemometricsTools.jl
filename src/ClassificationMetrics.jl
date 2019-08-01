@@ -181,15 +181,11 @@ function StatsToCSVs(Stats, schema, filepath, name)
 end
 
 """
-    StatsToLaTeX(Stats, schema, filepath, name)
+    DataFrameToLaTeX( df, caption = "" )
 
-Converts the 2-Tuple returned from `MulticlassStats()` (`stats`) to a LaTeX report file with a specified `name`
-in a specified `filepath` using the prescribed encoding `schema`.
-
-The statistics associated with the global analysis will end in a file name  of "-global.tex"
-and the local statistics for each class will end in a file named "-classwise.tex"
+Converts a DataFrame object to a LaTeX table (string).
 """
-function DataFrameToLaTeX(df)
+function DataFrameToLaTeX( df; caption = "")
     (Rows, Columns) = size(df)
     ColmFormat = reduce(*, ["c" for i in 1:Columns])
     ColmNames = join(string.(names(df))," & ")
@@ -200,25 +196,26 @@ function DataFrameToLaTeX(df)
     TableInterior = [ "\t\t " * join(string.(values(df[row,:])), " & ") * " \\\\ \n" for row in 1:Rows]
     TableInterior = reduce(*, TableInterior)
 
-    retstr *=   TableInterior *
-                "\t \\end{tabular} \n"*
-                "\\end{table}\n"
+    retstr *= TableInterior *
+              "\t \\end{tabular} \n"
+    retstr *= (length(caption) > 0) ? "\\t\\caption{$caption}" : ""
+    retstr *= "\\end{table}\n"
+    return retstr
 end
 
-# using DataFrames
-# df = DataFrame(A = randn(15), B = randn(15), C = randn(15), D = randn(15));
-# println(DataFrameToLaTeX(df));
-
-
 function StatsToLaTeX(Stats, schema, filepath, name)
+    globaldf = StatsDictToDataFrame(Stats[1], schema)
+    localdf = StatsDictToDataFrame(Stats[2], schema)
     TimeStamp = Dates.format(now(), "mm-dd-YYYY HH:MM")
-    Start = "\\documentclass[]{report}\n" *
-            "% Report Generated from ChemometricsTools.jl ($TimeStamp)\n" *
-            "\\begin{document}\n"
-    End = "\end{document}"
-#     globaldf = StatsDictToDataFrame(Stats[1], schema)
-#     localdf = StatsDictToDataFrame(Stats[2], schema)
-#
+    ReportStr = "\\documentclass[]{report}\n" *
+                "% Report Generated from ChemometricsTools.jl ($TimeStamp)\n" *
+                "\\begin{document}\n"
+    ReportStr *= DataFrameToLaTeX( globaldf; caption = "Global Classification Statistics" )
+    ReportStr *= DataFrameToLaTeX( globaldf; caption = "Local Classification Statistics" )
+    ReportStr *= "\end{document}"
+    open( filepath * "name.tex", "w" ) do f
+        write( f, ReportStr )
+    end
 end
 
 """
