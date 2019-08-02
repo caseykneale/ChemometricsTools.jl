@@ -256,10 +256,12 @@ end
 
 """
     MCRALS(X, C, S = nothing; norm = (false, false), Factors = 1, maxiters = 20, constraintiters = 500, nonnegative = (false, false), unimodalS = false, fixedunimodal = false  )
-Performs Multivariate Curve Resolution using Alternating Least Squares on `X` taking initial estimates for `S` or `C`.
-S or C can be constrained by their `norm`, or by nonnegativity using `nonnegative` arguments. S can be constrained by unimodality(EXPERIMENTAL).
-
+Performs Multivariate Curve Resolution using Alternating Least Squares on `X` taking initial estimates for either `S` or `C`.
+The number of maximum iterations for the ALS updates can be set `maxiters`.
+S or C can be constrained by their `norm`(true/false,true/false), or by nonnegativity by using `nonnegative` arguments (true/false,true/false).
+S can also be constrained by unimodality(`unimodalS`). Two unimodal algorithms exist the `fixedunimodal`(true), and the quadratic (false).
 The number of resolved `Factors` can also be set.
+The number of maximum iterations for constraints can be set by `constraintiters`.
 
 Tauler, R. Izquierdo-Ridorsa, A. Casassas, E. Simultaneous analysis of several spectroscopic titrations with self-modelling curve resolution.Chemometrics and Intelligent Laboratory Systems. 18, 3, (1993), 293-300.
 """
