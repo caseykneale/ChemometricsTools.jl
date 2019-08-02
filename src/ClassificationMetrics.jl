@@ -207,22 +207,61 @@ function DataFrameToLaTeX( df; caption = "")
     return retstr
 end
 
-function StatsToLaTeX(Stats, filepath, name, digits = 3; Comment = "",
+"""
+    StatsToLaTeX(Stats, filepath = nothing, name = nothing,
+                        digits = 3, maxcolumns = 6; Comment = "",
                         StatsList = [   "FMeasure", "Accuracy", "Specificity",
                                         "Precision", "Recall", "FAR", "FNR" ])
-    globaldf = StatsDictToDataFrame(Stats[1]; digits = digits, StatsList = StatsList)
-    localdf = StatsDictToDataFrame(Stats[2]; digits = digits, StatsList = StatsList)
 
+Converts a MulticlassStats object to a LaTeX table (string or saved file).
+LaTeX tables contain rows of StatsList, and a maximum column number of maxcolumns.
+Information is presented with a set number of decimals(digits).
+
+"""
+function StatsToLaTeX(Stats, filepath = nothing, name = nothing;
+                        digits = 3, maxcolumns = 6, Comment = "",
+                        StatsList = [   "FMeasure", "Accuracy", "Specificity",
+                                        "Precision", "Recall", "FAR", "FNR"     ] )
+    globaldf = StatsDictToDataFrame(Stats[1]; digits = digits, StatsList = StatsList)
+    classes = [ k for k in keys( Stats[2] ) ]
+    localdf = []
+    if length(classes) > maxcolumns
+        maxtbls = Int( round( length( classes ) / maxcolumns ) )
+        tmpdf = StatsDictToDataFrame(Stats[2]; digits = digits, StatsList = StatsList)
+        for rn in 1 : maxtbls
+            colview = []
+            if rn < maxtbls
+                colview = classes[ ((maxcolumns * (rn - 1)) + 1) : (rn * maxcolumns)]
+            else
+                colview = classes[ ((maxcolumns * (rn - 1)) + 1) : end]
+            end
+            push!(localdf, tmpdf[:, Symbol.( vcat(["Statistics"], colview))] )
+        end
+    else
+        localdf = StatsDictToDataFrame(Stats[2]; digits = digits, StatsList = StatsList)
+    end
     TimeStamp = Dates.format(now(), "mm-dd-YYYY HH:MM")
     ReportStr = "\\documentclass[]{report}\n" *
                 "% Report Generated from ChemometricsTools.jl ($TimeStamp)\n" *
                 "% $Comment" *
                 "\n\\begin{document}\n"
     ReportStr *= DataFrameToLaTeX( globaldf; caption = "Global Classification Statistics." )
-    ReportStr *= DataFrameToLaTeX( localdf; caption = "Classwise Classification Statistics." )
+    if length(classes) > maxcolumns
+        for tdf in localdf
+            ReportStr *= DataFrameToLaTeX( tdf; caption = "Classwise Classification Statistics." )
+        end
+    else
+        ReportStr *= DataFrameToLaTeX( localdf; caption = "Classwise Classification Statistics." )
+    end
     ReportStr *= "\n\\end{document}"
-    open( filepath * name * ".tex", "w" ) do f
-        write( f, ReportStr )
+    #If no name is given -> Return the string
+    if isa(filepath, Nothing) or isa(name, Nothing)
+        return ReportStr
+    else
+        open( filepath * name * ".tex", "w" ) do f
+            write( f, ReportStr )
+        end
+        return true
     end
 end
 

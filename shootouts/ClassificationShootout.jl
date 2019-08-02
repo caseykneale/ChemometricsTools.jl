@@ -49,4 +49,4 @@ RFStats = MulticlassStats( rf(TestX), TestY, Encoding );
 RFStats[2]["virginica"]
 
 StatsToCSVs(RFStats, "/home/caseykneale/Desktop/", "RFStats")
-StatsToLaTeX(RFStats, "/home/caseykneale/Desktop/", "RFStats")
+StatsToLaTeX(RFStats, "/home/caseykneale/Desktop/", "RFStats"; maxcolumns = 3)
