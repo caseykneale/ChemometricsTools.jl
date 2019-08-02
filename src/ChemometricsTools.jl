@@ -3,7 +3,7 @@ module ChemometricsTools
     using CSV: read
     using Distributions #Could probably also get rid of this one...
     using Dates
-    #A generic function that I use everywhere to coerce a vecto dim 0 to a row vector...
+    #A generic function that I use everywhere to coerce a vector dim 0 to a row vector...
     forceMatrix( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, length(a), 1 ) : a
     forceMatrixT( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, 1, length(a) ) : a
     export forceMatrix, forceMatrixT
@@ -82,13 +82,13 @@ module ChemometricsTools
     export RollingWindow, EchoStateNetwork, TuneRidge, PredictFn, EWMA, Variance, Limits, update,
         SimpleAverage, NaiveForecast, update!, update
 
-    include("MultiWay.jl") #Has Docss
+    include("MultiWay.jl") #Has Docs
     export MultiCenter, MultiScale, MultiNorm, MultiPCA
 
     include("KernelDensityGenerator.jl") #Has Docs
     export Universe, SpectralArray, GaussianBand, LorentzianBand
 
-    include("SimpleGAs.jl") #No Docs yet :(
+    include("SimpleGAs.jl") #Has Docs
     export BinaryLifeform, Lifeform, SinglePointCrossOver, Mutate
 
     #Generic function for pulling data from within this package.
