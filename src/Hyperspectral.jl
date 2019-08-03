@@ -1,7 +1,6 @@
 #This is a workspace for hyperspectral imaging methods
 #Maybe some NWAY stuff will fall in here...
 #This shouldn't be on master, but I won't put anything here unless I think it'll work.
-#
 
 function ACE(Background, X, Target)
     if length(size(Background)) == 3

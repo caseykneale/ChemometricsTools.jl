@@ -77,7 +77,6 @@ Removes an observation(`x`) from a RunningMean object(`RM`) and recuturns the ne
 """
 Remove(RM::RunningMean, x) = RunningMean( (RM.p * RM.mu - x) / (RM.p - 1), RM.p - 1 )
 
-
 mutable struct RunningVar
     m::RunningMean
     v::Float64

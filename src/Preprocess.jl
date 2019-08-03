@@ -1,6 +1,48 @@
 using DSP: conv #Ew I wanna get rid of this dependency... One function (SavitskyGolay) uses it...
 
 """
+    Noise(data, level; scale = :percent_max, type = :gaussian )
+
+Adds noise (uniform, or gaussian) to an array of data.
+The scale can be made relative to the percent_max, percent_average, or the absolute level values.
+
+Note: for Gaussian noise it is likely convenient to scale by an inverse quantile(say 0.999)
+"""
+function Noise(data, level; scale = :percent_max, type = :gaussian )
+    (maxes, minis) = ( [], [] )
+    noise = []
+    if type == :gaussian
+        noise = randn( size( data ) )
+    elseif type == :uniform
+        noise = rand( Float64, size( data ) ) .- 0.5
+    else
+        println("")
+        return
+    end
+    if scale == :percent_max
+        if length( size( data ) ) > 1
+            (maxes, minis) = ( reduce( max, data, dims = 2 ), reduce( min, data, dims = 2 ) )
+            return ( noise .* (maxes .- minis) .* level ) .+ data
+        else
+            (maxes, minis) = ( reduce( max, data ), reduce( min, data ) )
+            return ( noise .* (maxes .- minis) .* level ) .+ data
+        end
+    elseif scale == :percent_average
+        if length(size(data)) > 1
+            (maxes, minis) = ( reduce( max, data, dims = 2 ), reduce( min, data, dims = 2 ) )
+            avg = mean( (data .- minis) ./ (maxes .- minis), dims = 2 )
+            return ( noise .* avg .* level ) .+ data
+        else
+            (maxes, minis) = ( reduce( max, data ), reduce( min, data ) )
+            avg = mean( (data .- minis) ./ (maxes .- minis) )
+            return ( noise .* avg .* level ) .+ data
+        end
+    elseif scale == :absolute
+        return ( noise .* level ) .+ data
+    end
+end
+
+"""
     StandardNormalVariate(X)
 
 Scales the columns of `X` by the mean and standard deviation of each row. Returns the scaled array.

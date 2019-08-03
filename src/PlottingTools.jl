@@ -63,7 +63,6 @@ function plotchem(BA::BlandAltman; title = "Bland Altman")
     Plots.abline!(a, 0, BA.LowerLimit, color = :red )
 end
 
-
 rectangle(w, h, x, y) = Shape(x .+ [0,w,w,0], y .+ [0,0,h,h])
 
 """
@@ -86,10 +85,10 @@ end
 
 """
     DiscriminantAnalysisPlot(DA, GD, YHot, LblEncoding, UnlabeledData, Axis = [1,2], Confidence = 0.90)
-
 ...
 """
-function DiscriminantAnalysisPlot(DA, GD, YHot, LblEncoding, UnlabeledData, Axis = [1,2], Confidence = 0.90)
+function DiscriminantAnalysisPlot(  DA, GD, YHot, LblEncoding, UnlabeledData,
+                                    Axis = [1,2], Confidence = 0.90)
     @assert all(Axis .<= size(Data)[2])
     A = []
     for c in 1:size(filterYHOT)[2]

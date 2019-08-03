@@ -4,7 +4,6 @@
     OneHotOdds(Y)
 
 Calculates the odds of a one-hot formatted probability matrix. Returns a tuple.
-
 """
 function OneHotOdds(Y)
     rsums = sum(Y, dims = 1);
@@ -15,7 +14,6 @@ end
     entropy(v)
 
 Calculates the Shannon-Entropy of a probability vector `v`. Returns a scalar. A common gain function used in tree methods.
-
 """
 entropy(v) = -sum( map( x -> x * (x == 1.0 ? 0.0 : log( x , 2 )), v ) )
 
@@ -23,15 +21,14 @@ entropy(v) = -sum( map( x -> x * (x == 1.0 ? 0.0 : log( x , 2 )), v ) )
     gini(p)
 
 Calculates the GINI coefficient of a probability vector `p`. Returns a scalar. A common gain function used in tree methods.
-
 """
 gini(p) = 1.0 - sum( p .^ 2 )
+
 """
     ssd(p)
 
 Calculates the sum squared deviations from a decision tree split. Accepts a vector of values, and the mean of that
  vector. Returns a scalar. A common gain function used in tree methods.
-
 """
 ssd(split,mean) = sum( ( split .- mean ) .^ 2 )
 

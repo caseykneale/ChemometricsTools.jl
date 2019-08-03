@@ -49,7 +49,8 @@ module ChemometricsTools
     export FirstDerivative, SecondDerivative, FractionalDerivative, SavitzkyGolay,
         DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection,
         StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, ScaleMinMax,
-        offsetToZero, boxcar, ALSSmoother, PerfectSmoother, CORAL, TransferByOrthogonalProjection
+        offsetToZero, boxcar, ALSSmoother, PerfectSmoother, CORAL, TransferByOrthogonalProjection,
+        Noise
 
     include("RegressionModels.jl") # Has Docs
     export ClassicLeastSquares, OrdinaryLeastSquares, RidgeRegression, PrincipalComponentRegression,
