@@ -15,8 +15,7 @@ function Noise(data, level; scale = :percent_max, type = :gaussian )
         noise = randn( size( data ) )
     elseif type == :uniform
         noise = rand( Float64, size( data ) ) .- 0.5
-    else
-        println("")
+    else #ToDo: Throw exception
         return
     end
     if scale == :percent_max
