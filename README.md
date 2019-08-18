@@ -5,7 +5,7 @@ This package contains a collection of tools to perform fundamental and advanced 
 
 ## Tutorials/Demonstrations:
   - [Transforms](https://caseykneale.github.io/ChemometricsTools.jl/Demos/Transforms/)
-  - [Pipelines](https://caseykneale.github.io/ChemometricsTools.jl/Demos/Pipelines/)
+  - [Pipelines + LoopyMSC Example](https://caseykneale.github.io/ChemometricsTools.jl/Demos/Pipelines/)
   - [Classification](https://caseykneale.github.io/ChemometricsTools.jl/Demos/ClassificationExample/)
   - [Regression](https://caseykneale.github.io/ChemometricsTools.jl/Demos/RegressionExample/)
   - [Calibration Transfer: Direct Standardization](https://caseykneale.github.io/ChemometricsTools.jl/Demos/CalibXfer/)
