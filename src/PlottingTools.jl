@@ -5,10 +5,25 @@ end
 """
     QQ( Y1, Y2; Quantiles = collect( 1 : 99 ) ./ 100 )
 
-Returns a Plot object of a Quantile-Quantile plot between vectors `Y1` and `Y2` at the desired `Quantiles`.
+Returns a plotable object of a Quantile-Quantile plot between vectors `Y1` and `Y2` at the desired `Quantiles`.
 """
 function QQ( Y1, Y2; Quantiles = collect( 1 : 99 ) ./ 100 )
     return QQ( (Statistics.quantile!(Y1, Quantiles), Statistics.quantile!(Y2, Quantiles) ))
+end
+
+@recipe function f(qq::QQ)
+    m = sum( diff( qq.StoredTuple[ 1 ] ) ) / sum( diff( qq.StoredTuple[ 2 ] ) )
+    int = qq.StoredTuple[2][2] - (m * qq.StoredTuple[1][2])
+
+    seriestype := :scatter
+    title := "Quantile-Quantile Plot"
+    xlabel := Symbol("Quantile 1")
+    ylabel := Symbol("Quantile 2")
+    @series y := qq.StoredTuple
+
+    seriestype := :straightline
+    label := "Trend-Line"
+    @series y := ([0, 1], [int, int + m])
 end
 
 struct BlandAltman
@@ -23,7 +38,7 @@ end
 """
     BlandAltman(Y1, Y2; Confidence = 1.96)
 
-Returns a Plot object of a Bland-Altman plot between vectors `Y1` and `Y2` with a confidence limit of `Confidence`.
+Returns a Plottable object of a Bland-Altman plot between vectors `Y1` and `Y2` with a confidence limit of `Confidence`.
 """
 function BlandAltman(Y1, Y2; Confidence = 1.96)
     means = (Y1 .+ Y2) ./ 2.0
@@ -40,27 +55,21 @@ function BlandAltman(Y1, Y2; Confidence = 1.96)
     return BlandAltman( means, diffs, UpperLimit, Center, LowerLimit, Outliers )
 end
 
-
-"""
-    plotchem(QQ::{QQ, BlandAltman}; title )
-
-returns either a QQ Plot or a Bland-Altman plot with the defined `title`
-"""
-function plotchem(QQ::QQ; title = "Quantile-Quantile Plot" )
-    a = scatter( QQ.StoredTuple, title = title, xlabel = "Quantile 1", ylabel = "Quantile 2",
-                    label = "QQ")
-    diff(arr) = [ arr[d] - arr[d+1] for d in collect(1 : ( length( arr ) - 1 ))  ]
-    m = sum( diff( QQ.StoredTuple[ 1 ] ) ) / sum( diff( QQ.StoredTuple[ 2 ] ) )
-    int = QQ.StoredTuple[2][2] - (m * QQ.StoredTuple[1][2])
-    Plots.abline!(a, m, int, label = "Trend" )
-end
-
-function plotchem(BA::BlandAltman; title = "Bland Altman")
-    a = scatter( ( BA.means, BA.differences ), title = title, xlabel = "Means",
-                    ylabel = "Differences", label = "B.A.")
-    Plots.abline!(a, 0, BA.UpperLimit, color = :red )
-    Plots.abline!(a, 0, BA.Center, color = :red )
-    Plots.abline!(a, 0, BA.LowerLimit, color = :red )
+@recipe function f(BA::BlandAltman)
+    seriestype := :scatter
+    title := "Bland Altman"
+    xlabel := Symbol("Means")
+    ylabel := Symbol("Differences")
+    @series y := ( BA.means, BA.differences )
+    seriestype := :straightline
+    color := :red
+    @series y := ([0, 1], [BA.UpperLimit, BA.UpperLimit])
+    seriestype := :straightline
+    color := :red
+    @series y := ([0, 1], [BA.Center, BA.Center])
+    seriestype := :straightline
+    color := :red
+    @series y := ([0, 1], [BA.LowerLimit, BA.LowerLimit])
 end
 
 rectangle(w, h, x, y) = Shape(x .+ [0,w,w,0], y .+ [0,0,h,h])

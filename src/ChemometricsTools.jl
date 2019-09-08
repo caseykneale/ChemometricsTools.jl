@@ -1,5 +1,5 @@
 module ChemometricsTools
-    using DataFrames, LinearAlgebra, Statistics, StatsBase, SparseArrays, Plots
+    using DataFrames, LinearAlgebra, Statistics, StatsBase, SparseArrays, RecipesBase, Plots
     using CSV: read
     using Distributions #Could probably also get rid of this one...
     using Dates
