@@ -1,5 +1,5 @@
 module ChemometricsTools
-    using DataFrames, LinearAlgebra, Statistics, StatsBase, SparseArrays, RecipesBase, Plots
+    using DataFrames, LinearAlgebra, Statistics, StatsBase, SparseArrays, RecipesBase#, Plots
     using CSV: read
     using Distributions #Could probably also get rid of this one...
     using Dates
@@ -77,7 +77,8 @@ module ChemometricsTools
         UnimodalUpdate, UnimodalLeastSquares
 
     include("PlottingTools.jl") #Has Docs
-    export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay
+    export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay,
+        DiscriminantAnalysisPlot, DAPlot
 
     include("TimeSeries.jl") #Has Docs: Omitted EchoStateNetwork Fns
     export RollingWindow, EchoStateNetwork, TuneRidge, PredictFn, EWMA, Variance, Limits, update,

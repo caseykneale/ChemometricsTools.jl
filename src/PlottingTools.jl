@@ -116,24 +116,57 @@ end
     DiscriminantAnalysisPlot(DA, GD, YHot, LblEncoding, UnlabeledData, Axis = [1,2], Confidence = 0.90)
 ...
 """
-function DiscriminantAnalysisPlot(  DA, GD, YHot, LblEncoding, UnlabeledData,
-                                    Axis = [1,2], Confidence = 0.90)
-    @assert all(Axis .<= size(Data)[2])
+struct DAPlot
+    DA
+    GD
+    YHot
+    LblEncoding
+    UnlabeledData
+    Axis
+    Confidence
+end
+
+DiscriminantAnalysisPlot(DA, GD, YHot, LblEncoding, UnlabeledData;
+                    Axis = [1,2], Confidence = 0.90) = DAPlot( DA, GD, YHot,
+                    LblEncoding, UnlabeledData, Axis, Confidence)
+
+@recipe function f(dap::DAPlot)
+    exvar = round.(ExplainedVariance(dap.DA) .* 1000) /10
+    @assert all(dap.Axis .<= size(dap.UnlabeledData)[2])
     A = []
-    for c in 1:size(filterYHOT)[2]
-        whichrows = filterYHOT[:,c] .== 1.0
-        if c == 1
-            A = scatter(DA.scores[whichrows,Axis[1]], DA.scores[whichrows,Axis[2]],  label = LblEncoding.ToCold[c])
-        else
-            scatter!(A, DA.scores[whichrows,Axis[1]], DA.scores[whichrows,Axis[2]],  label = LblEncoding.ToCold[c])
+    for c in 1:size(dap.YHot)[2]
+        #Labelled data
+        whichrows = dap.YHot[:,c] .== 1.0
+        seriestype := :scatter
+        label := dap.LblEncoding.ToCold[c]
+        if c == 1 #if this is the first plot lets add axis labels
+            legend := :topleft
+            xlabel = "DA $(dap.Axis[1]) [$(exvar[dap.Axis[1]]) %]"
+            ylabel = "DA $(dap.Axis[2]) [$(exvar[dap.Axis[2]]) %]"
         end
-        elipse = ConfidenceEllipse(GD.ProjectedClassCovariances[c], GD.ProjectedClassMeans[c,:],
-                    Confidence, Axis; pointestimate = 180 );
-        plot!(elipse[:,1], elipse[:,2], label = "", color = :black, linestyle = :dash, linewidth = 2);
+        @series y := dap.DA.Scores[whichrows,dap.Axis[1]]
+        @series x := dap.DA.Scores[whichrows,dap.Axis[2]]
+        #Make confidence ellipse
+        elipse = ConfidenceEllipse(dap.GD.ProjectedClassCovariances[c], dap.GD.ProjectedClassMeans[c,:],
+                    dap.Confidence, dap.Axis; pointestimate = 180 );
+
+        seriestype := :path
+        color := :black
+        linestyle := :dash
+        linewidth := 2
+        label := ""
+        @series begin
+            y := elipse[:,1]
+            x := elipse[:,2]
+        end
     end
-    exvar = round.(ExplainedVariance(DA) .* 1000) /10
-    scatter!(A, UnlabeledData[:,Axis[1]], UnlabeledData[:,Axis[2]], color = :black, label = "", markershape = :hexagon,
-            xaxis = "DA $(Ax[1]) [$(exvar[Ax[1]]) %]", yaxis = "DA $(Ax[2]) [$(exvar[Ax[2]]) %]",
-            legend = :topleft);
-    return A
+    #New Data
+    seriestype := :scatter
+    color := :black
+    markershape = :hexagon
+    label := ""
+    @series begin
+        y := dap.UnlabeledData[:,dap.Axis[1]]
+        x := dap.UnlabeledData[:,dap.Axis[2]]
+    end
 end
