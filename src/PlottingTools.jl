@@ -73,24 +73,44 @@ end
 end
 
 rectangle(w, h, x, y) = Shape(x .+ [0,w,w,0], y .+ [0,0,h,h])
-
 """
     IntervalOverlay(Spectra, Intervals, Err)
 
-Displays the relative error(`Err`) of each `interval` ontop of a `Spectra`.
+Creates a Plottable object to display the relative error(`Err`) of each `interval` ontop of a `Spectra`.
 """
-function IntervalOverlay(Spectra, Intervals, Err)
-    RelativeErr = Err ./ sum(Err);
-    a = plot(Spectra', xlabel = "bins", ylabel = "Absorbance / Relative CV Error", ylim = (0,7), legend = false);
-    for (i, line) in enumerate( Intervals )
-        scalethis = reduce(max, Spectra)  / reduce(max, RelativeErr)
+struct IntervalOverlay
+    Spectra
+    Intervals
+    Err
+end
+
+@recipe function f(IO::IntervalOverlay)
+    RelativeErr = IO.Err ./ sum(IO.Err);
+
+    seriestype := :path
+    title := "Spectral Error Overlay"
+    xlabel := Symbol("Bins")
+    ylabel := Symbol("Absorbance / Relative CV Error")
+    legend := false
+    @series y := IO.Spectra'
+
+    seriestype := :shape
+    opacity := 0.5
+    for (i, line) in enumerate( IO.Intervals )
+        scalethis = reduce(max, IO.Spectra)  / reduce(max, RelativeErr)
         w = line[end] - line[1]
         h = RelativeErr[i] * scalethis
         xloc = line[1]
-        plot!(rectangle(w,h,xloc,0), opacity=.5)
+        @series y := rectangle(w,h,xloc,0)
     end
-    return a
 end
+
+# x = -pi:(pi/200):pi;
+# A = transpose((sin.(x) .+ 1.0) .+ randn(400,3) ./ 50);
+# Intervals = [ (((i-1) * 10) + 1, ((i) * 10)) for i in 1:40 ];
+# Err = rand(40);
+# IOo = IntervalOverlay(A,Intervals,Err)
+# Plots.plot(IOo)
 
 """
     DiscriminantAnalysisPlot(DA, GD, YHot, LblEncoding, UnlabeledData, Axis = [1,2], Confidence = 0.90)
