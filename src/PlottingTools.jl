@@ -131,21 +131,18 @@ DiscriminantAnalysisPlot(DA, GD, YHot, LblEncoding, UnlabeledData;
                     LblEncoding, UnlabeledData, Axis, Confidence)
 
 @recipe function f(dap::DAPlot)
-    exvar = round.(ExplainedVariance(dap.DA) .* 1000) /10
+    exvar = round.(ExplainedVariance(dap.DA) .* 10000) /100
     @assert all(dap.Axis .<= size(dap.UnlabeledData)[2])
     A = []
-    for c in 1:size(dap.YHot)[2]
+    Classes = size(dap.YHot)[2]
+    colors = get_color_palette(:auto, plot_color(:white), Classes)
+    for c in 1:Classes
         #Labelled data
         whichrows = dap.YHot[:,c] .== 1.0
         seriestype := :scatter
+        color := colors[c]
         label := dap.LblEncoding.ToCold[c]
-        if c == 1 #if this is the first plot lets add axis labels
-            legend := :topleft
-            xlabel = "DA $(dap.Axis[1]) [$(exvar[dap.Axis[1]]) %]"
-            ylabel = "DA $(dap.Axis[2]) [$(exvar[dap.Axis[2]]) %]"
-        end
-        @series y := dap.DA.Scores[whichrows,dap.Axis[1]]
-        @series x := dap.DA.Scores[whichrows,dap.Axis[2]]
+        @series y := ( dap.DA.Scores[whichrows,dap.Axis[1]], dap.DA.Scores[whichrows,dap.Axis[2]] )
         #Make confidence ellipse
         elipse = ConfidenceEllipse(dap.GD.ProjectedClassCovariances[c], dap.GD.ProjectedClassMeans[c,:],
                     dap.Confidence, dap.Axis; pointestimate = 180 );
@@ -155,18 +152,15 @@ DiscriminantAnalysisPlot(DA, GD, YHot, LblEncoding, UnlabeledData;
         linestyle := :dash
         linewidth := 2
         label := ""
-        @series begin
-            y := elipse[:,1]
-            x := elipse[:,2]
-        end
+        @series y := (elipse[:,1], elipse[:,2])
     end
     #New Data
     seriestype := :scatter
     color := :black
-    markershape = :hexagon
+    markershape = :star
     label := ""
-    @series begin
-        y := dap.UnlabeledData[:,dap.Axis[1]]
-        x := dap.UnlabeledData[:,dap.Axis[2]]
-    end
+    legend := :topleft
+    xlabel := "DA $(dap.Axis[1]) [$(exvar[dap.Axis[1]]) %]"
+    ylabel := "DA $(dap.Axis[2]) [$(exvar[dap.Axis[2]]) %]"
+    @series y := ( dap.UnlabeledData[:,dap.Axis[1]] , dap.UnlabeledData[:,dap.Axis[2]] )
 end
