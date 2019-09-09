@@ -77,8 +77,8 @@ module ChemometricsTools
         UnimodalUpdate, UnimodalLeastSquares
 
     include("PlottingTools.jl") #Has Docs
-    export QQ, BlandAltman, plotchem, rectangle, IntervalOverlay,
-        DiscriminantAnalysisPlot, DAPlot
+    export QQ, BlandAltman, rectangle, IntervalOverlay, DiscriminantAnalysisPlot,
+            DAPlot
 
     include("TimeSeries.jl") #Has Docs: Omitted EchoStateNetwork Fns
     export RollingWindow, EchoStateNetwork, TuneRidge, PredictFn, EWMA, Variance, Limits, update,
