@@ -105,6 +105,27 @@ end
     end
 end
 
+"""
+    PCA/LDA(Spectra, Intervals, Err)
+
+Plots scores of PCA/LDA analysis.
+"""
+@recipe function f(DA::Union{PCA, LDA}; Axis = [1,2])
+    @assert(length(Axis) == 2, "Axis for PCA/LDA plot must be of length 2." )
+    exvar = round.(ExplainedVariance(DA) .* 10000) /100
+    seriestype := :scatter
+    if isa(DA, PCA)
+        title := "PCA Scores Plot"
+        xlabel := "PCA $(Axis[1]) [$(exvar[Axis[1]]) %]"
+        ylabel := "PCA $(Axis[2]) [$(exvar[Axis[2]]) %]"
+    else
+        title := "LDA Scores Plot"
+        xlabel := "DA $(Axis[1]) [$(exvar[Axis[1]]) %]"
+        ylabel := "DA $(Axis[2]) [$(exvar[Axis[2]]) %]"
+    end
+    @series y := ( DA.Scores[:,Axis[2]], DA.Scores[:,Axis[1]] )
+end
+
 # x = -pi:(pi/200):pi;
 # A = transpose((sin.(x) .+ 1.0) .+ randn(400,3) ./ 50);
 # Intervals = [ (((i-1) * 10) + 1, ((i) * 10)) for i in 1:40 ];
