@@ -106,7 +106,7 @@ end
 end
 
 """
-    PCA/LDA(Spectra, Intervals, Err)
+    PCA/LDA(::Union{PCA, LDA}; Axis = [1,2])
 
 Plots scores of PCA/LDA analysis.
 """
