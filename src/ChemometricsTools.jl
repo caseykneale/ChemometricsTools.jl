@@ -61,7 +61,7 @@ module ChemometricsTools
     export OneHotOdds, entropy, gini, ssd, ClassificationTree, RegressionTree, CART
 
     include("Ensembles.jl") #Has Docs
-    export MakeInterval, MakeIntervals, stackedweights, RandomForest
+    export MakeIntervals, stackedweights, RandomForest
 
     include("Sampling.jl") #Has Docs
     export VenetianBlinds, SplitByProportion, KennardStone

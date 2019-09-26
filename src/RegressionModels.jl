@@ -189,7 +189,7 @@ function PartialLeastSquares( X, Y; Factors = minimum(size(X)) - 2, tolerance = 
         U[:,factor] = u; P[:,factor] = p
         W[:, factor] = w
     end#end for factors
-    #Use a more mdodern way to solve for the regression coefficients (2)
+    #Use a more modern way to solve for the regression coefficients (2)
     Coefficients = (Factors == 1) ? W * Q' : W * Base.inv( P' * W ) * Q'
     #An Equivalent way to obtain the regression coefficients.
     #Coefficients = W*Base.inv(W'*X'*X*W)*W'*X'*Y*Q
