@@ -19,7 +19,8 @@ This package contains a collection of tools to perform fundamental and advanced 
   - [Fault Detection](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/AnomalyShootout.jl)
 
 ### Package Status => Speed Boost (v 0.5.1)
-ChemometricsTools has been accepted as an official Julia package! Yep, so you can  ```Pkg.add("ChemometricsTools")``` to install it. The git repo's master branch has the most advanced version right now, but may be less reliable because I like to do dev on it. A lot of features have been added since the first public release (v 0.2.3 ). In 0.5.1 almost all of the functionality available can be used/abused. If you find a bug or want a new feature don't be shy - file an issue. In v0.5.1 Plots was removed as a dependency, new plot recipes were added, and now the package compiles much faster!. Plans for v0.6.0 are churning - mostly going to be touch up and adding functionality when I can.
+ChemometricsTools has been accepted as an official Julia package! Yep, so you can  ```Pkg.add("ChemometricsTools")``` to install it. The git repo's master branch has the most advanced version right now, but may be less reliable because I like to do dev on it. A lot of features have been added since the first public release (v 0.2.3 ). In 0.5.1 almost all of the functionality available can be used/abused. If you find a bug or want a new feature don't be shy - file an issue. In v0.5.1 Plots was removed as a dependency, new plot recipes were added, and now the package compiles much faster! Making headway into v0.6.0 - mostly going to be touch up and adding functionality when I can. Convenience functions, refactoring
+and clean up are in progress.
 
 ### Version Release Strategy
   - < 0.3.0 : Mapping functionality, prototyping

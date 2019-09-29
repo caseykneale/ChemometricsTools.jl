@@ -128,7 +128,7 @@ struct Scale{B} <: Transform
 end
 
 """
-    Center(Z)
+    Scale(Z)
 
 Acquires the standard deviation of each column in `Z` provided and returns a transform that will divide those column-wise standard deviation from any future data.
 """
@@ -156,6 +156,7 @@ function CenterScale(Z)
     stdev = StatsBase.std(Z, dims = 1)
     CenterScale( mu, stdev, true)
 end
+
 """
     (T::CenterScale)(Z; inverse = false)
 
@@ -189,6 +190,12 @@ Scales and shifts data in array `Z` column-wise according to learned min-maxes i
 struct BoxCox <: Transform
     innercall
 end
+
+"""
+    BoxCox(lambda)
+
+Returns a BoxCox transform operator/function. To be used in a pipeline.
+"""
 BoxCox(lambda) = return BoxCox(X; inverse = false) = begin
     Z = zeros(size(X))
     if inverse

@@ -1,3 +1,4 @@
+#push!(LOAD_PATH, "/home/caseykneale/Desktop/ChemometricsTools/ChemometricsTools.jl/");
 using ChemometricsTools
 using Plots
 
@@ -9,31 +10,32 @@ actuator = convert(Matrix,  DF)[:,2:end];
 #Split into a training set based on normal behaviour
 (Train, Test) = SplitByProportion(actuator, 0.40)
 
-
 #Plot the data
 plot(Train, legend = false, title = "Train Set - Raw Data", ylabel = "Measurements", xlabel = "time")
 #alot of DC offsets let's column center each variable.
 clean = Center(Train);
 pca = PCA(clean(Train); Factors = 5);
 cumsum( ExplainedVariance( pca ) )
-(Lambdas, limits) = Hotelling(clean(Train), pca; Quantile = 0.015, Variance = 0.95)
-scatter(Lambdas, title = "Train - T2 vs Time", xlabel = "time", ylabel = "T2", label = "T2");
-hline!([limits], label = "Control Limit")
+#Old Hotelling Interface
+#(Lambdas, limits) = Hotelling(clean(Train), pca; Quantile = 0.015, Variance = 0.95)
+T = Hotelling(clean(Train), pca; Quantile = 0.015, Variance = 0.95)
+scatter(T(clean(Train)), title = "Train - T2 vs Time", xlabel = "time", ylabel = "T2", label = "T2");
+hline!([T.UpperLimit], label = "Control Limit")
 
-(qs, limits) = Q(clean(Train), pca; Quantile = 1.0 - 1e-16, Variance = 0.99)
-scatter(qs, title = "Train - Q vs Time", xlabel = "time", ylabel = "Q", label = "Q");
-hline!([limits], label = "Control Limit")
+#Old Q Interface
+#(qs, limits) = Q(clean(Train), pca; Quantile = 1.0 - 1e-16, Variance = 0.99)
+q_residuals = Q(clean(Train), pca; Quantile = 1.0 - 1e-16, Variance = 0.99)
+scatter(q_residuals(Train), title = "Train - Q vs Time", xlabel = "time", ylabel = "Q", label = "Q");
+hline!([T.UpperLimit], label = "Control Limit")
 
 
 #Let's apply the control limits obtained from the train set to the test set...
-(Lambdas, limits) = Hotelling(clean(Test), pca; Quantile = 0.015, Variance = 0.95);
-scatter(Lambdas, title = "Test - T2 vs Time", xlabel = "time", ylabel = "T2", label = "T2");
-hline!([limits], label = "Control Limit");
+scatter(T(clean(Test)), title = "Test - T2 vs Time", xlabel = "time", ylabel = "T2", label = "T2");
+hline!([T.UpperLimit], label = "Control Limit");
 vline!([120], label = "Known Fault")
 
-(qs, limits) = Q(clean(Test), pca; Quantile = 1.0 - 1e-16, Variance = 0.99);
-scatter(qs, title = "Test - Q vs Time", xlabel = "time", ylabel = "Q", label = "Q");
-hline!([limits], label = "Control Limit");
+scatter(q_residuals(clean(Test)), title = "Test - Q vs Time", xlabel = "time", ylabel = "Q", label = "Q");
+hline!([q_residuals.UpperLimit], label = "Control Limit");
 vline!([120], label = "Known Fault")
 
 #Hotellings T2 is slower to detect the failure then the Q plot. Not a surprise but good to see.

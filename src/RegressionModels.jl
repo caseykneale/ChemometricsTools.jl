@@ -147,7 +147,6 @@ struct PartialLeastSquares <: RegressionModels
     Factors::Int
     XVariance::Array
     YVariance::Array
-    XEigvalues::Array
 end
 
 """
@@ -173,7 +172,6 @@ function PartialLeastSquares( X, Y; Factors = minimum(size(X)) - 2, tolerance = 
     P = zeros(Xcols, Factors); p = zeros(Xcols);
     Q = zeros(Ycols, Factors); q = zeros(Ycols)
     W = zeros(Xcols, Factors); w = zeros(Xrows);
-    XEigVals = zeros(Factors)
     for factor in 1:Factors
         u = (Ycols == 1) ? Yd[:,1] : Yd[ :, argmax( [ (Yd[:,col]' * Yd[:,col])[1] for col in 1:Ycols] ) ]
         for iter in 1:maxiters
@@ -196,14 +194,13 @@ function PartialLeastSquares( X, Y; Factors = minimum(size(X)) - 2, tolerance = 
         Q[:,factor] = q; T[:,factor] = t
         U[:,factor] = u; P[:,factor] = p
         W[:, factor] = w
-        XEigVals[factor] = sum( tnorm .^ 2 ) / (Xrows - 1)
     end#end for factors
     R = (Factors == 1) ? W : W * Base.inv( P' * W )
     #Use a more modern way to solve for the regression coefficients (2)
     Coefficients = R * Q'
     #An Equivalent way to obtain the regression coefficients.
     #Coefficients = W*Base.inv(W'*X'*X*W)*W'*X'*Y*Q
-    return PartialLeastSquares(P, T, Q, U, W, R, Coefficients, Factors, Xvar, Yvar, XEigVals)
+    return PartialLeastSquares(P, T, Q, U, W, R, Coefficients, Factors, Xvar, Yvar)
 end
 
 function PredictFn(X, M::PartialLeastSquares; Factors)
