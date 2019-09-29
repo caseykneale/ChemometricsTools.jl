@@ -170,7 +170,3 @@ function Base.iterate(iterator::PermutedVectorPair, state = 1)
         return ( broadcast(iterator.operation, iterator.vec1, iterator.vec2[state]) , state + 1)
     end
 end
-
-# for i in PermutedVectorPair([1,2,3],ones(10) )
-#     println(i)
-# end

@@ -66,15 +66,13 @@ end
 Calling a PCA object on new data brings the new data `Z` into or out of (`inverse` = true) the PCA basis.
 
 """
-(T::PCA)(Z::Array; Factors = length(T.Values), inverse = false) = (inverse) ? Z * (Diagonal(T.Values[1:Factors]) * T.Loadings[1:Factors,:]) : Z * (Diagonal( 1.0 ./ T.Values[1:Factors]) * T.Loadings[1:Factors,:])'
-
-"""
-    ExplainedVariance(PCA::PCA)
-
-Calculates the explained variance of each singular value in a pca object.
-
-"""
-ExplainedVariance(PCA::PCA) = ( PCA.Values .^ 2 ) ./ sum( PCA.Values .^ 2 )
+function (T::PCA)(Z::Array; Factors = length(T.Values), inverse = false)
+    if (inverse)
+        return Z * (Diagonal(T.Values[1:Factors]) * T.Loadings[1:Factors,:])
+    else
+        return Z * (Diagonal( 1.0 ./ T.Values[1:Factors]) * T.Loadings[1:Factors,:])'
+    end
+end
 
 struct LDA
     Scores::Array{Float64,2}
@@ -142,13 +140,6 @@ function ( model::LDA )( Z; Factors = length(model.Values) )
      Projected = Z * model.Loadings[:,1:Factors]
 end
 
-"""
-    ExplainedVariance(lda::LDA)
-
-Calculates the explained variance of each singular value in an LDA object.
-
-"""
-ExplainedVariance(lda::LDA) = (lda.Values .^ 2) ./ sum(lda.Values .^ 2)
 
 """
     HLDA(X, YHOT; K = 1, Factors = 1)
@@ -190,13 +181,6 @@ function HLDA(X, YHOT; K = 1, Factors = 2)
     Loadings = real.(Decomp.vectors[ : , Sorted[ Contributions ][ 1 : Factors ] ] )
 
     return LDA( X * Loadings,  Loadings, ReVals[ Sorted[ Contributions][1:Factors] ] )
-end
-
-function MatrixInverseSqrt(X, threshold = 1e-6)
-    eig = eigen(X)
-    diagelems = 1.0 ./ sqrt.( max.( eig.values , 0.0 ) )
-    diagelems[ diagelems .== Inf ] .= 0.0
-    return eig.vectors * LinearAlgebra.Diagonal( diagelems ) * Base.inv( eig.vectors )
 end
 
 #Untested...
@@ -255,8 +239,6 @@ function findpeaks( vY; m = 3)
     end #End loop
     return ret
 end
-
-
 
 function RecursiveAlignment(aligned, reference; maxlags::Int = 800, lookahead::Int = 0, minlength::Int = 20, mincorr::Float64 = 0.05)
     if length(aligned) < minlength
@@ -327,8 +309,6 @@ function RAFFT(raw, reference; maxlags::Int = 500, lookahead::Int = 1, minlength
     end
     return corrected
 end
-
-
 
 """
     AssessHealth( X )
