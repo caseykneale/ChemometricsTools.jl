@@ -112,7 +112,7 @@ function Hotelling(X, pca::PCA; Quantile = 0.05, Variance = 1.0)
     else
         Threshold =  quantile( Chisq( PCs ),  Quantile )
     end
-    return Hotelling( Lambda, (Diagonal( 1.0 ./ T.Values[1:Factors]) * T.Loadings[1:Factors,:])', Threshold)
+    return Hotelling( Lambda, (Diagonal( 1.0 ./ pca.Values[1:PCs]) * pca.Loadings[1:PCs,:])', Threshold)
 end
 
 """
@@ -158,6 +158,13 @@ function (H::Hotelling)(X)
     return diag( Scores * H.Lambda * Scores' )
 end
 
+
+struct Q
+    Rotations::Array
+    Projection::Array
+    UpperLimit::Float64
+end
+
 """
     Q(X, pca::PCA; Quantile = 0.95, Variance = 1.0)
 
@@ -171,7 +178,7 @@ function Q(X, pca::PCA; Quantile = 0.95, Variance = 1.0)
     (Obs,Vars) = size(X)
     CumVar = cumsum( ExplainedVariance( pca ) )
     PCs = sum(CumVar .<= Variance)
-    Q = diag(X * (LinearAlgebra.Diagonal(ones(Vars)) - pca.Loadings[1:PCs,:]' * pca.Loadings[1:PCs,:]) * X')
+    #Q = diag(X * (LinearAlgebra.Diagonal(ones(Vars)) - pca.Loadings[1:PCs,:]' * pca.Loadings[1:PCs,:]) * X')
     L = [ sum(pca.Values[(PCs + 1) : end] .^ order) for order in [ 1, 2, 3 ] ]
     H0 = 1.0 - ( ( 2.0 * L[ 1 ] * L[ 3 ] ) / ( 3.0 * L[ 2 ]^2 ) )
     if H0 < 1e-5
@@ -181,7 +188,9 @@ function Q(X, pca::PCA; Quantile = 0.95, Variance = 1.0)
     FirstTerm = ( Gauss * sqrt( 2.0 * L[2] * (H0^2.0) ) ) / L[1]
     SecondTerm =  (L[2] * H0 * ( 1.0 - H0 ) ) / (L[1] ^ 2.0)
     Upper = L[1] * ( FirstTerm + 1.0 + SecondTerm ) ^ 2.0
-    return Q, Upper
+    return Q( pca.Loadings[1:PCs,:]',
+              LinearAlgebra.I - pca.Loadings[1:PCs,:]' * pca.Loadings[1:PCs,:],
+              Upper )
 end
 
 """
@@ -197,12 +206,10 @@ https://wis.kuleuven.be/stat/robust/papers/2013/deketelaere-review.pdf
 """
 function Q(X, pls::PartialLeastSquares; Quantile = 0.95,  LVs = 1)
     (Obs,Vars) = size(X)
-    normloads = pls.XLoadings[:,1:LVs] ./ sum( pls.XLoadings[:,1:LVs] .^ 2, dims = 1) ;
-    proj = X * normloads * normloads'#(X - (pls.XScores[:,1:LVs] * normloads'))
+    normloads = pls.XLoadings[:,1:LVs] ./ sum( pls.XLoadings[:,1:LVs] .^ 2, dims = 1);
+    proj = X * normloads * normloads'
     resids = proj .- X
-    #Q = resids * resids'
-    #Q = diag(resids * (LinearAlgebra.Diagonal(ones(Vars)) - pls.XLoadings[:,1:LVs] * pls.XLoadings[:,1:LVs]') * resids')
-    Q = LinearAlgebra.diag(resids * (LinearAlgebra.I - normloads * normloads') * resids')
+    #Q = LinearAlgebra.diag(resids * (LinearAlgebra.I - normloads * normloads') * resids')
     eigvals = LinearAlgebra.svd( resids; full = false ).S #.^ 2
     L = [ sum(eigvals[(LVs + 1) : end] .^ order) for order in [ 1, 2, 3 ] ]
     H0 = 1.0 - ( ( 2.0 * L[ 1 ] * L[ 3 ] ) / ( 3.0 * L[ 2 ]^2 ) )
@@ -213,5 +220,13 @@ function Q(X, pls::PartialLeastSquares; Quantile = 0.95,  LVs = 1)
     FirstTerm = ( Gauss * sqrt( 2.0 * L[2] * (H0^2.0) ) ) / L[1]
     SecondTerm =  (L[2] * H0 * ( 1.0 - H0 ) ) / (L[1] ^ 2.0)
     Upper = L[1] * ( FirstTerm + 1.0 + SecondTerm ) ^ 2.0
-    return Q, Upper
+    return Q(normloads, LinearAlgebra.I - normloads * normloads', Upper)
+end
+
+function (qr::Q)(X)
+    proj = X * qr.Rotations * qr.Rotations'
+    resids = proj .- X
+    #Q = resids * resids'
+    #Q = diag(resids * (LinearAlgebra.Diagonal(ones(Vars)) - pls.XLoadings[:,1:LVs] * pls.XLoadings[:,1:LVs]') * resids')
+    return LinearAlgebra.diag(resids * qr.Projection * resids')
 end
