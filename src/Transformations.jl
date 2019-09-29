@@ -133,6 +133,7 @@ end
 Acquires the standard deviation of each column in `Z` provided and returns a transform that will divide those column-wise standard deviation from any future data.
 """
 Scale(Z) = Scale( StatsBase.std(Z, dims = 1),  true )
+
 """
     (T::Scale)(Z; inverse = false)
 
@@ -213,7 +214,6 @@ BoxCox(lambda) = return BoxCox(X; inverse = false) = begin
     end
     return Z
 end
-
 
 """
     Logit(Z; inverse = false)

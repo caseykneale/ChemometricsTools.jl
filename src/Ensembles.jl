@@ -1,9 +1,9 @@
 """
-    MakeIntervals( columns::Int, intervalsize::Int = 20 )
+    MakeIntervals( columns::Int, intervalsize::Int )
 
 Returns an 1-Array of intervals from the range: 1 - `columns` of size `intervalsize`.
 """
-function MakeIntervals( columns::Int, intervalsize::Int = 20 )
+function MakeIntervals( columns::Int, intervalsize::Int )
     ColSize = columns
     intlen = floor(ColSize / intervalsize) |> Int64
     Remainder = ColSize % intervalsize
@@ -17,11 +17,11 @@ function MakeIntervals( columns::Int, intervalsize::Int = 20 )
 end
 
 """
-    MakeIntervals( columns::Int, intervalsize::Union{Array, Tuple} = [20, 50, 100] )
+    MakeIntervals( columns::Int, intervalsize::Union{Array, Tuple})
 
 Creates an Dictionary whose key is the interval size and values are an array of intervals from the range: 1 - `columns` of size `intervalsize`.
 """
-function MakeIntervals( columns::Int, intervalsizes::Union{Array, Tuple} = [20, 50, 100] )
+function MakeIntervals( columns::Int, intervalsizes::Union{Array, Tuple}  )
     Intervals = Dict()
     for interval in intervalsizes
         Intervals[interval] = MakeIntervals(columns,  interval)
