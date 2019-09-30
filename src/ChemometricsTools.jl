@@ -1,8 +1,8 @@
 module ChemometricsTools
-    using DataFrames, LinearAlgebra, Statistics, StatsBase, SparseArrays, RecipesBase#, Plots
+    using DataFrames, LinearAlgebra, Statistics, StatsBase, SparseArrays, RecipesBase
     using CSV: read
     using Distributions #Could probably also get rid of this one...
-    using Dates#, Revise
+    using Dates, Documenter#, Revise
     #A generic function that I use everywhere to coerce a vector dim 0 to a row vector...
     forceMatrix( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, length(a), 1 ) : a
     forceMatrixT( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, 1, length(a) ) : a
