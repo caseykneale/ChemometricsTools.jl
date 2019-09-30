@@ -11,7 +11,7 @@ Pkg.add("ChemometricsTools")
 ```
 
 ## Support:
-This package was written in [Julia 1.0.3](https://julialang.org/) but should run fine in 1.1 or later releases. That's the beauty of from scratch code with minimal dependencies.
+This package was written in [Julia 1.0.3](https://julialang.org/) but it runs fine on 1.1, 1.2 and later releases. That's the beauty of from scratch code with minimal dependencies.
 
 ## Ethos
 Dependencies: Only base libraries (LinearAlgebra, StatsBase, Statistics, Plots) etc will be required. This is for longevity, and to provide a fast precompilation time. As wonderful as it is that other packages exist to do some of the internal operations this one needs, we won't have to worry about a breaking change made by an external author working out the kinks in a separate package. I want this to be long-term reliable without much upkeep. I'm a busy guy working a day job; I write this to warm-up before work, and unwind afterwards.
