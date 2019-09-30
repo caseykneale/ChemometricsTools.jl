@@ -1,8 +1,8 @@
-push!(LOAD_PATH,"/src/")
-push!(LOAD_PATH,"/home/caseykneale/Desktop/ChemometricsTools/ChemometricsTools.jl/")
-using Pkg
+#push!(LOAD_PATH,"/src/")
+#push!(LOAD_PATH,"/home/caseykneale/Desktop/ChemometricsTools/ChemometricsTools.jl/")
+#using Pkg
 #Pkg.activate(".")
-Pkg.activate(".")
+#Pkg.activate(".")
 
 using Documenter, ChemometricsTools
 
@@ -51,4 +51,9 @@ makedocs(
 		    			],
 			 "Full API" => "man/FullAPI.md",
 		]
+)
+
+
+deploydocs(
+    repo = "github.com/caseykneale/ChemometricsTools.jl.git",
 )
