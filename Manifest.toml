@@ -1,3 +1,5 @@
+# This file is machine-generated - editing it directly is not advised
+
 [[AbstractFFTs]]
 deps = ["LinearAlgebra"]
 git-tree-sha1 = "380e36c66edfa099cd90116b24c1ce8cafccac40"
@@ -136,24 +138,6 @@ deps = ["LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SpecialFunctio
 git-tree-sha1 = "b7c7b78569f9a86bb00d85ef7336101869824b15"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
 version = "0.21.2"
-
-[[DocStringExtensions]]
-deps = ["LibGit2", "Markdown", "Pkg", "Test"]
-git-tree-sha1 = "4d30e889c9f106a51ffa4791a88ffd4765bf20c3"
-uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
-version = "0.7.0"
-
-[[Documenter]]
-deps = ["Base64", "DocStringExtensions", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "REPL", "Test", "Unicode"]
-git-tree-sha1 = "1b6ae3796f60311e39cd1770566140d2c056e87f"
-uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-version = "0.23.3"
-
-[[DocumenterTools]]
-deps = ["Base64", "DocStringExtensions", "LibGit2"]
-git-tree-sha1 = "4c311de5cf6f8fe7a0489b9e3b02fbe3148dde15"
-uuid = "35a29f4d-8980-5a13-9543-d66fff28ecb8"
-version = "0.1.1"
 
 [[ErrorfreeArithmetic]]
 git-tree-sha1 = "a2b7d5a7962e5bfaab0e2e87c9cde7d3087f4e2c"

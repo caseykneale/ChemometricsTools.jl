@@ -1,8 +1,3 @@
-push!(LOAD_PATH,"/src/")
-#push!(LOAD_PATH,"/home/caseykneale/Desktop/ChemometricsTools/ChemometricsTools.jl/")
-using Pkg
-Pkg.activate(".")
-
 using Documenter, ChemometricsTools
 
 makedocs(
