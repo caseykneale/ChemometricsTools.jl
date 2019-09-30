@@ -47,7 +47,7 @@ makedocs(
 		]
 )
 
-
 deploydocs(
     repo = "github.com/caseykneale/ChemometricsTools.jl.git",
+	branch = "gh-pages",
 )
