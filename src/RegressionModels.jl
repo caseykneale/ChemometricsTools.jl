@@ -37,6 +37,7 @@ function PredictFn(X, M::Union{ClassicLeastSquares, RidgeRegression})
     Z = ( M.Bias ) ? hcat( ones(size( X )[ 1 ] ), X ) : X
     return Z * M.Coefficients
 end
+
 """
     (M::ClassicLeastSquares)(X)
 
@@ -129,6 +130,7 @@ function PrincipalComponentRegression(PCAObject::PCA, Y )
 end
 
 PredictFn(X, M::PrincipalComponentRegression) = M.CLS( M.PCA( X ) )
+
 """
     (M::PrincipalComponentRegression)( X )
 

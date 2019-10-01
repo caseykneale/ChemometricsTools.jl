@@ -5,7 +5,6 @@ struct pipeline
     inplace::Bool
 end
 
-#Naive Constructor...
 """
     Pipeline(Transforms)
 
