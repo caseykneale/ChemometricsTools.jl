@@ -4,13 +4,13 @@
 This package contains a collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. It is currently richer and more fundamental than any single free chemometrics package available in any other language. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is a pile of applied linear algebra/statistics that is well reasoned by the physics and meaning of chemical measurements. This is somewhat orthogonal to most fields of machine learning (aka "add more layers"). Sometimes chemometricians also get desperate and break out pure machine learning methods. So some of those methods are in this package, but if you want neural networks try [Flux.jl](https://github.com/FluxML/Flux.jl) it's a personal favorite of mine.
 
 ## Tutorials/Demonstrations:
-  - [Transforms](https://caseykneale.github.io/ChemometricsTools.jl/Demos/Transforms/)
-  - [Pipelines + LoopyMSC Example](https://caseykneale.github.io/ChemometricsTools.jl/Demos/Pipelines/)
-  - [Classification](https://caseykneale.github.io/ChemometricsTools.jl/Demos/ClassificationExample/)
-  - [Regression](https://caseykneale.github.io/ChemometricsTools.jl/Demos/RegressionExample/)
-  - [Calibration Transfer: Direct Standardization](https://caseykneale.github.io/ChemometricsTools.jl/Demos/CalibXfer/)
-  - [Stacked Interval Partial Least Squares Regression](https://caseykneale.github.io/ChemometricsTools.jl/Demos/SIPLS/)
-  - [Curve Resolution](https://caseykneale.github.io/ChemometricsTools.jl/Demos/CurveResolution/)
+  - [Transforms](https://caseykneale.github.io/ChemometricsTools.jl/dev/Demos/Transforms/)
+  - [Pipelines + LoopyMSC Example](https://caseykneale.github.io/ChemometricsTools.jl/dev/Demos/Pipelines/)
+  - [Classification](https://caseykneale.github.io/ChemometricsTools.jl/dev/Demos/ClassificationExample/)
+  - [Regression](https://caseykneale.github.io/ChemometricsTools.jl/dev/Demos/RegressionExample/)
+  - [Calibration Transfer: Direct Standardization](https://caseykneale.github.io/ChemometricsTools.jl/dev/Demos/CalibXfer/)
+  - [Stacked Interval Partial Least Squares Regression](https://caseykneale.github.io/ChemometricsTools.jl/dev/Demos/SIPLS/)
+  - [Curve Resolution](https://caseykneale.github.io/ChemometricsTools.jl/dev/Demos/CurveResolution/)
 
 ## Shootouts/Modeling Examples:
   - [Readme](https://github.com/caseykneale/ChemometricsTools.jl/tree/master/shootouts)
@@ -18,7 +18,7 @@ This package contains a collection of tools to perform fundamental and advanced 
   - [Regression](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/RegressionShootout.jl)
   - [Fault Detection](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/AnomalyShootout.jl)
 
-### Package Status => Speed Boost (v 0.5.5)
+### Package Status => Iterative Refinement (v 0.5.5)
 ChemometricsTools has been accepted as an official Julia package! Yep, so you can  ```Pkg.add("ChemometricsTools")``` to install it. The git repo's master branch has the most advanced version right now, but may be less reliable because I like to do dev on it. A lot of features have been added since the first public release (v 0.2.3 ). In 0.5.5 almost all of the functionality available can be used/abused. If you find a bug or want a new feature don't be shy - file an issue. In v0.5.1 Plots was removed as a dependency, new plot recipes were added, and now the package compiles much faster! Making headway into v0.6.0 - mostly going to be touch up and adding functionality when I can. Convenience functions, documentation, bug fixes, refactoring and clean up are in progress bare with me.
 
 ### Version Release Strategy
