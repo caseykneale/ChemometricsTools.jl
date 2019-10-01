@@ -68,18 +68,24 @@ end
 Calculates the leverage of samples in a `pca` object.
 """
 function Leverage(pca::PCA)
-    return [ sum(diag(pca.Scores[r,:] * Base.inv(pca.Scores[r,:]' * pca.Scores[r,:]) * pca.Scores[r,:]')) for r in 1:size(pca.Scores)[1] ]
+    H = LinearAlgebra.diag(pca.Scores * Base.inv(pca.Scores' * pca.Scores) * pca.Scores')
+    if any(H .< 1e-9)
+        @warn("Negative Leverage values. Please center X matrix.")
+    end
+    return H
 end
 
 """
     Leverage(pls::PartialLeastSquares)
 
-UNTESTED
-
 Calculates the leverage of samples in a `pls` object.
 """
 function Leverage(pls::PartialLeastSquares)
-    return [ sum(diag(pls.XScores[r,:] * Base.inv(pls.XScores[r,:]' * pls.XScores[r,:]) * pls.XScores[r,:]')) for r in 1:size(pls.XScores)[1] ]
+    H = diag(pls.XScores * Base.inv(pls.XScores' * pls.XScores) * pls.XScores')
+    if any(H .< 1e-9)
+        @warn("Negative Leverage values. Please center X & Y matrices.")
+    end
+    return H
 end
 
 struct Hotelling

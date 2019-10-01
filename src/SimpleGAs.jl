@@ -13,7 +13,6 @@ the GA's in this package can be used to minimize or maximize this is an open par
 """
 Lifeform(size, onlikelihood, initialscore) = BinaryLifeform(initialscore, rbinomial(onlikelihood, size))
 
-
 """
     SinglePointCrossOver( L1::BinaryLifeform, L2::BinaryLifeform )
 

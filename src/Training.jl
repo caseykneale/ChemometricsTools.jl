@@ -56,7 +56,6 @@ see the tutorials for pragmatic examples. The iterator returns a 2-Tuple of 2-Tu
 """
 LeaveOneOut(x, y) = KFoldsValidation( size( x )[ 1 ], 1, size( x )[ 1 ], 0, x, forceMatrix(y) )
 
-
 function Base.iterate( iter::KFoldsValidation, state = (0,0) )
     ( i, o ) = state;
     predictInds = []; trainInds = []; holdoutInds = []
