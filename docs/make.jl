@@ -41,9 +41,8 @@ makedocs(
 						 "Stats." => "man/Stats.md",
 						 "Distance Measures" => "man/Dists.md",
 						 "PSO" => "man/PSO.md",
-						 "Genetic Algorithms" => "man/GeneticAlgorithms.md",
-		    			]#,
-			 #"Full API" => "man/FullAPI.md",
+						 "Genetic Algorithms" => "man/GeneticAlgorithms.md"
+		    			]
 		]
 )
 
