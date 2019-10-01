@@ -1,5 +1,4 @@
-using Dates
-using CSV
+using Dates, CSV
 """
     IsColdEncoded(Y)
 

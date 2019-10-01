@@ -1,8 +1,7 @@
 module ChemometricsTools
     using DataFrames, LinearAlgebra, Statistics, StatsBase, SparseArrays, RecipesBase
     using CSV: read
-    using Distributions #Could probably also get rid of this one...
-    using Dates#, Revise
+    using Distributions, Dates#, Revise
     #A generic function that I use everywhere to coerce a vector dim 0 to a row vector...
     forceMatrix( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, length(a), 1 ) : a
     forceMatrixT( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, 1, length(a) ) : a
@@ -19,12 +18,13 @@ module ChemometricsTools
 
     include("RegressionMetrics.jl") #Has Docs
     export ME, MAE, MAPE, SSE, MSE, RMSE, SSTotal, SSReg, SSRes, RSquare,
-        PearsonCorrelationCoefficient, PercentRMSE
+        PearsonCorrelationCoefficient, PercentRMSE, FNorm
 
     include("DistanceMeasures.jl") #Has Docs
     export SquareEuclideanDistance, EuclideanDistance, ManhattanDistance,
         GaussianKernel, CauchyKernel, LinearKernel, Kernel, NearestNeighbors,
-        AdjacencyMatrix, InClassAdjacencyMatrix, OutOfClassAdjacencyMatrix
+        AdjacencyMatrix, InClassAdjacencyMatrix, OutOfClassAdjacencyMatrix,
+        CenterKernelMatrix
 
     include("Transformations.jl") #Has Docs: Box Cox Omitted for now...
     export Transform, PipelineInPlace, Pipeline, QuantileTrim, Center, Scale,
@@ -48,9 +48,9 @@ module ChemometricsTools
     include("Preprocess.jl") #Has Docs
     export FirstDerivative, SecondDerivative, FractionalDerivative, SavitzkyGolay,
         DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection,
-        StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, ScaleMinMax,
-        offsetToZero, boxcar, ALSSmoother, PerfectSmoother, CORAL, TransferByOrthogonalProjection,
-        Noise
+        StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, ScaleFNorm,
+        ScaleMinMax, offsetToZero, boxcar, ALSSmoother, PerfectSmoother, CORAL,
+        TransferByOrthogonalProjection, Noise
 
     include("RegressionModels.jl") # Has Docs
     export ClassicLeastSquares, OrdinaryLeastSquares, RidgeRegression,

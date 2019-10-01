@@ -1,5 +1,3 @@
-#Zero dependencies! Alright that's what I'm talking about!
-
 """
     OneHotOdds(Y)
 
@@ -106,7 +104,6 @@ struct CART
     Classification::Bool
 end
 
-
 """
     ClassificationTree(x, y; gainfn = entropy, maxdepth = 4, minbranchsize = 3)
 
@@ -176,7 +173,6 @@ Predictions can be formed by calling the following function from the CART object
 I wrote it the recursive way in the past and it was quite slow, I think this is true also
 of interpretted languages like R/Python...So here it is, nonrecursive tree's!
 """
-
 function RegressionTree(x, y; gainfn = ssd, maxdepth = 4, minbranchsize = 3, varsmpl = 0)
     curdepth = 1 #Place holder for power of 2 depth of the binary tree
     cursky = 1 #Holds a 1 if branch can grow, 0 if it cannot
@@ -232,7 +228,6 @@ end
 
 This is a universal CART object predict function.
 """
-
 function (M::CART)(x)
     (Obs, Vars) = size(x) .|> Int
     output = zeros(Obs, M.MaxClasses)

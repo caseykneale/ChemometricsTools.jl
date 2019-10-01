@@ -46,8 +46,6 @@ function PCA_NIPALS(X; Factors = minimum(size(X)) - 1, tolerance = 1e-7, maxiter
     return PCA(Tm, Pm, EigVal, "NIPALS")
 end
 
-#SVD based PCA
-
 """
     PCA(X; Factors = minimum(size(X)) - 1)
 

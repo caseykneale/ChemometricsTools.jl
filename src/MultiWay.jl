@@ -83,7 +83,6 @@ Computes the equivalent of the Froebinius norm on a tensor `T`. Returns a scalar
 """
 MultiNorm(T) = sqrt(sum(T .^ 2))
 
-
 """
     MultiPCA(X; Factors = 2)
 

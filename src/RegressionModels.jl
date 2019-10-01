@@ -78,6 +78,7 @@ function KernelRidgeRegression( X, Y, Penalty; KernelParameter = 0.0, KernelType
     Kern = Kernel( KernelParameter, KernelType, X )
     return KRR(Kern, RidgeRegression( Kern(X), Y, Penalty ) )
 end
+
 """
     (M::KRR)(X)
 

@@ -45,7 +45,6 @@ struct RandomForest
     ensemble::Array{CART, 1}
 end
 
-
 """
     RandomForest(x, y, mode = :classification; gainfn = entropy, trees = 50, maxdepth = 10,  minbranchsize = 5, samples = 0.7, maxvars = nothing)
 

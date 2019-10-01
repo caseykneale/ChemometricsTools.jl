@@ -53,14 +53,15 @@ function RMSE( y, yhat )
 end
 
 """
-    PercentRMSE( y, yhat )
+    PercentRMSE( y, yhat; aspercent = true )
 
 Calculates Percent Root Mean Squared Error from vectors `Y` and `YHat`
 """
-function PercentRMSE( y, yhat )
+function PercentRMSE( y, yhat; aspercent = true )
     mini = reduce(min, yhat)
     maxi = reduce(max, yhat)
-    return RMSE(y,yhat) / (maxi - mini)
+    scalar = (aspercent) ? 100.0 : 1
+    return scalar * RMSE(y,yhat) / (maxi - mini)
 end
 
 """
@@ -89,6 +90,7 @@ Calculates Sum of Squared Residuals from vectors `Y` and `YHat`
 function SSRes( y, yhat )
     return sum( ( y - yhat ) .^ 2 )
 end
+
 """
     RSquare( y, yhat )
 
@@ -97,6 +99,14 @@ Calculates R^2 from `Y` and `YHat`
 function RSquare( y, yhat )
     return 1.0 - ( SSRes(y, yhat) / SSTotal(y) )
 end
+
+"""
+    FNorm( X )
+
+Calculates the Froebinius norm of matrix X.
+"""
+FNorm( X ) = sqrt.( sum( X .^ 2 ) )
+
 """
     PearsonCorrelationCoefficient( y, yhat )
 

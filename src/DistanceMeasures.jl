@@ -124,14 +124,12 @@ function OutOfClassAdjacencyMatrix(DistanceMatrix, YHOT, K = 1)
     return Result
 end
 
-
-
-#Kernels
 struct Kernel
     params::Union{Float64, Tuple}
     ktype::String
     original::Array
 end
+
 """
     Kernel(X)
 
@@ -139,7 +137,6 @@ Default constructor for Kernel object. Returns the linear kernel of `X`.
 """
 Kernel( X ) = Kernel(0.0, "linear", X)
 
-#This is just a wrapper so we can apply kernels willy nilly in one line
 """
     (K::Kernel)(X)
 
@@ -165,14 +162,14 @@ LinearKernel(X, c) =  (X * X') .+ c
 
 Creates a Linear kernel from Arrays `X` and `Y` with hyperparameter `C`.
 """
-LinearKernel(X, Y, c) = (Y * X') .+ c
+LinearKernel( X, Y, c ) = (Y * X') .+ c
 
 """
     GaussianKernel(X, sigma)
 
 Creates a Gaussian/RBF kernel from Array `X` using hyperparameter `sigma`.
 """
-function GaussianKernel(X, sigma)
+function GaussianKernel( X, sigma )
     Gamma = -1.0 / (2.0 * sigma^2)
     return exp.( SquareEuclideanDistance(X) .* Gamma  )
 end
@@ -187,7 +184,6 @@ function GaussianKernel(X, Y, sigma)
     return exp.( SquareEuclideanDistance(Y, X) .* Gamma  )
 end
 
-
 """
     CauchyKernel(X, sigma)
 
@@ -197,7 +193,6 @@ function CauchyKernel(X, sigma)
     return 1.0 ./ ( (pi * sigma) .* (1.0 .+ ( SquareEuclideanDistance(X) ./ sigma) .^ 2  ) )
 end
 
-
 """
     CauchyKernel(X, Y, sigma)
 
@@ -205,4 +200,15 @@ Creates a Cauchy kernel from Arrays `X` and `Y` using hyperparameters `sigma`.
 """
 function CauchyKernel(X, Y, sigma)
     return 1.0 ./ ( (pi * sigma) .* (1.0 .+ ( SquareEuclideanDistance(Y, X) ./ sigma) .^ 2  ) )
+end
+
+"""
+    CenterKernelMatrix(X)
+
+Returns a centered kernel matrix.
+"""
+function CenterKernelMatrix(K, n = first( size( K ) ) )
+    Obs = first( size( X ) )
+    Ones = ones(Obs, Obs) / n
+    return (LinearAlgebra.I - Ones) * K * (LinearAlgebra.I - Ones)
 end

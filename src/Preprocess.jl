@@ -70,6 +70,13 @@ Scales the columns of `X` by the Inf-Norm of each row. Returns the scaled array.
 ScaleInfNorm(X) = X ./ reduce(max, X, dims = 2)
 
 """
+    ScaleFNorm(X)
+
+Scales EACH entry of `X` by the Frobenius Norm of. Returns the scaled array.
+"""
+ScaleFNorm(X) = X ./ FNorm( X )
+
+"""
     ScaleMinMax(X)
 
 Scales the columns of `X` by the Min and Max of each row such that no observation is greater than 1 or less than zero.
@@ -104,7 +111,6 @@ function boxcar(X; windowsize = 3, fn = mean)
     end
     return result
 end
-
 
 """
     ALSSmoother(X; lambda = 100, p = 0.001, maxiters = 10)
@@ -352,7 +358,6 @@ function (OSC::OrthogonalSignalCorrection)(Z; Factors = 2)
     return X
 end
 
-
 struct TransferByOrthogonalProjection
     Factors::Int
     vars::Int
@@ -384,8 +389,6 @@ end
 struct CORAL
     coralmat::Array
 end
-
-
 """
     CORAL(X1, X2; lambda = 1.0)
 
