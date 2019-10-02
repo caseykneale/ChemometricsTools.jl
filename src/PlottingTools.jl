@@ -1,4 +1,7 @@
 """
+    residualsplotrecipe(rmodel::ChemometricsTools.RegressionModels, X, Y)
+
+Plots the residuals of a RegressionModel object given an input `X` and ground-truth `Y`.
 """
 @recipe function residualsplotrecipe(rmodel::ChemometricsTools.RegressionModels, X, Y)
     Yhat = rmodel(X)
@@ -22,7 +25,12 @@ function QQ( Y1, Y2; Quantiles = collect( 1 : 99 ) ./ 100 )
     return QQ( (Statistics.quantile!(Y1, Quantiles), Statistics.quantile!(Y2, Quantiles) ))
 end
 
-@recipe function f(qq::QQ)
+"""
+    quantilequantile(qq::QQ)
+
+Plots a Quantile-Quantile plot.
+"""
+@recipe function quantilequantile(qq::QQ)
     m = sum( diff( qq.StoredTuple[ 1 ] ) ) / sum( diff( qq.StoredTuple[ 2 ] ) )
     int = qq.StoredTuple[2][2] - (m * qq.StoredTuple[1][2])
 
@@ -66,7 +74,13 @@ function BlandAltman(Y1, Y2; Confidence = 1.96)
     return BlandAltman( means, diffs, UpperLimit, Center, LowerLimit, Outliers )
 end
 
-@recipe function f(BA::BlandAltman)
+
+"""
+    blandaltman(BA::BlandAltman)
+
+Plots a Bland-Altman plot.
+"""
+@recipe function blandaltman(BA::BlandAltman)
     seriestype := :scatter
     title := "Bland Altman"
     xlabel := Symbol("Means")
@@ -84,6 +98,7 @@ end
 end
 
 rectangle(w, h, x, y) = Shape(x .+ [0,w,w,0], y .+ [0,0,h,h])
+
 """
     IntervalOverlay(Spectra, Intervals, Err)
 
@@ -95,7 +110,12 @@ struct IntervalOverlay
     Err
 end
 
-@recipe function f(IO::IntervalOverlay)
+"""
+    intervaloverlay(IO::IntervalOverlay)
+
+Plots a barchart overlay over a spectra according to an `IntervalOverlay` object.
+"""
+@recipe function intervaloverlay(IO::IntervalOverlay)
     RelativeErr = IO.Err ./ sum(IO.Err);
 
     seriestype := :path
@@ -162,7 +182,12 @@ DiscriminantAnalysisPlot(DA, GD, YHot, LblEncoding, UnlabeledData;
                     Axis = [1,2], Confidence = 0.90) = DAPlot( DA, GD, YHot,
                     LblEncoding, UnlabeledData, Axis, Confidence)
 
-@recipe function f(dap::DAPlot)
+"""
+    discrimanalyplot(dap::DAPlot)
+
+Plots two DA axis, with ellipsoids according to a `DiscriminantAnalysisPlot` object.
+"""
+@recipe function discrimanalyplot(dap::DAPlot)
     exvar = round.(ExplainedVariance(dap.DA) .* 10000) /100
     @assert all(dap.Axis .<= size(dap.UnlabeledData)[2])
     A = []

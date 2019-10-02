@@ -161,8 +161,7 @@ function PerfectSmoother(X; lambda = 100)
     return output
 end
 
-#Pretty sure this is reversible like a transform, but don't have time to solve it
-#in reverse yet...
+#Pretty sure this is reversible like a transform, but don't have time to solve the inverse yet...
 struct MultiplicativeScatterCorrection
     BiasedMeans
     Bias
@@ -277,8 +276,6 @@ function SavitzkyGolay(X, Delta, PolyOrder, windowsize::Int)
     return output[:, (offset + 1) : (end - offset)]
 end
 
-
-#Direct Standardization Calibration Transfer Method
 struct DirectStandardizationXform
     pca::PCA
     TransferMatrix::Array
@@ -306,7 +303,6 @@ end
 Applies a the transform from a learned direct standardization object `DSX` to new data `X`.
 """
 function (DSX::DirectStandardizationXform)(X; Factors = length(DSX.pca.Values))
-    #Transform data into PCA
     Into = DSX.pca(X; Factors = Factors)
     Bridge = Into * DSX.TransferMatrix[1:Factors,1:Factors]
     return DSX.pca(Bridge; Factors = Factors, inverse = true)
