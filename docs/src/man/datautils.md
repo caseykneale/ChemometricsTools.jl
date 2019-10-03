@@ -4,5 +4,5 @@
 
 ```@autodocs
 Modules = [ChemometricsTools]
-Pages   = ["datautils.jl"]
+Pages   = ["DataUtils.jl"]
 ```
