@@ -22,9 +22,9 @@ module ChemometricsTools
 
     include("DistanceMeasures.jl") #Has Docs
     export SquareEuclideanDistance, EuclideanDistance, ManhattanDistance,
-        GaussianKernel, CauchyKernel, LinearKernel, Kernel, NearestNeighbors,
-        AdjacencyMatrix, InClassAdjacencyMatrix, OutOfClassAdjacencyMatrix,
-        CenterKernelMatrix
+        MinkowskiDistance, LevenshteinDistance, GaussianKernel, CauchyKernel,
+        LinearKernel, Kernel, NearestNeighbors, AdjacencyMatrix,
+        InClassAdjacencyMatrix, OutOfClassAdjacencyMatrix, CenterKernelMatrix
 
     include("Transformations.jl") #Has Docs: Box Cox Omitted for now...
     export Transform, PipelineInPlace, Pipeline, QuantileTrim, Center, Scale,
@@ -49,8 +49,8 @@ module ChemometricsTools
     export FirstDerivative, SecondDerivative, FractionalDerivative, SavitzkyGolay,
         DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection,
         StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, ScaleFNorm,
-        ScaleMinMax, offsetToZero, boxcar, ALSSmoother, PerfectSmoother, CORAL,
-        TransferByOrthogonalProjection, Noise
+        ScaleMinMax, ScaleByIntensity, offsetToZero, boxcar, ALSSmoother,
+        PerfectSmoother, CORAL, TransferByOrthogonalProjection, Noise
 
     include("RegressionModels.jl") # Has Docs
     export ClassicLeastSquares, OrdinaryLeastSquares, RidgeRegression,

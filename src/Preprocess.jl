@@ -89,6 +89,14 @@ function ScaleMinMax(X)
 end
 
 """
+    ScaleByIntensity(X, index)
+
+Scales the columns of `X` by the value of a peak at a specified `index` in each row.
+Returns the scaled array.
+"""
+ScaleByIntensity(X, index) = X ./ X[:,index]
+
+"""
     offsetToZero(X)
 
 Ensures that no observation(row) of Array `X` is less than zero, by ensuring the minimum value of each row is zero.

@@ -74,7 +74,6 @@ function (PNN::ProbabilisticNeuralNetwork)(X; sigma = 0.1)
     return Score
 end
 
-#Generalized Gaussian Discriminant Analysis
 struct GaussianDiscriminant
     Basis::Union{PCA, LDA}
     ClassSize::Array
@@ -182,7 +181,6 @@ function ConfidenceEllipse(cov, mean, confidence, axis = [1,2]; pointestimate = 
     return Translate
 end
 
-
 struct LogisticRegression
     Coefficients
     Biases
@@ -232,7 +230,6 @@ end
 Returns a 1 hot encoded inference from `X` using a LogisticRegression object.
 """
 ( model::LogisticRegression )( X ) = softmax( (X * model.Coefficients) .+ model.Biases )
-
 
 struct GaussianNaiveBayes
     TotalSamples::Int
