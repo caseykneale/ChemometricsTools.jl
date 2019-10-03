@@ -19,6 +19,7 @@ makedocs(
 						"Curve Resolution" => "Demos/CurveResolution.md",
 					   ],
 			 "API" => Any[
+			 			 "Data Utilities" => "man/datautils.md",
 			 			 "Kernel Density Generator" => "man/kerneldensity.md",
 			 			 "Preprocessing" => "man/Preprocess.md",
 			 			 "Transformations/Pipelines" => "man/Transformations.md",

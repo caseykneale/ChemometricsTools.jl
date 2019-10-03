@@ -97,7 +97,8 @@ Plots a Bland-Altman plot.
     @series y := ([0, 1], [BA.LowerLimit, BA.LowerLimit])
 end
 
-rectangle(w, h, x, y) = Shape(x .+ [0,w,w,0], y .+ [0,0,h,h])
+
+#rectangle(w, h, x, y) = Shape(x .+ [0,w,w,0], y .+ [0,0,h,h])
 
 """
     IntervalOverlay(Spectra, Intervals, Err)
@@ -132,7 +133,9 @@ Plots a barchart overlay over a spectra according to an `IntervalOverlay` object
         w = line[end] - line[1]
         h = RelativeErr[i] * scalethis
         xloc = line[1]
-        @series y := rectangle(w,h,xloc,0)
+        #@series y := rectangle(w,h,xloc,0)
+        #seriestype := :shape
+        @series ( xloc .+ [ 0, w, w, 0 ], [ 0, 0, h, h ] ) 
     end
 end
 
