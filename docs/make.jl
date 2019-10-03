@@ -18,31 +18,43 @@ makedocs(
 						"Calibration Transfer" => "Demos/CalibXfer.md",
 						"Curve Resolution" => "Demos/CurveResolution.md",
 					   ],
-			 "API" => Any[
-			 			 "Data Utilities" => "man/datautils.md",
-			 			 "Kernel Density Generator" => "man/kerneldensity.md",
-			 			 "Preprocessing" => "man/Preprocess.md",
-			 			 "Transformations/Pipelines" => "man/Transformations.md",
-						 "Sampling" => "man/Sampling.md",
-						 "Analysis" => "man/Analysis.md",
-						 "Training" => "man/Training.md",
-						 "Time Series" => "man/TimeSeries.md",
-						 "Regression Models" => "man/RegressionModels.md",
-						 "Regression Metrics" => "man/regressMetrics.md",
-			 			 "Classification Models" => "man/ClassificationModels.md",
-						 "Classification Metrics" => "man/classMetrics.md",
-						 "Tree Methods" => "man/Trees.md",
-						 "Ensemble Models" => "man/Ensemble.md",
-						 "Model Analysis" => "man/modelanalysis.md",
-						 "Plotting" => "man/Plotting.md",
-						 "Clustering" => "man/Clustering.md",
-						 "MultiWay" => "man/MultiWay.md",
-						 "Anomaly Detection" => "man/AnomalyDetection.md",
-						 "Curve Resolution" => "man/CurveResolution.md",
-						 "Stats." => "man/Stats.md",
-						 "Distance Measures" => "man/Dists.md",
-						 "PSO" => "man/PSO.md",
-						 "Genetic Algorithms" => "man/GeneticAlgorithms.md"
+			 "Data" => Any[
+			 					"Data Utilities" => "man/datautils.md",
+			 			 		"Kernel Density Generator" => "man/kerneldensity.md"
+							],
+			 "Manipulations" => Any[
+			 					"Preprocessing" => "man/Preprocess.md",
+			 			 		"Transformations/Pipelines" => "man/Transformations.md",
+						 		"Sampling" => "man/Sampling.md"
+							],
+			 "Visualizations" => Any[
+			 					"Plotting" => "man/Plotting.md",
+			 				],
+			 "Analysis" => Any[
+			 					"Distances/Kernels" => "man/Dists.md",
+			 					"Analysis" => "man/Analysis.md",
+			  					"Clustering" => "man/Clustering.md",
+								"Stats." => "man/Stats.md",
+							],
+			 "Modeling" => Any[
+			 					"Training" => "man/Training.md",
+						 		"Time Series" => "man/TimeSeries.md",
+						 		"Regression Models" => "man/RegressionModels.md",
+						 		"Regression Metrics" => "man/regressMetrics.md",
+			 			 		"Classification Models" => "man/ClassificationModels.md",
+						 		"Classification Metrics" => "man/classMetrics.md",
+						 		"Tree Methods" => "man/Trees.md",
+						 		"Ensemble Models" => "man/Ensemble.md"
+							],
+			 "Speciality Tools" => Any[
+			 					 "Model Analysis" => "man/modelanalysis.md"
+						 		 "MultiWay" => "man/MultiWay.md",
+								 "Anomaly Detection" => "man/AnomalyDetection.md",
+								 "Curve Resolution" => "man/CurveResolution.md",
+							],
+			"Advanced" => Any[
+								 "PSO" => "man/PSO.md",
+								 "Genetic Algorithms" => "man/GeneticAlgorithms.md"
 		    			]
 		]
 )
