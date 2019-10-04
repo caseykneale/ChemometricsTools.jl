@@ -1,3 +1,6 @@
+# push!(LOAD_PATH, "/home/caseykneale/Desktop/ChemometricsTools/ChemometricsTools.jl/");
+# using Pkg
+# Pkg.activate(".")
 using Documenter, ChemometricsTools
 
 makedocs(
@@ -27,7 +30,7 @@ makedocs(
 			 			 		"Transformations/Pipelines" => "man/Transformations.md",
 						 		"Sampling" => "man/Sampling.md"
 							],
-			 "Visualizations" => "Plotting" => "man/Plotting.md",
+			 "Visualizations" => Any[ "Plotting" => "man/Plotting.md"],
 			 "Analysis" => Any[
 			 					"Distances/Kernels" => "man/Dists.md",
 			 					"Analysis" => "man/Analysis.md",
