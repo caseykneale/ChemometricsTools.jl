@@ -174,11 +174,11 @@ struct Kernel
 end
 
 """
-    Kernel(X)
+    Kernel(X::Array)
 
 Default constructor for Kernel object. Returns the linear kernel of `X`.
 """
-Kernel( X ) = Kernel(0.0, "linear", X)
+Kernel( X::Array ) = Kernel(0.0, "linear", X)
 
 """
     (K::Kernel)(X)

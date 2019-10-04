@@ -1,4 +1,4 @@
-# Data Utilitiess API Reference
+# Data Utilities API Reference
 
 ## Functions
 

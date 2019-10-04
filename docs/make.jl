@@ -48,7 +48,7 @@ makedocs(
 						 		"Ensemble Models" => "man/Ensemble.md"
 							],
 			 "Speciality Tools" => Any[
-			 					 "Model Analysis" => "man/modelanalysis.md",
+			 					 "Model Analysis" => "man/modelanaly.md",
 						 		 "MultiWay" => "man/MultiWay.md",
 								 "Anomaly Detection" => "man/AnomalyDetection.md",
 								 "Curve Resolution" => "man/CurveResolution.md"
