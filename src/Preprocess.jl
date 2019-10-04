@@ -177,13 +177,13 @@ struct MultiplicativeScatterCorrection
 end
 
 """
-    MultiplicativeScatterCorrection(Z)
+    MultiplicativeScatterCorrection(Z::Array)
 
 Creates a MultiplicativeScatterCorrection object from the data in Z
 
 Martens, H. Multivariate calibration. Wiley
 """
-function MultiplicativeScatterCorrection(Z)
+function MultiplicativeScatterCorrection(Z::Array)
     BiasedMeans = hcat( ones( ( size(Z)[2], 1) ) , StatsBase.mean( Z, dims = 1 )[1,:] )
     Coeffs = ( BiasedMeans' * BiasedMeans ) \ ( Z * BiasedMeans )'
     MultiplicativeScatterCorrection( BiasedMeans, Coeffs[1,:], Coeffs[2,:] )

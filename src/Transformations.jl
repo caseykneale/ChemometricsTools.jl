@@ -112,7 +112,7 @@ end
 
 Acquires the mean of each column in `Z` provided and returns a transform that will subtract those column means from any future data.
 """
-Center(Z) = Center( StatsBase.mean(Z, dims = 1), true )
+Center(Z::Array) = Center( StatsBase.mean(Z, dims = 1), true )
 
 """
     (T::Center)(Z; inverse = false)
@@ -131,7 +131,7 @@ end
 
 Acquires the standard deviation of each column in `Z` provided and returns a transform that will divide those column-wise standard deviation from any future data.
 """
-Scale(Z) = Scale( StatsBase.std(Z, dims = 1),  true )
+Scale(Z::Array) = Scale( StatsBase.std(Z, dims = 1),  true )
 
 """
     (T::Scale)(Z; inverse = false)
@@ -151,7 +151,7 @@ end
 
 This is a composition of Center and Scale (in that order).
 """
-function CenterScale(Z)
+function CenterScale(Z::Array)
     mu = StatsBase.mean(Z, dims = 1)
     stdev = StatsBase.std(Z, dims = 1)
     CenterScale( mu, stdev, true)
@@ -174,10 +174,10 @@ end
 
 Acquires the minimum and maximum of each column in `Z` provided and returns a transform that performs the following operation (Z - min(X))/(max(X) - min(X)) on any future data. This has the important effect of scaling all values observed in the range of `Z` to be between 0 and 1 with respect to each column.
 """
-function RangeNorm( Z )
+function RangeNorm( Z::Array )
     mins = minimum(Z, dims = 1)
     maxes = maximum(Z, dims = 1)
-    RangeNorm( mins, maxes)
+    return RangeNorm( mins, maxes)
 end
 
 """
@@ -196,7 +196,7 @@ end
 
 Returns a BoxCox transform operator/function. To be used in a pipeline.
 """
-BoxCox(lambda) = return BoxCox(X; inverse = false) = begin
+BoxCox(lambda::Float64) = return BoxCox(X; inverse = false) = begin
     Z = zeros(size(X))
     if inverse
         if lambda != 0.0

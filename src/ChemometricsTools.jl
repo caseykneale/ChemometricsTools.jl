@@ -58,7 +58,7 @@ module ChemometricsTools
         LSSVM, ExtremeLearningMachine, PredictFn, sigmoid,
         MonotoneRegression
 
-    include("ModelAnalysis.jl") #Has Docs
+    include("ModelAnalysis.jl") #Has Docs - Not displaying?
     export ExplainedVariance, ExplainedVarianceX, ExplainedVarianceY,
             Q, Hotelling, Leverage
 
@@ -98,7 +98,7 @@ module ChemometricsTools
     include("SimpleGAs.jl") #Has Docs
     export BinaryLifeform, Lifeform, SinglePointCrossOver, Mutate
 
-    include("DataUtils.jl") #NO Docs
+    include("DataUtils.jl") #Has Docs
     export ChemometricsToolsDataset, ChemometricsToolsDatasets,
         FindCommonVariables
 

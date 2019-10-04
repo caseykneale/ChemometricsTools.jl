@@ -17,7 +17,7 @@ end
 
 Constructs a ClassicLeastSquares regression model of the form `Y` = A`X` with or without a `Bias` term. Returns a CLS object.
 """
-function ClassicLeastSquares( X, Y; Bias = false )
+function ClassicLeastSquares( X::Array, Y::Array; Bias = false )
     Z = (Bias) ? hcat( ones( size( X )[ 1 ] ), X ) : X
     return ClassicLeastSquares(Base.inv(Z' * Z) * Z' * Y, Bias)
 end
