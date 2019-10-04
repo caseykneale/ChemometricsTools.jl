@@ -16,7 +16,7 @@ makedocs(
 						"Regression" => "Demos/RegressionExample.md",
 						"SIPLS" => "Demos/SIPLS.md",
 						"Calibration Transfer" => "Demos/CalibXfer.md",
-						"Curve Resolution" => "Demos/CurveResolution.md",
+						"Curve Resolution" => "Demos/CurveResolution.md"
 					   ],
 			 "Data" => Any[
 			 					"Data Utilities" => "man/datautils.md",
@@ -27,14 +27,12 @@ makedocs(
 			 			 		"Transformations/Pipelines" => "man/Transformations.md",
 						 		"Sampling" => "man/Sampling.md"
 							],
-			 "Visualizations" => Any[
-			 					"Plotting" => "man/Plotting.md",
-			 				],
+			 "Visualizations" => "Plotting" => "man/Plotting.md",
 			 "Analysis" => Any[
 			 					"Distances/Kernels" => "man/Dists.md",
 			 					"Analysis" => "man/Analysis.md",
 			  					"Clustering" => "man/Clustering.md",
-								"Stats." => "man/Stats.md",
+								"Stats." => "man/Stats.md"
 							],
 			 "Modeling" => Any[
 			 					"Training" => "man/Training.md",
@@ -47,10 +45,10 @@ makedocs(
 						 		"Ensemble Models" => "man/Ensemble.md"
 							],
 			 "Speciality Tools" => Any[
-			 					 "Model Analysis" => "man/modelanalysis.md"
+			 					 "Model Analysis" => "man/modelanalysis.md",
 						 		 "MultiWay" => "man/MultiWay.md",
 								 "Anomaly Detection" => "man/AnomalyDetection.md",
-								 "Curve Resolution" => "man/CurveResolution.md",
+								 "Curve Resolution" => "man/CurveResolution.md"
 							],
 			"Advanced" => Any[
 								 "PSO" => "man/PSO.md",
