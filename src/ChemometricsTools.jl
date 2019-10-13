@@ -82,7 +82,7 @@ module ChemometricsTools
         UnimodalUpdate, UnimodalLeastSquares
 
     include("PlottingTools.jl") #Has Docs
-    export residualsplotrecipe, QQ, BlandAltman, rectangle, IntervalOverlay,
+    export residualsplotrecipe, QQ, BlandAltman, IntervalOverlay,
         DiscriminantAnalysisPlot, DAPlot
 
     include("TimeSeries.jl") #Has Docs: Omitted EchoStateNetwork Fns
@@ -90,7 +90,8 @@ module ChemometricsTools
         SimpleAverage, NaiveForecast, update!, update
 
     include("MultiWay.jl") #Has Docs
-    export MultiCenter, MultiScale, MultiNorm, MultiPCA
+    export Unfold, MultiCenter, MultiScale, MultiNorm, MultilinearPCA, HOSVD, HOOI,
+        TensorProduct, MultilinearPLS
 
     include("KernelDensityGenerator.jl") #Has Docs
     export Universe, SpectralArray, GaussianBand, LorentzianBand

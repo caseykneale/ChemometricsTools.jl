@@ -54,7 +54,7 @@ Well, I'd love to hammer in some time series methods. That was originally part o
 
 ## ToDo:
   - Gaussian Discriminant plotting function (needs documenting)
-  - Long-term: SIMCA, and MultiWAY PLS
+  - Long-term: SIMCA
   - Hyperspectral data preprocessing methods that fit into pipelines/transforms.
 
 ## Maybes:

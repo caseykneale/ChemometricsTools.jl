@@ -251,6 +251,7 @@ function ExtremeLearningMachine(X, Y, ReservoirSize = 10; ActivationFn = sigmoid
 end
 
 PredictFn(X, M::ELM) = M.Fn.(X * M.Reservoir) * M.Coefficients;
+
 """
     (M::ELM)(X)
 

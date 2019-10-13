@@ -27,7 +27,7 @@ These files contain NIR spectra of 653 pharmaceutical tablets from the 2002 Inte
 
 #### actuator.csv
 Borrowed from : https://c3.nasa.gov/dashlink/resources/503/
-Contributing Author(s) : Edward Balaban , Sriram Narasimhan , Indranil Roychoudhury , Abhinav Saxena
+Contributing Author(s): Edward Balaban, Sriram Narasimhan, Indranil Roychoudhury, Abhinav Saxena
 A data set of two-minute scenarios with a large set of motion and load profiles. Each scenario started with a nominal actuator, then, at 1-minute mark the ballscrew jam fault was injected by switching to the faulty actuator. The scenarios are intended for testing diagnostic algorithms. Please note that only the low speed data (current, temperature, position, and load) were collected during this set of experiments.
 
 #### iris.csv

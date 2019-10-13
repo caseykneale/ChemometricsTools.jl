@@ -1,3 +1,4 @@
+#ToDo: Add Cooks distance
 
 """
     ExplainedVariance(PCA::PCA)
@@ -165,7 +166,6 @@ function (H::Hotelling)(X)
     return diag( Scores * H.Lambda * Scores' )
 end
 
-
 struct Q
     Rotations::Array
     Projection::Array
@@ -233,7 +233,5 @@ end
 function (qr::Q)(X)
     proj = X * qr.Rotations * qr.Rotations'
     resids = proj .- X
-    #Q = resids * resids'
-    #Q = diag(resids * (LinearAlgebra.Diagonal(ones(Vars)) - pls.XLoadings[:,1:LVs] * pls.XLoadings[:,1:LVs]') * resids')
     return LinearAlgebra.diag(resids * qr.Projection * resids')
 end
