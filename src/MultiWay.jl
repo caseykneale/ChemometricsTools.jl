@@ -324,8 +324,8 @@ function (M::MultilinearPLS)(X; Factors = M.Factors)
     X_e = Unfold( copy(X) )
     for Factor in 1:Factors
         Weights_unfolded = foldr(kron, map( x -> x[:,Factor]', reverse(M.XLoadings) ) )
-        XProjections[:,Factor] = copy(X_e) * Weights_unfolded'
-        X_e = X_e - copy( XProjections[:,Factor] * Weights_unfolded )
+        XProjections[:,Factor] = X_e * Weights_unfolded'
+        X_e = X_e - XProjections[:,Factor] * Weights_unfolded
     end
     F = 1:Factors
     return XProjections[ :, F ] * M.Coefficients[ F, F ] * M.YLoadings[1][ :, F ]'
