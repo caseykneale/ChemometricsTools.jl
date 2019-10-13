@@ -39,6 +39,7 @@ end
     NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
 Performs a variation of non-negative matrix factorization on Array `X` and returns the a 2-Tuple of (Concentration Profile, Spectra)
 *Note: This is not a coordinate descent based NMF. This is a simple fast version which works well enough for chemical signals*
+
 Algorithms for non-negative matrix factorization. Daniel D. Lee. H. Sebastian Seung. NIPS'00 Proceedings of the 13th International Conference on Neural Information Processing Systems. 535-54
 """
 function NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)

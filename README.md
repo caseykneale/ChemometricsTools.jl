@@ -18,7 +18,7 @@ This package contains a collection of tools to perform fundamental and advanced 
   - [Regression](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/RegressionShootout.jl)
   - [Fault Detection](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/AnomalyShootout.jl)
 
-### Package Status => Iterative Refinement (v 0.5.5)
+### Package Status => Iterative Refinements (v 0.5.6)
 ChemometricsTools has been accepted as an official Julia package! Yep, so you can  ```Pkg.add("ChemometricsTools")``` to install it. The git repo's master branch has the most advanced version right now, but may be less reliable because I like to do dev on it. A lot of features have been added since the first public release (v 0.2.3 ). In 0.5.5 almost all of the functionality available can be used/abused. If you find a bug or want a new feature don't be shy - file an issue. In v0.5.1 Plots was removed as a dependency, new plot recipes were added, and now the package compiles much faster! Making headway into v0.6.0 - mostly going to be touch up and adding functionality when I can. Convenience functions, documentation, bug fixes, refactoring and clean up are in progress bare with me.
 
 ### Version Release Strategy
@@ -43,11 +43,17 @@ This package features dozens of regression performance metrics, and a few built 
 ### Classification Modeling
 In-house classification encodings (one cold/one hot), and easy to retrieve global or multiclass performance statistics. ChemometricsTools currently includes: LDA/PCA with Gaussian discriminants, also Hierchical LDA, multinomial softmax/logistic regression, PLS-DA, K-NN, Gaussian Naive Bayes, Classification Trees, Random Forest, Probabilistic Neural Networks, LinearPerceptrons, and more to come. You can also conveniently dump classification statistics to LaTeX/CSV reports!
 
+### Multiway/Multilinear Modeling (Master only)
+On master I've been working to fulfill an obvious gap in the available tooling. Standard
+methods for Tucker decomposition (HOSVD, and HOOI) have been included. Some preprocessing methods, and even an early view at multilinear PLS!
+
 ## Specialized tools?
 This package has tools for specialized fields of analysis'. For instance, fractional derivatives for the electrochemists (and the adventurous), a handful of smoothing methods for spectroscopists, curve resolution (unimodal and nonnegativity constraints available) for forensics, process fault detection methods, etc. There are certainly plans for other tools for analyzing chemical data that packages in other languages have seemingly left out. Stay tuned.
 
 ## Where's the Data?
-Right now I don't have rights to provide much data; but the iris, Tecator meat data, and a NASA fault detection datasets are included. I'd love for a collaborator to contribute some: spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. There's a good chance in a week or so I'll be reaching out to the community for these sorts of things, in the mean time you can load in your own datasets using the Julia ecosystem.
+Right now I don't have rights to provide much data; but the 2002 International Diffuse Reflectance Conference Pharmaceutical NIR, iris, Tecator aka 'meat', and ball gear fault detection (NASA) dataset are [included](https://github.com/caseykneale/ChemometricsTools.jl/tree/master/data).
+
+I'd love for a collaborator to contribute some: spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. There's a good chance, that once this package is established, I'll reach out to the community for these sorts of things. In the mean time you can load in your own datasets using the Julia ecosystem (CSV.jl, MATLAB.jl, JSON.jl, etc).
 
 ## What about Time Series? Cluster modeling?
 Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has pretty much everything covered. Similarly, if you want clustering methods, just install [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I may add a few supportive odds and ends in here (or contribute to the packages directly) but really, most of the Julia 1.0+ ecosystem is really reliable, well made, and community supported.

@@ -64,6 +64,13 @@ function ExplainedVarianceY( Y, pls::PartialLeastSquares )
 end
 
 """
+    Leverage(X::Array)
+
+Calculates the leverage of samples in a `X` from the perspective of a linearly addative model.
+"""
+Leverage(X::Array) = LinearAlgebra.diag( X * Base.inv(transpose(X)*X)*transpose(X) )
+
+"""
     Leverage(pca::PCA)
 
 Calculates the leverage of samples in a `pca` object.
