@@ -1,15 +1,22 @@
 module ChemometricsTools
     using DataFrames, LinearAlgebra, Statistics, StatsBase, SparseArrays,
-            RecipesBase, Distributions, Dates, Revise
+            RecipesBase, Distributions, Dates, Combinatorics, Revise
     using CSV: read
     #A generic function that I use everywhere to coerce a vector dim 0 to a row vector...
     forceMatrix( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, length(a), 1 ) : a
     forceMatrixT( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, 1, length(a) ) : a
     export forceMatrix, forceMatrixT
 
+    include("DOE.jl") #Has Docs
+    export SimplexCentroidDesign, SimplexLatticeDesign
+
     include("InHouseStats.jl") #Has Docs
     export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean, RunningVar,
         Variance, Mean, rbinomial, Skewness, SampleSkewness, PermutedVectorPair
+
+    include("Univariate.jl") #Has Docs
+    export Univariate, UnivariateCalibration, StandardAddition, Confidence_Offset,
+        Confidence_Slope
 
     include("ClassificationMetrics.jl") #Has Docs
     export LabelEncoding, IsColdEncoded, HotToCold, ColdToHot, MulticlassStats,

@@ -56,7 +56,7 @@ Right now I don't have rights to provide much data; but the 2002 International D
 I'd love for a collaborator to contribute some: spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. There's a good chance, that once this package is established, I'll reach out to the community for these sorts of things. In the mean time you can load in your own datasets using the Julia ecosystem (CSV.jl, MATLAB.jl, JSON.jl, etc).
 
 ## What about Time Series? Cluster modeling?
-Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has pretty much everything covered. Similarly, if you want clustering methods, just install [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I may add a few supportive odds and ends in here (or contribute to the packages directly) but really, most of the Julia 1.0+ ecosystem is really reliable, well made, and community supported.
+Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has the essentials for online learning covered. Surely many are contemplating packages with time series as a focus. Similarly, if you want clustering methods, just install [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I may add a few supportive odds and ends in here (or contribute to the packages directly) but really, most of the Julia 1.0+ ecosystem is really reliable, well made, and community supported.
 
 ## ToDo:
   - Gaussian Discriminant plotting function (needs documenting)
@@ -64,6 +64,6 @@ Well, I'd love to hammer in some time series methods. That was originally part o
   - Hyperspectral data preprocessing methods that fit into pipelines/transforms.
 
 ## Maybes:
-  - Convenience fns for standard addition, propagation of error, multiequilibria, kinetics?
+  - Convenience fns propagation of error, multiequilibria, kinetics?
   - Design of Experiment tools (Partial Factorial design, simplex, etc...)?
   - Electrochemical simulations and optical simulations (maybe separate packages...)?
