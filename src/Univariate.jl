@@ -67,7 +67,7 @@ function StandardAddition( Signal, Spike )
     @assert(len == length(Spike))
     mu_x, mu_y = sum( Spike ) / len             , sum( Signal ) / len
     SSxx, SSyy = sum( ( Spike .- mu_x ) .^ 2 )  , sum( ( Signal .- mu_y ) .^ 2 )
-    SSxy = sum( ( Spike .- mu_x ) .* ( Signal . - mu_y ) )
+    SSxy = sum( ( Spike .- mu_x ) .* ( Signal .- mu_y ) )
 
     m = SSxy / SSxx
     b = mu_y - ( m * mu_x )
