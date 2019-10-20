@@ -1,4 +1,66 @@
 """
+    univariatecalibrationrecipe(rmodel::UnivariateCalibration, X, Y;
+                                            decimals = 3, text_location = :topleft)
+
+Plots the calibration trend line of a UnivariateCalibration object given an input `X` and ground-truth `Y`.
+"""
+@recipe function univariatecalibrationrecipe(rmodel::UnivariateCalibration, X, Y;
+                                            decimals = 3, text_location = :topleft)
+    Yhat = rmodel.(X)
+    seriestype := :scatter
+    title := "Univariate Regression Plot"
+    xlabel := Symbol("Fitted Values")
+    ylabel := Symbol("Residuals")
+    label := "Actual Values"
+    @series y := (X, Y)
+    seriestype := :straightline
+    label := "Trend-Line"
+    slope, bias, Rsq = string.( round.( [ rmodel.Slope, rmodel.Offset, rmodel.Rsq ], digits = decimals ) )
+    @series begin
+        annotation := (text_location, "y = " * slope * " x + " * bias * "\n R2 = " * Rsq )
+        y := ( [0, 1], [rmodel.Offset, rmodel.Offset + rmodel.Slope])
+    end
+end
+
+"""
+    standard_addition_recipe(rmodel::StandardAddition, X, Y;
+                                            decimals = 3, text_location = :topleft)
+
+Plots a trend line of a StandardAddition object given an input `X` and ground-truth `Y`.
+"""
+@recipe function standard_addition_recipe(rmodel::StandardAddition, X, Y;
+                                            decimals = 3, text_location = :topleft)
+    seriestype := :scatter
+    legend := :bottomright
+    title := "Standard Addition Plot"
+    xlabel := Symbol("Spike")
+    ylabel := Symbol("Response")
+    label := "Experiment"
+    @series y := (X, Y)
+    seriestype := :straightline
+    label := "Trend-Line"
+    slope, bias, Rsq = string.( round.( [ rmodel.Slope, rmodel.Offset, rmodel.Rsq ], digits = decimals ) )
+    @series begin
+        y := ( [0, 1], [rmodel.Offset, rmodel.Offset + rmodel.Slope])
+    end
+    seriestype := :scatter
+    label := "Unknown"
+    @series y := ( [ rmodel.Unknown ], [ 0 ] )
+    seriestype := :hline
+    label := ""
+    color := :black
+    @series y := [ 0 ]
+    seriestype := :vline
+    label := ""
+    color := :black
+    @series begin
+        annotation := (text_location, "y = " * slope * " x + " * bias * "\n R2 = " * Rsq )
+        x := [ X[1] ]
+    end
+end
+
+
+"""
     residualsplotrecipe(rmodel::ChemometricsTools.RegressionModels, X, Y)
 
 Plots the residuals of a RegressionModel object given an input `X` and ground-truth `Y`.
@@ -135,7 +197,7 @@ Plots a barchart overlay over a spectra according to an `IntervalOverlay` object
         xloc = line[1]
         #@series y := rectangle(w,h,xloc,0)
         #seriestype := :shape
-        @series ( xloc .+ [ 0, w, w, 0 ], [ 0, 0, h, h ] ) 
+        @series ( xloc .+ [ 0, w, w, 0 ], [ 0, 0, h, h ] )
     end
 end
 

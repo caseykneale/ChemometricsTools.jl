@@ -70,12 +70,13 @@ function StandardAddition( Signal, Spike )
     SSxy = sum( ( Spike .- mu_x ) .* ( Signal .- mu_y ) )
 
     m = SSxy / SSxx
+    #y = mx + b -> y - mx =  b
     b = mu_y - ( m * mu_x )
-    Y_hat = ( m * Signal ) .+ b
+    Y_hat = ( m * Spike ) .+ b
     #Find X - intercept...
     x0 = -b / m #y = 0 = mx + b => -b / m = x
 
-    Sy = sqrt( ( Signal .- Y_hat ) / DOF )
+    Sy = sqrt( sum( (Signal .- Y_hat) .^ 2 ) / DOF )
     Sx = (Sy / abs(m)) * sqrt( (1/len) * ( mu_y^2 / ( m^2 * sum( ( Spike .- mu_x ) .^ 2 )  ) ) )
 
     SSe = sum( (Signal .- Y_hat) .^ 2 )
@@ -110,6 +111,3 @@ function Confidence_Slope( UC::Univariate; Significance = 0.05 )
     extent = UC.Slope_Uncertainty * quantile( TDist( UC.DOF ), Significance / 2 )
     return ( UC.Slope - extent, UC.Slope + extent )
 end
-
-# Confidence_M(UV; Significance = 0.05)
-# Confidence_B(UV; Significance = 0.05)

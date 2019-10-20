@@ -21,7 +21,6 @@ function SimplexLatticeDesign( Components::Int, Spaces::Int )
     return Possible
 end
 
-
 """
     SimplexCentroidDesign( Components::Int, Order::Union{ UnitRange{ Int }, Int} )
 

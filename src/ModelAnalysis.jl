@@ -1,4 +1,3 @@
-#ToDo: Add Cooks distance
 
 """
     ExplainedVariance(PCA::PCA)
@@ -165,7 +164,7 @@ end
 
 Retrieves the `T^2` statistic from a saved Hotelling model.
 Note 1: This does not automatically center or scale `X`.
-Note 2:if the model used to generate the Hotelling struct changes, so will the Hotelling struct(pass by reference).
+Note 2: if the model used to generate the Hotelling struct changes, so will the Hotelling struct(pass by reference).
 
 """
 function (H::Hotelling)(X)
