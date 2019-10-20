@@ -1,7 +1,7 @@
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://caseykneale.github.io/ChemometricsTools.jl/dev/) [![Build Status](https://travis-ci.org/caseykneale/ChemometricsTools.jl.svg?branch=master)](https://travis-ci.org/caseykneale/ChemometricsTools.jl)
 
 # ChemometricsTools.jl
-This package contains a collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. It is currently richer and more fundamental than any single free chemometrics package available in any other language. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is a pile of applied linear algebra/statistics that is well reasoned by the physics and meaning of chemical measurements. This is somewhat orthogonal to most fields of machine learning (aka "add more layers"). Sometimes chemometricians also get desperate and break out pure machine learning methods. So some of those methods are in this package, but if you want neural networks try [Flux.jl](https://github.com/FluxML/Flux.jl) it's a personal favorite of mine.
+This package contains a collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. It is currently richer and more fundamental than any single free chemometrics package available in any other language. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is the symbiosis of applied linear algebra/statistics which is disciplined by the physics and meaning of chemical measurements. This is somewhat orthogonal to most specializations of machine learning where "add more layers" is the modus operandi. Sometimes chemometricians also get *desperate* and break out pure machine learning methods - so some of those techniques are in this package.
 
 ## Tutorials/Demonstrations:
   - [Transforms](https://caseykneale.github.io/ChemometricsTools.jl/dev/Demos/Transforms/)
@@ -18,8 +18,11 @@ This package contains a collection of tools to perform fundamental and advanced 
   - [Regression](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/RegressionShootout.jl)
   - [Fault Detection](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/AnomalyShootout.jl)
 
-### Package Status => Iterative Refinements (v 0.5.6)
-ChemometricsTools has been accepted as an official Julia package! Yep, so you can  ```Pkg.add("ChemometricsTools")``` to install it. The git repo's master branch has the most advanced version right now, but may be less reliable because I like to do dev on it. A lot of features have been added since the first public release (v 0.2.3 ). In 0.5.5 almost all of the functionality available can be used/abused. If you find a bug or want a new feature don't be shy - file an issue. In v0.5.1 Plots was removed as a dependency, new plot recipes were added, and now the package compiles much faster! Making headway into v0.6.0 - mostly going to be touch up and adding functionality when I can. Convenience functions, documentation, bug fixes, refactoring and clean up are in progress bare with me.
+### Package Status => Fleshing Out (v 0.5.7)
+ChemometricsTools has been accepted as an official Julia package! Yep, so you can  ```Pkg.add("ChemometricsTools")``` to install it. A lot of features have been added since the first public release (v 0.2.3 ). In 0.5.7 almost all of the functionality available can be used/abused. If you find a bug or want a new feature don't be shy - file an issue. In v0.5.1 Plots was removed as a dependency, new plot recipes were added, and now the package compiles much faster! Multilinear modeling, univariate modeling, and DOE functions are now available. Making headway into the release plan for v0.6.0. Convenience functions, documentation, bug fixes, refactoring and clean up are in progress bare with me. The git repo's master branch typically has the most advanced version, but the features on it may be less reliable because I like to do development on it.
+
+### Seeking Collaborators
+So my time and efforts for building this package are constrained. I really would like to find some collaborators to help flesh this package out, use it, find bugs. Even if your interests are more leaning towards machine learning/statistics I'd love to hear from you. Please file an issue if you are interested - or send me a message on Julia Discourse (ckneale)!
 
 ### Version Release Strategy
   - < 0.3.0 : Mapping functionality, prototyping
@@ -38,14 +41,14 @@ Multiple transformations can easily be chained together and stored using "Pipeli
 ChemometricsTools offers easy to use iterators for K-folds validation's, and moving window sampling/training. More advanced sampling methods, like Kennard Stone, are just a function call away. Convenience functions for interval selections, weighting regression ensembles, etc are also available. These allow for ensemble models like SIPLS, P-DS, P-OSC, etc to be built quickly. With the tools included both in this package and Base Julia, nothing should stand in your way.
 
 ### Regression Modeling
-This package features dozens of regression performance metrics, and a few built in plots (Bland Altman, QQ, Interval Overlays etc) are included. The list of regression methods currently includes: CLS, Ridge, Kernel Ridge, LS-SVM, PCR, PLS(1/2), ELM's, Regression Trees, Random Forest, Monotone Regression... More to come. Chemometricians love regressions!
+This package features dozens of regression performance metrics, and a few built in plots (Bland Altman, QQ, Interval Overlays etc) are included. The list of regression methods currently includes: CLS, Ridge, Kernel Ridge, LS-SVM, PCR, PLS(1/2), ELM's, Regression Trees, Random Forest, Monotone Regression... More to come. Chemometricians love regressions! I've also added some convenience functions for univariate calibrations, standard addition experiments and some automated plot functions for them.
 
 ### Classification Modeling
 In-house classification encodings (one cold/one hot), and easy to retrieve global or multiclass performance statistics. ChemometricsTools currently includes: LDA/PCA with Gaussian discriminants, also Hierchical LDA, multinomial softmax/logistic regression, PLS-DA, K-NN, Gaussian Naive Bayes, Classification Trees, Random Forest, Probabilistic Neural Networks, LinearPerceptrons, and more to come. You can also conveniently dump classification statistics to LaTeX/CSV reports!
 
-### Multiway/Multilinear Modeling (Master only)
-On master I've been working to fulfill an obvious gap in the available tooling. Standard
-methods for Tucker decomposition (HOSVD, and HOOI) have been included. Some preprocessing methods, and even an early view at multilinear PLS!
+### Multiway/Multilinear Modeling
+I've been working to fulfill an obvious gap in the available tooling. Standard
+methods for Tucker decomposition (HOSVD, and HOOI) have been included. Some preprocessing methods, and even an early view at multilinear PLS. There's a lot that could be done here, please feel free to contribute!
 
 ## Specialized tools?
 This package has tools for specialized fields of analysis'. For instance, fractional derivatives for the electrochemists (and the adventurous), a handful of smoothing methods for spectroscopists, curve resolution (unimodal and nonnegativity constraints available) for forensics, process fault detection methods, etc. There are certainly plans for other tools for analyzing chemical data that packages in other languages have seemingly left out. Stay tuned.
@@ -53,18 +56,16 @@ This package has tools for specialized fields of analysis'. For instance, fracti
 ## Where's the Data?
 Right now I don't have rights to provide much data; but the 2002 International Diffuse Reflectance Conference Pharmaceutical NIR, iris, Tecator aka 'meat', and ball gear fault detection (NASA) dataset are [included](https://github.com/caseykneale/ChemometricsTools.jl/tree/master/data).
 
-I'd love for a collaborator to contribute some: spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. There's a good chance, that once this package is established, I'll reach out to the community for these sorts of things. In the mean time you can load in your own datasets using the Julia ecosystem (CSV.jl, MATLAB.jl, JSON.jl, etc).
+I'd love for a collaborator to contribute some: spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. In the mean time you can load in your own datasets using the Julia ecosystem (CSV.jl, MATLAB.jl, JSON.jl, etc).
 
 ## What about Time Series? Cluster modeling?
 Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has the essentials for online learning covered. Surely many are contemplating packages with time series as a focus. Similarly, if you want clustering methods, just install [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I may add a few supportive odds and ends in here (or contribute to the packages directly) but really, most of the Julia 1.0+ ecosystem is really reliable, well made, and community supported.
 
 ## ToDo:
-  - Gaussian Discriminant plotting function (needs documenting)
-  - Univariate plot functions
   - Long-term: SIMCA
   - Hyperspectral data preprocessing methods that fit into pipelines/transforms.
+  - Design of Experiment tools (Partial Factorial design, D/I-optimal, etc...)?
 
 ## Maybes:
   - Convenience fns propagation of error, multiequilibria, kinetics?
-  - Design of Experiment tools (Partial Factorial design, D/I-optimal, etc...)?
   - Electrochemical simulations and optical simulations (maybe separate packages...)?

@@ -204,7 +204,7 @@ end
 """
     PCA/LDA(::Union{PCA, LDA}; Axis = [1,2])
 
-Plots scores of PCA/LDA analysis.
+Plots scores of `PCA`/`LDA` object using the defined `Axis'`.
 """
 @recipe function f(DA::Union{PCA, LDA}; Axis = [1,2])
     @assert(length(Axis) == 2, "Axis for PCA/LDA plot must be of length 2." )
@@ -222,16 +222,18 @@ Plots scores of PCA/LDA analysis.
     @series y := ( DA.Scores[:,Axis[2]], DA.Scores[:,Axis[1]] )
 end
 
-# x = -pi:(pi/200):pi;
-# A = transpose((sin.(x) .+ 1.0) .+ randn(400,3) ./ 50);
-# Intervals = [ (((i-1) * 10) + 1, ((i) * 10)) for i in 1:40 ];
-# Err = rand(40);
-# IOo = IntervalOverlay(A,Intervals,Err)
-# Plots.plot(IOo)
-
 """
-    DiscriminantAnalysisPlot(DA, GD, YHot, LblEncoding, UnlabeledData, Axis = [1,2], Confidence = 0.90)
-...
+    DiscriminantAnalysisPlot(DA, GD, YHot, LblEncoding, UnlabeledData,
+                                Axis = [1,2], Confidence = 0.90)
+
+An object to hold all the information needed to plot a discriminant analysis.
+`DA` = `LDA`/`PCA` object
+`GD` = `GuassianDiscriminant` object
+`YHot` = One hot encoded y vectors
+`LblEncoding` = a `ClassificationLabel` object
+`UnlabeledData` = data that does not have a known label (see where it falls in the plot).
+`Axis` = principal or discriminant axis' to display
+`Confidence` = Significance value from 0-1 for the confidence ellipses.
 """
 struct DAPlot
     DA

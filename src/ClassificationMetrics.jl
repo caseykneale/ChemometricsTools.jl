@@ -13,7 +13,7 @@ struct ClassificationLabel
 end
 
 """"
-    LabelEncoding(HotOrCold)
+    LabelEncoding( HotOrCold )
 
 Determines if an Array, `Y`, is one hot encoded, or cold encoded by it's dimensions.
 Returns a ClassificationLabel object/schema to convert between the formats.
