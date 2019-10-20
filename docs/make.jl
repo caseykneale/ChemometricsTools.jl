@@ -32,6 +32,8 @@ makedocs(
 							],
 			 "Visualizations" => Any[ "Plotting" => "man/Plotting.md"],
 			 "Analysis" => Any[
+			 					"DOE" => "man/DOE.md",
+								"Univariate" => "man/Univariate.md",
 			 					"Distances/Kernels" => "man/Dists.md",
 			 					"Analysis" => "man/Analysis.md",
 			  					"Clustering" => "man/Clustering.md",

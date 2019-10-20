@@ -57,3 +57,17 @@ function SimplexCentroidDesign( Components::Int, Order::Union{ UnitRange{ Int },
     end
     return DesignSpace
 end
+
+
+# """
+# The Sequential Generation of D-Optimum Experimental Designs. Wynn. The Annals of Mathematical Statistics. 41(5). 1970
+# """
+# function FedorovWynn(Components::Int, Points::Int)
+#     X = rand( Points, Components )
+#     while ( 1 / LinearAlgebra.cond(X' * X) ) < 1e-6
+#         X = rand( Points, Components )
+#     end
+#     M = X' * X
+#     Minv = Base.inv( M )
+#     f(x) = sum(x)
+# end

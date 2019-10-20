@@ -60,10 +60,11 @@ Well, I'd love to hammer in some time series methods. That was originally part o
 
 ## ToDo:
   - Gaussian Discriminant plotting function (needs documenting)
+  - Univariate plot functions
   - Long-term: SIMCA
   - Hyperspectral data preprocessing methods that fit into pipelines/transforms.
 
 ## Maybes:
   - Convenience fns propagation of error, multiequilibria, kinetics?
-  - Design of Experiment tools (Partial Factorial design, simplex, etc...)?
+  - Design of Experiment tools (Partial Factorial design, D/I-optimal, etc...)?
   - Electrochemical simulations and optical simulations (maybe separate packages...)?
