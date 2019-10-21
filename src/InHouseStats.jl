@@ -156,6 +156,25 @@ struct PermutedVectorPair{A,B,C}
 end
 
 """
+    CorrelationMatrix(X; DOF_used = 0)
+
+Returns the Pearson correlation matrix from a centered covariance matrix.
+
+This is only included because finding a legible implementation was hard for me
+to find some years ago (for the reader). But, also I don't like assumptions on
+whether or not we should use all N, N-1, etc for scaling (hence `DOF_used`).
+"""
+function CorrelationMatrix(X; DOF_used = 0)
+    obs, _ = size(X)
+    obs -= DOF_used
+    C = LinearAlgebra.I - ( ( 1 / obs ) .* ones(obs) * ones(obs)' )
+    Xs = C * X #Same thing as subtracting the column means
+    XstXs = (1 / obs) * (Xs' * Xs) #get covariance matrix
+    D = LinearAlgebra.Diagonal( 1 ./ sqrt.( LinearAlgebra.diag( XstXs ) ) )#define the scaling matrix
+    return D * XstXs * D
+end
+
+"""
     PermutedVectorPair(vec1, vec2; op = +)
 
 Returns an iterator which applies each element in vec2 to vec1 via the user selected operator(op)

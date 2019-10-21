@@ -328,6 +328,67 @@ function MCRALS(X::Union{Array{Float64,1}, Array{Float64,2}},
     return output
 end
 
+"""
+    ITTFA(X; Factors = 1, maxiters = 500, threshold = 1e-8,
+                    nonnegativity = true)
+
+This function performs a Iterative Target Transform Factor Analysis (ITTFA).
+It's untested. Use at your own risk.
+
+Chemometric characterization of batch reactions. ISA Transactions 38(3):211-216. July 1999. 
+DOI: 10.1016/S0019-0578(99)00022-1 
+"""
+function ITTFA(X; Factors = 1, maxiters = 500, threshold = 1e-8,
+                    nonnegativity = true)
+	rows, vars = size(X);
+	PCA = LinearAlgebra.svd( X );
+	T = PCA.U * LinearAlgebra.Diagonal( PCA.S )[ : , 1 : Factors ] .^ 2;
+	needlematrix = LinearAlgebra.Diagonal( ones( rows ) );
+    estimates = zeros( rows, Factors )
+    #find candidates
+    corrscore = zeros( rows )
+    for factor in 1:Factors
+        for i in 1 : rows
+            needlevector = needlematrix[ i, : ]
+            needlevector_old = copy( needlevector );
+            needlevector = needlevector' * T[:,factor] * T[:,factor]';
+            corrscore[ i ] = CorrelationVectors(needlevector[:], needlevector_old[:])
+        end
+        Top_N_Needles = sortperm( corrscore )[ 1 ]
+        #Actually do ITTFFA
+        for (c, i) in enumerate( Top_N_Needles )
+            lastcorr = 0.0
+            curcor = Inf
+            iter = 0
+            needlevector = needlematrix[ i, : ][:]
+            while ( iter < maxiters ) && ( ( curcor - lastcorr ) > 1e-6 )
+                needlevector_old = copy( needlevector );
+                needlevector = ( needlevector' * T[:,factor] * T[:,factor]' )[:];
+                if nonnegativity
+                    needlevector[ needlevector .< 0.0 ] .= 0.0
+                end
+                lastcor = copy(curcor)
+                curcor = CorrelationVectors(needlevector[:], needlevector_old[:])
+                iter += 1
+        	end
+            estimates[ :, factor ] = needlevector
+       end
+   end
+   #X       = C * S'
+   #C-1 X   = S'
+   #X S'-1  = C-1
+   #estimates = estimates ./ sum( (estimates), dims = 2)
+   purespectra = LinearAlgebra.pinv( estimates ) * X
+   purespectra = RangeNorm(Matrix(purespectra'))(Matrix(purespectra'))'
+   pureabundance = X * LinearAlgebra.pinv( purespectra )
+
+   scale = LinearAlgebra.Diagonal(1.0 ./ sum(pureabundance, dims = 1))
+   pureabundance = pureabundance * scale
+   #purespectra = Base.inv( scale ) * purespectra
+
+   return purespectra, pureabundance
+end
+
 #I believe the SIMPLISMA implementation below has errors. It's a super neat algorithm, but it does
 #not display expected behaviour...
 

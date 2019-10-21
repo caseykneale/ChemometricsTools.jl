@@ -56,7 +56,7 @@ This package has tools for specialized fields of analysis'. For instance, fracti
 ## Where's the Data?
 Right now I don't have rights to provide much data; but the 2002 International Diffuse Reflectance Conference Pharmaceutical NIR, iris, Tecator aka 'meat', and ball gear fault detection (NASA) dataset are [included](https://github.com/caseykneale/ChemometricsTools.jl/tree/master/data).
 
-I'd love for a collaborator to contribute some: spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. In the mean time you can load in your own datasets using the Julia ecosystem (CSV.jl, MATLAB.jl, JSON.jl, etc).
+I'd love for a collaborator to contribute some: spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. In the mean time you can load in your own datasets using the Julia ecosystem (XLSX.jl, CSV.jl, JSON.jl, MATLAB.jl, etc).
 
 ## What about Time Series? Cluster modeling?
 Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has the essentials for online learning covered. Surely many are contemplating packages with time series as a focus. Similarly, if you want clustering methods, just install [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I may add a few supportive odds and ends in here (or contribute to the packages directly) but really, most of the Julia 1.0+ ecosystem is really reliable, well made, and community supported.

@@ -6,8 +6,8 @@ distance (`DistanceType`) between a `New` and `Normal` J nearest neighbors to th
 J nearest neighbors in the `Normal` set. No cut off is provided, that should be done by the end-user. A typical
 cut off value is 1.0 .
 """
-#ToDo: Only find distances of K's that matter! This will speed things up and slim memory use.
 function OneClassJKNN( Normal, New; J::Int = 1, K::Int = 1, DistanceType = "euclidean" )
+    #ToDo: Only find distances of K's that matter! This will speed things up and slim memory use.
     Obs = size( Normal )[ 1 ]
     ObsNew = size( New )[ 1 ]
     DistMat = zeros( Obs, ObsNew )
