@@ -175,6 +175,22 @@ function CorrelationMatrix(X; DOF_used = 0)
 end
 
 """
+    CorrelationVectors( A, B )
+
+Returns the Pearson correlation of 2 vectors.
+
+This is only included because finding a legible implementation was hard for me
+to find some years ago (for the reader). 
+"""
+function CorrelationVectors( A, B )
+    obs = length( A )
+    @assert( obs == length( B ), "Vectors must have the same length." )
+    A = ( A .- mean(A) )
+    B = ( B .- mean(B) )
+    return ( A' * B ) * ( 1 / ( (obs - 1) * std( A ) * std( B )) )
+end
+
+"""
     PermutedVectorPair(vec1, vec2; op = +)
 
 Returns an iterator which applies each element in vec2 to vec1 via the user selected operator(op)

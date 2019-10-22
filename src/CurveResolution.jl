@@ -336,57 +336,61 @@ This function performs a Iterative Target Transform Factor Analysis (ITTFA).
 It's untested. Use at your own risk.
 
 Chemometric characterization of batch reactions. ISA Transactions 38(3):211-216. July 1999. 
-DOI: 10.1016/S0019-0578(99)00022-1 
+DOI: 10.1016/S0019-0578(99)00022-1
 """
-function ITTFA(X; Factors = 1, maxiters = 500, threshold = 1e-8,
-                    nonnegativity = true)
-	rows, vars = size(X);
-	PCA = LinearAlgebra.svd( X );
-	T = PCA.U * LinearAlgebra.Diagonal( PCA.S )[ : , 1 : Factors ] .^ 2;
-	needlematrix = LinearAlgebra.Diagonal( ones( rows ) );
+function ITTFA(X; Factors = 1, Components = Factors, maxiters = 500,
+                threshold = 1e-8, nonnegativity = true)
+	rows, vars = size( X );
+    Result = zeros( Components, rows )
+    selectedneedles = zeros( Components )
+    PCA = LinearAlgebra.svd( X );
+    T = PCA.U
+    needlematrix = LinearAlgebra.Diagonal( ones( rows ) );
     estimates = zeros( rows, Factors )
-    #find candidates
-    corrscore = zeros( rows )
-    for factor in 1:Factors
-        for i in 1 : rows
-            needlevector = needlematrix[ i, : ]
+    #Find the best locations for needles based on their projected scores
+    possiblecomponents = zeros( Factors, Components )
+    possiblelocations = zeros( Factors, Components )
+    for f in 1 : Factors
+        projscore = zeros( rows )
+        for i in 1 : rows #Maybe they limit these to the window span?
+            needlevector = needlematrix[ :, i ]
             needlevector_old = copy( needlevector );
-            needlevector = needlevector' * T[:,factor] * T[:,factor]';
-            corrscore[ i ] = CorrelationVectors(needlevector[:], needlevector_old[:])
+            needlevector = T[:,f] * T[:,f]' * needlevector
+            projscore[ i ] = sqrt( sum( (needlevector .- needlevector_old) .^ 2 ) )
         end
-        Top_N_Needles = sortperm( corrscore )[ 1 ]
-        #Actually do ITTFFA
-        for (c, i) in enumerate( Top_N_Needles )
-            lastcorr = 0.0
-            curcor = Inf
-            iter = 0
-            needlevector = needlematrix[ i, : ][:]
-            while ( iter < maxiters ) && ( ( curcor - lastcorr ) > 1e-6 )
-                needlevector_old = copy( needlevector );
-                needlevector = ( needlevector' * T[:,factor] * T[:,factor]' )[:];
-                if nonnegativity
-                    needlevector[ needlevector .< 0.0 ] .= 0.0
-                end
-                lastcor = copy(curcor)
-                curcor = CorrelationVectors(needlevector[:], needlevector_old[:])
-                iter += 1
-        	end
-            estimates[ :, factor ] = needlevector
-       end
-   end
-   #X       = C * S'
-   #C-1 X   = S'
-   #X S'-1  = C-1
-   #estimates = estimates ./ sum( (estimates), dims = 2)
-   purespectra = LinearAlgebra.pinv( estimates ) * X
-   purespectra = RangeNorm(Matrix(purespectra'))(Matrix(purespectra'))'
-   pureabundance = X * LinearAlgebra.pinv( purespectra )
-
-   scale = LinearAlgebra.Diagonal(1.0 ./ sum(pureabundance, dims = 1))
-   pureabundance = pureabundance * scale
-   #purespectra = Base.inv( scale ) * purespectra
-
-   return purespectra, pureabundance
+        #Get the smallest projections of the needles!
+        possiblelocations[f, : ] = sortperm( projscore )[ 1 : Components ]
+        possiblecomponents[f, : ] = projscore[ Int.( possiblelocations[f, : ] ) ]
+    end
+    #Let's find the best needles! by consuming the smallest locations
+    bestlocations = zeros(Components)
+    for c in 1 : Components
+        bestcomponents, idx = findmin( possiblecomponents )
+        possiblecomponents[idx] = Inf
+        bestlocations[c] = possiblelocations[ idx ]
+        #Note this allows for duplicates... can fix...
+        #toberemoved = findall( possiblelocations .== possiblelocations[ idx ] )
+        #possiblecomponents[toberemoved] .= Inf
+    end
+    for c in 1 : Components
+        #Initialize optimized needle for each component
+        needlevector_old = zeros( rows )
+        needlevector = needlematrix[ :, Int( bestlocations[c] ) ]
+        iter = 0
+        while ( iter < maxiters ) && ( sum( ( needlevector - needlevector_old ) .^ 2 ) > 1e-6 )
+            needlevector_old = copy( needlevector );
+            needlevector = T[:,1:c] * T[:,1:c]' * needlevector
+            if nonnegativity
+                needlevector[ needlevector .< 0.0 ] .= 0.0
+            end
+            iter += 1
+    	end
+        Result[c, : ] = copy(needlevector)
+    end
+    #Project back to X using ALS
+    purespectra = LinearAlgebra.pinv( Result )'  * X
+    pureabundance = X * LinearAlgebra.pinv( purespectra )
+    return purespectra, pureabundance, bestlocations
 end
 
 #I believe the SIMPLISMA implementation below has errors. It's a super neat algorithm, but it does
