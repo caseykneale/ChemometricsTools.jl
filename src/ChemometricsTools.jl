@@ -12,7 +12,8 @@ module ChemometricsTools
 
     include("InHouseStats.jl") #Has Docs
     export EmpiricalQuantiles, Update!, Remove!, Update, Remove, RunningMean, RunningVar,
-        Variance, Mean, rbinomial, Skewness, SampleSkewness, PermutedVectorPair
+        Variance, Mean, rbinomial, Skewness, SampleSkewness, PermutedVectorPair,
+        CorrelationMatrix, CorrelationVectors
 
     include("Univariate.jl") #Has Docs
     export Univariate, UnivariateCalibration, StandardAddition, Confidence_Offset,
@@ -86,8 +87,8 @@ module ChemometricsTools
 
     include("CurveResolution.jl") #Has Docs
     export BTEMobjective, BTEM, NMF, SIMPLISMA, MCRALS, FNNLS, UnimodalFixedUpdate,
-        UnimodalUpdate, UnimodalLeastSquares
-
+        UnimodalUpdate, UnimodalLeastSquares, ITTFA
+        
     include("PlottingTools.jl") #Has Docs
     export residualsplotrecipe, QQ, BlandAltman, IntervalOverlay,
         DiscriminantAnalysisPlot, DAPlot

@@ -70,6 +70,7 @@ Returns a tuple of the following form: (Concentraion Profile, Pure Spectral Esti
 W. Windig, Spectral Data Files for Self-Modeling Curve Resolution with Examples Using the SIMPLISMA Approach, Chemometrics and Intelligent Laboratory Systems, 36, 1997, 3-16.
 """
 function SIMPLISMA(X; Factors = 1, alpha = 0.05, includedvars = 1:size(X)[2], SecondDeriv = true)
+    @warn("Has not been tested for correctness.")
     Xcpy = deepcopy(X)
     X = X[:,includedvars]
     if SecondDeriv
@@ -340,7 +341,8 @@ DOI: 10.1016/S0019-0578(99)00022-1
 """
 function ITTFA(X; Factors = 1, Components = Factors, maxiters = 500,
                 threshold = 1e-8, nonnegativity = true)
-	rows, vars = size( X );
+    @warn("Has not been tested for correctness.")
+    rows, vars = size( X );
     Result = zeros( Components, rows )
     selectedneedles = zeros( Components )
     PCA = LinearAlgebra.svd( X );
@@ -362,7 +364,7 @@ function ITTFA(X; Factors = 1, Components = Factors, maxiters = 500,
         possiblelocations[f, : ] = sortperm( projscore )[ 1 : Components ]
         possiblecomponents[f, : ] = projscore[ Int.( possiblelocations[f, : ] ) ]
     end
-    #Let's find the best needles! by consuming the smallest locations
+    #Let's find the best needles! by consuming the smallest projected norms
     bestlocations = zeros(Components)
     for c in 1 : Components
         bestcomponents, idx = findmin( possiblecomponents )
@@ -372,6 +374,7 @@ function ITTFA(X; Factors = 1, Components = Factors, maxiters = 500,
         #toberemoved = findall( possiblelocations .== possiblelocations[ idx ] )
         #possiblecomponents[toberemoved] .= Inf
     end
+    #Now let's assume we have good needles and go forward with curve resolution via ITTFA
     for c in 1 : Components
         #Initialize optimized needle for each component
         needlevector_old = zeros( rows )
