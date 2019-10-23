@@ -390,7 +390,7 @@ function ( s::SIMCA )( X )
         F = s.Factors[ class ]
         XProject = s.PCAs[ class ]( Xp ; Factors = F )
         residuals = Xp .- ( XProject * s.PCAs[ class ].Loadings[:,1:F]' )
-        Y[:, class] .= sqrt( sum( s. .- residuals, dims = 2 ) ./ ( Vars - F ) )
+        Y[:, class] .= sqrt( sum( s .- residuals, dims = 2 ) ./ ( Vars - F ) )
         #Not in traditional method but convenient for modern classification formalism
         Y[ : , class ] .= (s.ClassLimits[class] .- Y[ : , class ])
         Outliers = Y[:, class] .< s.ClassLimits[class]
