@@ -363,7 +363,7 @@ function SIMCA(X, Y; ExplainedVariance = 0.95, Quantile = 0.99)
         Xcs = CS( X[Members,:] )
         pca = PCA( Xcs )
         factors = findfirst( ExplainedVariance(pca) .> ExplainedVariance )
-        residual_variance = Xcs .- pca(Xcs; factors).Scores * pca.Loadings[:,1:factors]'
+        residual_variance = Xcs .- pca(Xcs; Factors = factors).Scores * pca.Loadings[:,1:factors]'
         DOF = ( ClassSize[Class] - factors - 1 ) * ( Vars - factors )
         S0 = sum(residual_variance) / DOF
 
