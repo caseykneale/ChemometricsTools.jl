@@ -331,14 +331,13 @@ Returns a 1 hot encoded inference from `X` using a LinearPerceptron object.
 """
 (L::linearperceptron)(X) = X * L.W
 
-
 struct SIMCA
-    PCAs::Union{PCA, LDA}
+    PCAs::Array{ Union{ PCA, LDA }, 1 }
     Factors::Array{Int,1}
     Preprocessers::Array
     Classes::Int
     ClassSizes::Array{Int,1}
-    ClassLimits::Array{Int,1}
+    ClassLimits::Array{Float64,1}
 end
 
 """
@@ -346,25 +345,25 @@ end
 
 UNTESTED
 """
-function SIMCA(X, Y; ExplainedVariance = 0.95, Quantile = 0.99)
+function SIMCA(X, Y; VarianceExplained = 0.95, Quantile = 0.99)
     (Obs, ClassNumber) = size( Y )
     Vars = size(X)[2]
-    ClassSizes = zeros(ClassNumber)
+    ClassSizes = Int.(zeros(ClassNumber))
     ClassLimits = zeros(ClassNumber)
-    Factors = zeros(ClassNumber)
+    Factors = Int.(zeros(ClassNumber))
     residual_variance = zeros(ClassNumber)
     PCAs = []
     Preprocessers = []
     for class in 1 : ClassNumber
         Members = Y[ :, class ] .== 1
-        ClassSize[class] = sum(Members)
-        @assert(ClassSize[class] > 1, "Classes must have more than 1 members to create a PCA basis.")
+        ClassSizes[class] = sum(Members)
+        @assert(ClassSizes[class] > 1, "Classes must have more than 1 members to create a PCA basis.")
         CS = CenterScale(X[Members,:])
         Xcs = CS( X[Members,:] )
         pca = PCA( Xcs )
-        factors = findfirst( ExplainedVariance(pca) .> ExplainedVariance )
-        residual_variance = Xcs .- pca(Xcs; Factors = factors).Scores * pca.Loadings[:,1:factors]'
-        DOF = ( ClassSize[Class] - factors - 1 ) * ( Vars - factors )
+        factors = findfirst( cumsum(ExplainedVariance(pca)) .> VarianceExplained )
+        residual_variance = Xcs .- (pca(Xcs; Factors = factors) * pca.Loadings[1:factors,:])
+        DOF = ( ClassSizes[class] - factors - 1 ) * ( Vars - factors )
         S0 = sum(residual_variance) / DOF
 
         ClassLimits[class] = S0 * sqrt( quantile( Distributions.FDist( ( Vars - factors ) , DOF ), Quantile) )
@@ -373,7 +372,7 @@ function SIMCA(X, Y; ExplainedVariance = 0.95, Quantile = 0.99)
         push!( Preprocessers, CS )
         push!( PCAs, pca )
     end
-    return SIMCA(PCAs, Factors, Preprocessers, ClassNumber, ClassSize, ClassLimits )
+    return SIMCA(PCAs, Factors, Preprocessers, ClassNumber, ClassSizes, ClassLimits )
 end
 
 """
@@ -389,9 +388,10 @@ function ( s::SIMCA )( X )
         Xp = s.Preprocessers[ class ]( X )
         F = s.Factors[ class ]
         XProject = s.PCAs[ class ]( Xp ; Factors = F )
-        residuals = Xp .- ( XProject * s.PCAs[ class ].Loadings[:,1:F]' )
-        Y[:, class] .= sqrt( sum( s .- residuals, dims = 2 ) ./ ( Vars - F ) )
+        residuals = Xp .- ( XProject * s.PCAs[ class ].Loadings[1:F,:] )
+        Y[:, class] .= sqrt.( sum( residuals .^ 2, dims = 2 ) ./ ( Vars - F ) )
         #Not in traditional method but convenient for modern classification formalism
+        println("...")
         Y[ : , class ] .= (s.ClassLimits[class] .- Y[ : , class ])
         Outliers = Y[:, class] .< s.ClassLimits[class]
         Y[ Outliers , class ] .= 0.0

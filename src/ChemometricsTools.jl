@@ -48,7 +48,7 @@ module ChemometricsTools
     include("ClassificationModels.jl") #Has docs
     export KNN, ProbabilisticNeuralNetwork, GaussianDiscriminant, LogisticRegression, MultinomialSoftmaxRegression,
         GaussianNaiveBayes, HighestVoteOneHot, ConfidenceEllipse, LinearPerceptronSGD, LinearPerceptronBatch,
-        HLDA
+        HLDA, SIMCA
 
     include("Clustering.jl") #Has Docs
     export TotalClusterSS, WithinClusterSS, BetweenClusterSS, KMeansClustering, KMeans
@@ -88,7 +88,7 @@ module ChemometricsTools
     include("CurveResolution.jl") #Has Docs
     export BTEMobjective, BTEM, NMF, SIMPLISMA, MCRALS, FNNLS, UnimodalFixedUpdate,
         UnimodalUpdate, UnimodalLeastSquares, ITTFA
-        
+
     include("PlottingTools.jl") #Has Docs
     export residualsplotrecipe, QQ, BlandAltman, IntervalOverlay,
         DiscriminantAnalysisPlot, DAPlot
