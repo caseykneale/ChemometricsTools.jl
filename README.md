@@ -62,7 +62,6 @@ I'd love for a collaborator to contribute some: spectra, chromatograms, etc. Ple
 Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has the essentials for online learning covered. Surely many are contemplating packages with time series as a focus. Similarly, if you want clustering methods, just install [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I may add a few supportive odds and ends in here (or contribute to the packages directly) but really, most of the Julia 1.0+ ecosystem is really reliable, well made, and community supported.
 
 ## ToDo:
-  - Long-term: SIMCA
   - Hyperspectral data preprocessing methods that fit into pipelines/transforms.
   - Design of Experiment tools (Partial Factorial design, D/I-optimal, etc...)?
 

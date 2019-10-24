@@ -25,15 +25,15 @@ Shuffle!( X, YHot );
 @time rf = RandomForest(TrainX, TrainY, :classification; gainfn = entropy, trees = 100,
                         maxdepth = 10,  minbranchsize = 5,
                         samples = 0.7, maxvars = nothing)
-@time simca = SIMCA(TrainX, TrainY; VarianceExplained = 0.95, Quantile = 0.99)
-
+@time simca = SIMCA(TrainX, TrainY; VarianceExplained = 0.95, Quantile = 0.999)
 
 #Let's evaluate them on the training set then the hold out - see how they do!
 models = ( knn, ldagd, mnsr, gnb, ct, rf, simca );
 modelnames = ( :knn, :ldagd, :mnsr, :gnb, :ct, :rf, :SIMCA );
 TrainingF1s = Dict()
 for ( name, model ) in zip(modelnames, models)
-    TrainingF1s[name] = MulticlassStats( model(TrainX), TrainY, Encoding )[1][:Global]["FMeasure"]
+    Predicted = model(TrainX)
+    TrainingF1s[name] = MulticlassStats( Predicted, TrainY, Encoding )[1][:Global]["FMeasure"]
 end
 
 TrainingF1s

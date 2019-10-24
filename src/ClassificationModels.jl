@@ -341,11 +341,22 @@ struct SIMCA
 end
 
 """
-    SIMCA(X, Y; ExplainedVariance = 0.95)
+    SIMCA( X, Y;
+            VarianceExplained = repeat([0.95], size(Y)[2]),
+            Quantile = repeat([0.95], size(Y)[2]) )
 
-UNTESTED
+Returns a Soft-Independent Modelling of Class Analogies(SIMCA) classification model
+ object from `X` and one hot encoded `Y`.
 """
-function SIMCA(X, Y; VarianceExplained = 0.95, Quantile = 0.99)
+function SIMCA( X, Y;
+                VarianceExplained = repeat([0.95], size(Y)[2]),
+                Quantile = repeat([0.95], size(Y)[2]) )
+    if length( VarianceExplained ) == 1
+        VarianceExplained = repeat( [ VarianceExplained ], size( Y )[ 2 ] )
+    end
+    if length( Quantile ) == 1
+        Quantile = repeat( [ Quantile ], size( Y )[ 2 ] )
+    end
     (Obs, ClassNumber) = size( Y )
     Vars = size(X)[2]
     ClassSizes = Int.(zeros(ClassNumber))
@@ -357,16 +368,15 @@ function SIMCA(X, Y; VarianceExplained = 0.95, Quantile = 0.99)
     for class in 1 : ClassNumber
         Members = Y[ :, class ] .== 1
         ClassSizes[class] = sum(Members)
-        @assert(ClassSizes[class] > 1, "Classes must have more than 1 members to create a PCA basis.")
-        CS = CenterScale(X[Members,:])
+        @assert(ClassSizes[class] > 1, "Classes must have more than 1 member to create a PCA basis...")
+        CS = Center(X[Members,:])
         Xcs = CS( X[Members,:] )
         pca = PCA( Xcs )
-        factors = findfirst( cumsum(ExplainedVariance(pca)) .> VarianceExplained )
+        factors = findfirst( cumsum(ExplainedVariance(pca)) .> VarianceExplained[class] )
         residual_variance = Xcs .- (pca(Xcs; Factors = factors) * pca.Loadings[1:factors,:])
         DOF = ( ClassSizes[class] - factors - 1 ) * ( Vars - factors )
-        S0 = sum(residual_variance) / DOF
-
-        ClassLimits[class] = S0 * sqrt( quantile( Distributions.FDist( ( Vars - factors ) , DOF ), Quantile) )
+        S0 = sum(residual_variance .^ 2) / DOF
+        ClassLimits[class] = S0 * sqrt( quantile( Distributions.FDist( ( Vars - factors ) , DOF ), Quantile[class]) )
         Factors[class] = factors
         residual_variance[class] = S0
         push!( Preprocessers, CS )
@@ -378,8 +388,7 @@ end
 """
     (s::SIMCA)( X )
 
-Returns a 1 hot encoded inference from `X` with SIMCA.
-UNTESTED
+Returns a 1 hot encoded inference from `X` from a SIMCA model.
 """
 function ( s::SIMCA )( X )
     Obs, Vars = size( X )
@@ -389,12 +398,11 @@ function ( s::SIMCA )( X )
         F = s.Factors[ class ]
         XProject = s.PCAs[ class ]( Xp ; Factors = F )
         residuals = Xp .- ( XProject * s.PCAs[ class ].Loadings[1:F,:] )
-        Y[:, class] .= sqrt.( sum( residuals .^ 2, dims = 2 ) ./ ( Vars - F ) )
+        Y[:, class] = sqrt.( sum( residuals .^ 2, dims = 2 ) ./ ( Vars - F ) )
         #Not in traditional method but convenient for modern classification formalism
-        println("...")
         Y[ : , class ] .= (s.ClassLimits[class] .- Y[ : , class ])
-        Outliers = Y[:, class] .< s.ClassLimits[class]
-        Y[ Outliers , class ] .= 0.0
+        #Remove outliers by Q stat...
+        Y[ Y[:, class] .< 0.0 , class ] .= 0.0
     end
-    return Score
+    return Y
 end
