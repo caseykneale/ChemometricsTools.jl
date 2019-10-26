@@ -1,4 +1,4 @@
-push!(LOAD_PATH, "/home/caseykneale/Desktop/ChemometricsTools/ChemometricsTools.jl/");
+#push!(LOAD_PATH, "/home/caseykneale/Desktop/ChemometricsTools/ChemometricsTools.jl/");
 using ChemometricsTools
 #View the data in the package space
 ChemometricsToolsDatasets()

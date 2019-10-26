@@ -60,53 +60,54 @@ function NMF(X; Factors = 1, tolerance = 1e-7, maxiters = 200)
     return (W, H)
 end
 
-
 """
     SIMPLISMA(X; Factors = 1, alpha = 0.05, includedvars = 1:size(X)[2], SecondDeriv = true)
 Performs SIMPLISMA on Array `X` using either the raw spectra or the Second Derivative spectra.
 alpha can be set to reduce contributions of baseline, and a list of included variables in the determination
 of pure variables may also be provided.
 Returns a tuple of the following form: (Concentraion Profile, Pure Spectral Estimates, Pure Variables)
+
 W. Windig, Spectral Data Files for Self-Modeling Curve Resolution with Examples Using the SIMPLISMA Approach, Chemometrics and Intelligent Laboratory Systems, 36, 1997, 3-16.
 """
-function SIMPLISMA(X; Factors = 1, alpha = 0.05, includedvars = 1:size(X)[2], SecondDeriv = true)
-    @warn("Has not been tested for correctness.")
+function SIMPLISMA(X; Factors = 1, alpha = 0.03, includedvars = 1:size(X)[2],
+                    SecondDeriv = true)
+    @warn("SIMPLISMA has not been completely tested for correctness.")
     Xcpy = deepcopy(X)
     X = X[:,includedvars]
     if SecondDeriv
         X = map( x -> max( x, 0.0 ), -SecondDerivative( X ) )
     end
-    (obs, vars) = size(X)
-    Col_Std = Statistics.std(X, dims = 1) .* sqrt( (obs - 1) / obs);
-    Col_Mu = Statistics.mean(X, dims = 1);
-    Robust_Col_Mu = Col_Mu .+ (alpha * reduce(max, Col_Mu) );
-    Norm = sqrt.( ((Col_Std .+ Robust_Col_Mu).^ 2) .+ (Col_Mu .^ 2) )
-    Normed = X ./ Norm
-    normcov = (Normed' * Normed) ./ obs
-    purity = Col_Std ./ Robust_Col_Mu
     purvarindex = []
+    (obs, vars) = size(X)
+    pureX = zeros( Factors, vars )
     weights = zeros( vars )
 
-    for i in 1 : (Factors+1)
-       for j in 1 : vars
-            if i > 1
-                weights[j] = LinearAlgebra.det( normcov[ [ j; purvarindex] , [j; purvarindex ]  ] )
-            else
-                weights[j] = LinearAlgebra.det( normcov[ j , j ] )
-            end
+    Col_Std = Statistics.std(X, dims = 1) .* sqrt( (obs - 1) / obs);
+    Col_Mu = Statistics.mean(X, dims = 1);
+    Robust_Col_Mu = Col_Mu .+ (alpha .* reduce(max, Col_Mu) );
+    NormFactor = sqrt.( ((Col_Std .+ Robust_Col_Mu).^ 2) .+ (Col_Mu .^ 2) )
+    Xp = X ./ NormFactor
+
+    purity = Col_Std ./ Robust_Col_Mu
+
+    for i in 1 : (Factors)
+        for j in 1 : vars
+           purvarmatrix = Xp[ : , vcat( purvarindex, j) ] ;
+           O = (purvarmatrix' * purvarmatrix) ./ obs
+           weights[j] = det( O );
        end
        purity_Spec = weights .* purity'
        push!(purvarindex, argmax(purity_Spec)[1])
+       pureX[i,:] = purity_Spec;
     end
-
-    pureX = Xcpy[ : , includedvars[purvarindex[1:end]] ]
-    purespectra = pureX \ Xcpy
+    pureinX = Xcpy[ : , includedvars[purvarindex] ]
+    purespectra = pureinX \ Xcpy
     pureabundance = Xcpy / purespectra
 
     scale = LinearAlgebra.Diagonal(1.0 ./ sum(pureabundance, dims = 2))
     pureabundance = pureabundance * scale
     purespectra = Base.inv( scale ) * purespectra
-    return (pureabundance[:,2:end], purespectra[2:end,:], includedvars[purvarindex[2:end]])
+    return (pureabundance, purespectra, includedvars[purvarindex])
 end
 
 """
@@ -341,7 +342,7 @@ DOI: 10.1016/S0019-0578(99)00022-1
 """
 function ITTFA(X; Factors = 1, Components = Factors, maxiters = 500,
                 threshold = 1e-8, nonnegativity = true)
-    @warn("Has not been tested for correctness.")
+    @warn("ITTFA has not been tested for correctness.")
     rows, vars = size( X );
     Result = zeros( Components, rows )
     selectedneedles = zeros( Components )

@@ -1,8 +1,12 @@
 #This is a workspace for hyperspectral imaging methods
-#Maybe some NWAY stuff will fall in here...
-#This shouldn't be on master, but I won't put anything here unless I think it'll work.
 
+"""
+    ACE(Background, X, Target)
+
+Untested
+"""
 function ACE(Background, X, Target)
+    @assert( length(size(Background)) < 4 )
     if length(size(Background)) == 3
         Background = reshape(Background, prod( size( Background )[1:2 ]), size( Background )[ 3 ]  )
     end
@@ -16,15 +20,22 @@ function ACE(Background, X, Target)
     return (numerator * numerator) / denominator
 end
 
-#MF is always superior to CEMXiurui Geng,   Luyan Ji, Weitun Yang, Fuxiang Wang, Yongchao Zhao
-#https://arxiv.org/pdf/1612.00549.pdf
+"""
+    MatchedFilter(X, Target)
+
+Untested
+
+MatchedFilter is always superior to CEM. Xiurui Geng, Luyan Ji, Weitun Yang, Fuxiang Wang, Yongchao Zhao
+https://arxiv.org/pdf/1612.00549.pdf
+"""
 function MatchedFilter(X, Target)
-    if length(size(Background)) == 3
-        Background = reshape(Background, prod( size( Background )[1:2 ]), size( Background )[ 3 ]  )
+    @assert( length(size(X)) < 4 )
+    if length(size(X)) == 3
+        X = reshape(X, prod( size( X )[1:2 ]), size( X )[ 3 ]  )
     end
-    mu = Statistics.mean(Background, dims = 1)
-    mcent = Background .- mu
-    covinv = Base.inv( ( 1.0 / size(Background)[1] ) .* (mcent' * mcent) )
+    mu = Statistics.mean(X, dims = 1)
+    mcent = X .- mu
+    covinv = Base.inv( ( 1.0 / size(X)[1] ) .* (mcent' * mcent) )
     tmu = Target .- mu
     xmu = X .- mu
     numerator = covinv * tmu

@@ -52,6 +52,7 @@ makedocs(
 			 "Speciality Tools" => Any[
 			 					 "Model Analysis" => "man/modelanaly.md",
 						 		 "MultiWay" => "man/MultiWay.md",
+								 "Hyperspectral" => "man/Hyperspectral.md",
 								 "Anomaly Detection" => "man/AnomalyDetection.md",
 								 "Curve Resolution" => "man/CurveResolution.md"
 							],

@@ -1,7 +1,7 @@
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://caseykneale.github.io/ChemometricsTools.jl/dev/) [![Build Status](https://travis-ci.org/caseykneale/ChemometricsTools.jl.svg?branch=master)](https://travis-ci.org/caseykneale/ChemometricsTools.jl)
 
 # ChemometricsTools.jl
-This package contains a collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. It is currently richer and more fundamental than any single free chemometrics package available in any other language. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is the symbiosis of applied linear algebra/statistics which is disciplined by the physics and meaning of chemical measurements. This is somewhat orthogonal to most specializations of machine learning where "add more layers" is the modus operandi. Sometimes chemometricians also get *desperate* and break out pure machine learning methods - so some of those techniques are in this package.
+This package contains a collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. It is currently richer and more fundamental than any single free chemometrics package available in any other language. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is the symbiosis of applied linear algebra/statistics which is disciplined by the physics and meaning of chemical measurements. This is somewhat orthogonal to most specializations of machine learning where "add more layers" is the modus operandi. Sometimes chemometricians also weigh the pros and cons of black box modelling and break out pure machine learning methods - so some of those techniques are in this package.
 
 ## Tutorials/Demonstrations:
   - [Transforms](https://caseykneale.github.io/ChemometricsTools.jl/dev/Demos/Transforms/)
@@ -18,7 +18,7 @@ This package contains a collection of tools to perform fundamental and advanced 
   - [Regression](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/RegressionShootout.jl)
   - [Fault Detection](https://github.com/caseykneale/ChemometricsTools.jl/blob/master/shootouts/AnomalyShootout.jl)
 
-### Package Status => Fleshing Out (v 0.5.7)
+### Package Status => Fleshing Out (v 0.5.8)
 ChemometricsTools has been accepted as an official Julia package! Yep, so you can  ```Pkg.add("ChemometricsTools")``` to install it. A lot of features have been added since the first public release (v 0.2.3 ). In 0.5.7 almost all of the functionality available can be used/abused. If you find a bug or want a new feature don't be shy - file an issue. In v0.5.1 Plots was removed as a dependency, new plot recipes were added, and now the package compiles much faster! Multilinear modeling, univariate modeling, and DOE functions are now available. Making headway into the release plan for v0.6.0. Convenience functions, documentation, bug fixes, refactoring and clean up are in progress bare with me. The git repo's master branch typically has the most advanced version, but the features on it may be less reliable because I like to do development on it.
 
 ### Seeking Collaborators
@@ -44,7 +44,7 @@ ChemometricsTools offers easy to use iterators for K-folds validation's, and mov
 This package features dozens of regression performance metrics, and a few built in plots (Bland Altman, QQ, Interval Overlays etc) are included. The list of regression methods currently includes: CLS, Ridge, Kernel Ridge, LS-SVM, PCR, PLS(1/2), ELM's, Regression Trees, Random Forest, Monotone Regression... More to come. Chemometricians love regressions! I've also added some convenience functions for univariate calibrations, standard addition experiments and some automated plot functions for them.
 
 ### Classification Modeling
-In-house classification encodings (one cold/one hot), and easy to retrieve global or multiclass performance statistics. ChemometricsTools currently includes: LDA/PCA with Gaussian discriminants, also Hierchical LDA, multinomial softmax/logistic regression, PLS-DA, K-NN, Gaussian Naive Bayes, Classification Trees, Random Forest, Probabilistic Neural Networks, LinearPerceptrons, and more to come. You can also conveniently dump classification statistics to LaTeX/CSV reports!
+In-house classification encodings (one cold/one hot), and easy to retrieve global or multiclass performance statistics. ChemometricsTools currently includes: LDA/PCA with Gaussian discriminants, Hierchical LDA, SIMCA, multinomial softmax/logistic regression, PLS-DA, K-NN, Gaussian Naive Bayes, Classification Trees, Random Forest, Probabilistic Neural Networks, LinearPerceptrons, and more to come. You can also conveniently dump classification statistics to LaTeX/CSV reports!
 
 ### Multiway/Multilinear Modeling
 I've been working to fulfill an obvious gap in the available tooling. Standard
@@ -62,9 +62,13 @@ I'd love for a collaborator to contribute some: spectra, chromatograms, etc. Ple
 Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has the essentials for online learning covered. Surely many are contemplating packages with time series as a focus. Similarly, if you want clustering methods, just install [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I may add a few supportive odds and ends in here (or contribute to the packages directly) but really, most of the Julia 1.0+ ecosystem is really reliable, well made, and community supported.
 
 ## ToDo:
-  - Hyperspectral data preprocessing methods that fit into pipelines/transforms.
-  - Design of Experiment tools (Partial Factorial design, D/I-optimal, etc...)?
+  - Clean up.
+  - Performance improvements.
+  - Syntax improvements.
+  - Documentation improvements.
+  - Unit tests.
 
 ## Maybes:
+  - Design of Experiment tools (Partial Factorial design, D/I-optimal, etc...)?
   - Convenience fns propagation of error, multiequilibria, kinetics?
   - Electrochemical simulations and optical simulations (maybe separate packages...)?

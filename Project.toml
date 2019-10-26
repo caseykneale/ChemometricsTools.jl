@@ -1,7 +1,7 @@
 name = "ChemometricsTools"
 uuid = "a9718f02-dbee-5ae5-ad0e-dfbd07fa387b"
 authors = ["caseykneale "]
-version = "0.5.7"
+version = "0.5.8"
 
 [deps]
 Arpack = "7d9fca2a-8960-54d3-9f78-7d1dccf2cb97"

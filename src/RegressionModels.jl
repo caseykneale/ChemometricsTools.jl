@@ -1,7 +1,7 @@
 abstract type RegressionModels end
 #If only we could add methods to abstract types...
 # (M::RegressionModel)(X) = RegressionOut(X, M)
-# maybe in Julia 2.0? - Update: Julia 1.2 allows this!!!
+# maybe in Julia 2.0? - Update: Julia 1.2+ allows this!!!
 
 struct ClassicLeastSquares <: RegressionModels
     Coefficients::Array
@@ -106,7 +106,10 @@ Returns a LSSVM Wrapper for a CLS object.
 """
 function LSSVM( X, Y, Penalty; KernelParameter = 0.0, KernelType = "linear" )
     Kern = Kernel( KernelParameter, KernelType, X )
-    return LSSVM(Kern, RidgeRegression( formatlssvminput( Kern( X ) ), vcat( 0.0, Y ), Penalty ) )
+    return LSSVM(   Kern,
+                    RidgeRegression( formatlssvminput( Kern( X ) ),
+                    vcat( 0.0, Y ),
+                    Penalty ) )
 end
 
 """
@@ -273,6 +276,7 @@ end
 Performs a monotone/isotonic regression on a vector x. This can be weighted
 with a vector w.
 
+Code was translated directly from:
 Exceedingly Simple Monotone Regression. Jan de Leeuw. Version 02, March 30, 2017
 """
 function MonotoneRegression(x::Array{Float64,1}, w = nothing)

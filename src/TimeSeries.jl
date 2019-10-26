@@ -28,7 +28,7 @@ function Base.iterate( iter::RollingWindow, state = 1 )
     else
         return nothing
     end
-    return ( window ,  state + iter.skip  )
+    return ( window, state + iter.skip  )
 end
 
 mutable struct ewma
@@ -45,6 +45,7 @@ Constructs an exponentially weighted moving average object from an initial scala
 the decay parameter `Lambda`. This defaults the center value to be the initial value.
 """
 EWMA(Initial::Float64, Lambda::Float64) = ewma(Lambda, Initial, Initial, RunningVar(Initial))
+
 """
     EWMA(Initial::Float64, Lambda::Float64) = ewma(Lambda, Initial, Initial, RunningVar(Initial))
 
@@ -61,6 +62,7 @@ function EWMA(Initial::Array, Lambda::Float64)
     burnin.center = burnin.rv.m.mu
     return burnin
 end
+
 """
     EWMA(P::ewma)(New; train = true)
 
@@ -73,6 +75,7 @@ function (P::ewma)(New; train = true)
     end
     return P.lastval
 end
+
 """
     ChangeCenter(P::ewma, new::Float64)
 
@@ -81,19 +84,20 @@ This is a convenience function to update the center of a `P` EWMA model, to a `n
 function ChangeCenter(P::ewma, new::Float64)
     P.center .= new
 end
+
 """
     Variance(P::ewma)
 
 This function returns the EWMA control variance.
 """
 Variance(P::ewma) = (P.lambda / (2.0 - P.lambda) ) * Variance(P.rv)
+
 """
     Limits(P::ewma; k = 3.0)
 
 This function returns the upper and lower control limits with a `k` span of variance for an EWMA object `P`.
 """
 Limits(P::ewma; k = 3.0) = (P.center + (k * sqrt( Variance( P ) ) ), P.center - (k * sqrt( Variance( P ) ) )  )
-
 
 mutable struct NaiveForecaster
     lastval::Float64
@@ -104,6 +108,7 @@ end
 Makes a forecaster model that simply predicts the last value it has seen for all future values.
 """
 NaiveForecast(univariate::Array) = NaiveForecaster( last( univariate ) )
+
 """
     update!( model::NaiveForecaster, newdata::Float64 )
 
@@ -128,6 +133,7 @@ Predicts with a naive forecaster model.
 mutable struct SimpleAverage
     runmean::RunningMean
 end
+
 """
     SimpleAverage( univariate )
 """
@@ -143,6 +149,7 @@ function SimpleAverage(univariate::Array)
     end
     return SimpleAverage( rm )
 end
+
 """
     Update( model::naiveforecaster, newdata::Float64 )
 """
@@ -156,7 +163,6 @@ end
 Predicts with a naive forecaster model.
 """
 (sa::SimpleAverage)() = sa.runmean.mu
-
 
 struct EchoStateNetwork
     Winput::Array
@@ -174,7 +180,7 @@ end
                         L2 = 1e-8, alpha = 0.25, SpectralRadius = 1.00, Sparsity = 0.99, Noise = -1.00,
                         bias = true, burnin = 0)
 
-    Currently untested.
+    Creates an echo state network model/object.
 """
 function EchoStateNetwork(X, Y, Reservoir = 1000;
                         L2 = 1e-8, alpha = 0.25, SpectralRadius = 1.00, Sparsity = 0.99, Noise = -1.00,
@@ -218,16 +224,25 @@ function EchoStateNetwork(X, Y, Reservoir = 1000;
     return EchoStateNetwork( Winput, W, Woutput, States, state, L2, alpha, bias )
 end
 
-#This function modifies an ESN model's output weights without reconstructing the dynamic resevoir.
-#Time saver!
+
+"""
+    TuneRidge(Y, model::EchoStateNetwork, L2, burnin = 0 )
+
+    This function modifies an ESN model's output weights without reconstructing the dynamic resevoir.
+    Basically this is a time saver!
+"""
 function TuneRidge(Y, model::EchoStateNetwork, L2, burnin = 0 )
     model.L2 .= L2
     model.Woutput .= Y[ (burnin + 2) : end]' * model.States' * Base.inv( model.States * model.States' .+ L2 * diag(ones(bias + Vars + Reservoir) ) )
 end
 
-#This function uses X data to predict Y values from a stored ESN model.
-#Burnin can be used here, but it simply rejects the first N samples from storage/allocation.
-#UseLastState will employ the last known state from the training set as the first state estimate (reccomended)
+"""
+    PredictFn(model::EchoStateNetwork, X; UseLastState = true, burnin = 0)
+
+    This function uses X data to predict Y values from a stored ESN model.
+    Burnin can be used here, but it simply rejects the first `N` samples from storage/allocation.
+    UseLastState will employ the last known state from the training set as the first state estimate (reccomended)
+"""
 function PredictFn(model::EchoStateNetwork, X; UseLastState = true, burnin = 0)
     (Obs,Vars) = size(X)
     #Run the trained ESN using last state as starting point
