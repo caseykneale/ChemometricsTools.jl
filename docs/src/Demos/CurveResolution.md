@@ -1,3 +1,6 @@
+# WARNING
+Please note that I recently discovered a few bugs that made the examples in this document appear better then they actually are! Woops! The syntax is still useful and the examples as well - but don't feel bad if you don't get the same results. I'll update this when I can...
+
 # Curve Resolution Demo
 ChemometricsTools has some curve resolution methods baked in. So far NMF, SIMPLISMA, and MCR-ALS are included. If you aren't familiar with them, they are used to extract spectral and concentration estimates from unknown mixtures in chemical signals. Below is an example of spectra which are composed of signals from a mixture of a 3 components. I could write a volume analyzing this simple set, but this is just a show-case of some methods and how to call them, what kind of results they might give you. The beauty of this example is that, we know what is in it, in a forensic or real-world situation we won't know what is in it, and we have to rely on domain knowledge, physical reasoning, and metrics to determine the validity of our results.
 
@@ -53,6 +56,6 @@ As we can see, NMF does resolve a few components that resemble a few of the actu
 
 ![MCRALSC](https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/CurveResolutionDemo/MCRALSC.png)
 
-SIMPLISMA basically botched this dataset with regards to the concentration profiles. While NMF and MCR-ALS do quite good. Of course preprocessing can help here, and tinkering too. Ultimately not bad, given the mixture components. I do have a paper that shows another approach to this problem doubtful I'd be allowed to rewrite the code, I think my university owns it!
+SIMPLISMA basically botched this dataset with regards to the concentration profiles. While NMF and MCR-ALS do quite good. Of course preprocessing can help here, and tinkering too. Ultimately not bad, given the mixture components. I do have a paper that shows another approach to this problem doubtful I'd be allowed to rewrite the code, I think my previous university owns it!
 
 Casey Kneale, Steven D. Brown, [Band target entropy minimization and target partial least squares for spectral recovery and quantitation](http://www.sciencedirect.com/science/article/pii/S0003267018309188), Analytica Chimica Acta, Volume 1031, 2018, Pages 38-46, ISSN 0003-2670, https://doi.org/10.1016/j.aca.2018.07.054.
