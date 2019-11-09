@@ -267,13 +267,13 @@ Note: This isn't highly optimized for performance. It was made when DSP.jl broke
 and broke the ChemometricsTools.jl package.
 """
 function ConvFilter1DFFT(a, filter)
-    @assert(length(filter) < length(a), "Length of filter should be less than the length of the vector." )
+    @assert(length(filter) <= length(a), "Length of filter should be less than the length of the vector." )
     NewSize = length(a) + length(filter) - 1;
     ADiff = Int(round((NewSize - length(a)) ))
     filterDiff = Int(round((NewSize - length(filter)) ))
     X = fft( vcat( a, zeros( ADiff ) ) )
     H = fft( vcat( filter, zeros( filterDiff ) ) )
-    return abs.(ifft( X .* H ))[ (ADiff+1):(end-ADiff) ]
+    return real.(ifft( X .* H ))[ (ADiff+1):(end-ADiff) ]
 end
 
 """
@@ -285,19 +285,22 @@ and `Delta` is the order of the derivative.
 
 Savitzky, A.; Golay, M.J.E. (1964). "Smoothing and Differentiation of Data by Simplified Least Squares Procedures". Analytical Chemistry. 36 (8): 1627–39. doi:10.1021/ac60214a047.
 """
-function SavitzkyGolay(X, Delta, PolyOrder, windowsize::Int)
+function SavitzkyGolay(X, DerivOrder, PolyOrder, windowsize::Int)
     @assert( (windowsize % 2) == 1, "Window size must be an odd number" )
+    @assert( PolyOrder < (windowsize-1), "Polynomial order must be less than the window size." )
     X = forceMatrixT(X)
     (Obs,Vars) = size(X)
     windowspan = (windowsize - 1) / 2
-    basis = ( ( -windowspan ) : windowspan ) .^ ( 0 : PolyOrder )'
-    A = ( basis' * basis) \ basis'
-    DeltaFac = factorial(Delta)
-    output = DeltaFac * ConvFilter1DFFT(X[1,:], A[Delta + 1,: ])'
+    basis = ones( windowsize, PolyOrder+1 )
+    basis[:,2:end] = ( (-windowspan:windowspan)' .^ ( 1 : PolyOrder ))'
+    DerivFac = factorial( DerivOrder )
+    FIR = inv( basis' * basis) * basis'
+    output = DerivFac * ConvFilter1DFFT(X[1,:], FIR[DerivOrder+1,: ])'
     for r in 2:Obs
-        output = vcat( output, DeltaFac * ConvFilter1DFFT(X[r,:], A[Delta + 1,: ])' )
+        sg = DerivFac * ConvFilter1DFFT(X[r,:], FIR[DerivOrder+1,: ])'
+        output = vcat( output, sg )
     end
-    offset = ((windowsize - 1) / 2) |> Int
+    offset = Int( windowspan )
     return output[:, (offset + 1) : (end - offset)]
 end
 
