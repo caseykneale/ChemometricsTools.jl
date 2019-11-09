@@ -1,7 +1,11 @@
 module ChemometricsTools
     using DataFrames, LinearAlgebra, Statistics, StatsBase, SparseArrays,
-            RecipesBase, Distributions, Dates, Combinatorics, Revise
+            RecipesBase, Distributions, Dates, Combinatorics, Revise, FFTW
     using CSV: read
+    #DSP.jl is currently broken and has been removed as a dependancy from
+    #this project until further notice.
+    #using DSP: conv
+
     #A generic function that I use everywhere to coerce a vector dim 0 to a row vector...
     forceMatrix( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, length(a), 1 ) : a
     forceMatrixT( a ) = ( length( size( a ) ) == 1 ) ? reshape( a, 1, length(a) ) : a
@@ -58,7 +62,8 @@ module ChemometricsTools
         DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection,
         StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, ScaleFNorm,
         ScaleMinMax, ScaleByIntensity, offsetToZero, boxcar, ALSSmoother,
-        PerfectSmoother, CORAL, TransferByOrthogonalProjection, Noise, LinearResample
+        PerfectSmoother, CORAL, TransferByOrthogonalProjection, Noise, LinearResample,
+        ConvFilter1DFFT
 
     include("RegressionModels.jl") # Has Docs
     export ClassicLeastSquares, OrdinaryLeastSquares, RidgeRegression,

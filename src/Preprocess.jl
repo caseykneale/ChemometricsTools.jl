@@ -1,5 +1,3 @@
-using DSP: conv #Ew I wanna get rid of this dependency... One function (SavitskyGolay) uses it...
-
 """
     Noise(data, level; scale = :percent_max, type = :gaussian )
 
@@ -260,6 +258,25 @@ function FractionalDerivative(Y, X = 1 : length(Y); Order = 0.5)
 end
 
 """
+    ConvFilter1DFFT(a, filter)
+
+Performs a 1D convolution of vector `filter` onto `a` via the FFT definition of a
+ convolution. This method implicitly zeropads and truncates the result.
+
+Note: This isn't highly optimized for performance. It was made when DSP.jl broke,
+and broke the ChemometricsTools.jl package.
+"""
+function ConvFilter1DFFT(a, filter)
+    @assert(length(filter) < length(a), "Length of filter should be less than the length of the vector." )
+    NewSize = length(a) + length(filter) - 1;
+    ADiff = Int(round((NewSize - length(a)) ))
+    filterDiff = Int(round((NewSize - length(filter)) ))
+    X = fft( vcat( a, zeros( ADiff ) ) )
+    H = fft( vcat( filter, zeros( filterDiff ) ) )
+    return abs.(ifft( X .* H ))[ (ADiff+1):(end-ADiff) ]
+end
+
+"""
     SavitzkyGolay(X, Delta, PolyOrder, windowsize)
 
 Performs SavitskyGolay smoothing across every row in an Array `X`.
@@ -276,9 +293,9 @@ function SavitzkyGolay(X, Delta, PolyOrder, windowsize::Int)
     basis = ( ( -windowspan ) : windowspan ) .^ ( 0 : PolyOrder )'
     A = ( basis' * basis) \ basis'
     DeltaFac = factorial(Delta)
-    output = DeltaFac * conv(X[1,:], A[Delta + 1,: ])'
+    output = DeltaFac * ConvFilter1DFFT(X[1,:], A[Delta + 1,: ])'
     for r in 2:Obs
-        output = vcat( output, DeltaFac * conv(X[r,:], A[Delta + 1,: ])' )
+        output = vcat( output, DeltaFac * ConvFilter1DFFT(X[r,:], A[Delta + 1,: ])' )
     end
     offset = ((windowsize - 1) / 2) |> Int
     return output[:, (offset + 1) : (end - offset)]
