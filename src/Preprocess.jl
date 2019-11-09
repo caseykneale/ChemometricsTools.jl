@@ -269,7 +269,7 @@ and `Delta` is the order of the derivative.
 Savitzky, A.; Golay, M.J.E. (1964). "Smoothing and Differentiation of Data by Simplified Least Squares Procedures". Analytical Chemistry. 36 (8): 1627–39. doi:10.1021/ac60214a047.
 """
 function SavitzkyGolay(X, Delta, PolyOrder, windowsize::Int)
-    @assert (windowsize % 2) == 1
+    @assert( (windowsize % 2) == 1, "Window size must be an odd number" )
     X = forceMatrixT(X)
     (Obs,Vars) = size(X)
     windowspan = (windowsize - 1) / 2
@@ -282,6 +282,30 @@ function SavitzkyGolay(X, Delta, PolyOrder, windowsize::Int)
     end
     offset = ((windowsize - 1) / 2) |> Int
     return output[:, (offset + 1) : (end - offset)]
+end
+
+"""
+    LinearResample(X, newsize)
+
+Resamples a vector `X` to be of size `newsize` via linear interpolation.
+"""
+function LinearResample(X, newsize)
+   cursize = length(X)
+   if cursize == newsize
+      return X
+   end
+   newspacing = ( (cursize-1) / (newsize-1) )
+   newsampling = 1 : newspacing : cursize
+   interpolated = zeros(newsize)
+   for i in 1 : ( cursize - 1 )
+      #For large arrays this is costly - could change to track the indices
+      #assuming uniform spacing.
+      inds = findall( i .<= newsampling .<= ( i + 1 ) )
+      slope = ( X[i+1] - X[i] )
+      offset = X[i] - (slope*i)
+      interpolated[inds] = (newsampling[inds] .* slope) .+ offset
+   end
+   return interpolated
 end
 
 struct DirectStandardizationXform

@@ -58,7 +58,7 @@ module ChemometricsTools
         DirectStandardization, OrthogonalSignalCorrection, MultiplicativeScatterCorrection,
         StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, ScaleFNorm,
         ScaleMinMax, ScaleByIntensity, offsetToZero, boxcar, ALSSmoother,
-        PerfectSmoother, CORAL, TransferByOrthogonalProjection, Noise
+        PerfectSmoother, CORAL, TransferByOrthogonalProjection, Noise, LinearResample
 
     include("RegressionModels.jl") # Has Docs
     export ClassicLeastSquares, OrdinaryLeastSquares, RidgeRegression,
