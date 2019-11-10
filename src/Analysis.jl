@@ -308,6 +308,93 @@ function RAFFT(raw, reference; maxlags::Int = 500, lookahead::Int = 1, minlength
     return corrected
 end
 
+struct COW
+   Nodes::Array
+   Lengths::Array
+end
+
+"""
+    COW( A, B; segments = 20, slack = 1,
+               maxslack = Int( floor( length(A) / segments ) ) - 2 )
+
+COW makes a CorrelationOptimizedWarping object which warp corrects spectra `A`
+to reference `B`. The user can select the number of segments, slack size,
+and optionally the maximum slack parameter.
+
+Note: Not fully tested.
+
+"Aligning of single and multiple wavelength chromatographic profiles for chemometric data analysis using correlation optimised warping"
+Nielsen, N. P. V.; Carstensen, J. M.; Smedsgaard, J.Journal of Chromatography A1998,805, 17–35.
+"""
+function COW( A, B;
+                  segments = 20, slack = 1,
+                  maxslack = Int( floor( length(A) / segments ) ) - 2 )
+   @warn "This code (COW) is mostly untested. Please report any bugs!"
+   vars = length( A )
+   seglen = Int( floor( vars / segments ) )
+   @assert( vars == length( B ), "spectra should have the same dimensionality" )
+   @assert(seglen > slack, "Slack cannot exceed the length of segments ($seglen)")
+   @assert(maxslack < (seglen - 2), "Maximum slack cannot exceed the length of segments ($seglen - 2)")
+   if seglen < 10
+      @warn "the segment length is less then 10 bins. This could be a bad idea!"
+   end
+   seginit = collect(1 : seglen : vars)
+   seginit[end] = vars
+   extent = ( (length(seginit) - segments) == 1 ) ? (1:segments) : (1:(segments - 1))
+   goalsegments = [ B[ seginit[i]:seginit[(i + 1)] ] for i in extent ]
+   slacks = (-slack):slack
+   nodes = copy(seginit)
+   corr, oldstate = zeros( segments -1 ), zeros(Int, segments - 2 )
+   highscore = -1.1 * segments
+   bestslacks = zeros( segments-2 )
+   iterate = Iterators.product( repeat( [ slacks ], segments - 2 )... )
+   for i in iterate
+      #Check change
+      curstate = reverse( i ) #The reverse is easier to think about for me...
+      difference = findfirst( oldstate .!= curstate )
+      #Compute state
+      update = seginit[(difference+1):(end-1)] .+ curstate[difference:end]
+      nodes[ (difference+1):(end-1) ] = collect(update)
+      #Check validity of segments
+      if all(nodes .<= vars) && all( abs.(nodes .- seginit) .<= maxslack )
+         #Get score
+         for d in difference : ( segments - 1 )
+            span = nodes[ d ]: (nodes[ d + 1 ] - 1)
+            resampled = LinearResample( A[ span ], length( goalsegments[ d ] ) )
+            corr[ d ] = CorrelationVectors( resampled, goalsegments[d] )
+         end
+         #Store the best score
+         if sum(corr) > highscore
+            highscore = sum(corr)
+            bestslacks = curstate
+         end
+      end
+      #Update state
+      oldstate = curstate
+   end
+   #Warp to best state
+   warped = copy( A )
+   update = seginit[2:(segments-1)] .+  bestslacks
+   nodes = copy(seginit)
+   nodes[ 2:(segments-1) ] = update
+   return COW(nodes, length.(goalsegments) )
+end
+
+function (moo::COW)(A)
+   warped = []
+   for s in 1 : (length(moo.Nodes) - 1)
+      if s == 1
+         span = 1 : (moo.Nodes[ s + 1 ] - 1 )
+      else
+         span = (moo.Nodes[ s ]+1) : (moo.Nodes[ s + 1 ] - 1 )
+      end
+      fudge = (s == (length(moo.Nodes) - 1)) ? -1 : 0
+      warped = vcat(warped, LinearResample( A[ span ], moo.Lengths[ s ] + fudge ) )
+   end
+   return warped
+end
+
+
 """
     AssessHealth( X )
 

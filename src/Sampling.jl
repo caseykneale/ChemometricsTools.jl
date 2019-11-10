@@ -28,6 +28,7 @@ Splits an `X` Array along the observations dimension into a 2-Tuple of 2-Tuples 
 The form of the output is the following: ( X1, X2 )
 """
 VenetianBlinds(X) = ( X[1:2:end,:], X[2:2:end,:] )
+
 """
     VenetianBlinds(X,Y)
 
@@ -44,6 +45,8 @@ CIRow(a::CartesianIndex) = collect(Tuple(a))[1]
     KennardStone(X, TrainSamples; distance = "euclidean")
 
 Returns the indices of the Kennard-Stone sampled exemplars (E), and those not sampled (O) as a 2-Tuple (E, O).
+
+Note: there is an indexing bug here...
 
 R. W. Kennard & L. A. Stone (1969) Computer Aided Design of Experiments, Technometrics, 111, 137-148, DOI: 10.1080/00401706.1969.10490666
 """
