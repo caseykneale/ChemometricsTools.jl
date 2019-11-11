@@ -44,7 +44,7 @@ module ChemometricsTools
 
     include("Analysis.jl") #Has Docs
     export PCA_NIPALS, PCA, LDA, CanonicalCorrelationAnalysis, findpeaks,
-        RAFFT, AssessHealth
+        RAFFT, AssessHealth, DynamicTimeWarping, COW
 
     include("AnomalyDetection.jl") #Has docs
     export OneClassJKNN
@@ -98,7 +98,7 @@ module ChemometricsTools
     export residualsplotrecipe, QQ, BlandAltman, IntervalOverlay,
         DiscriminantAnalysisPlot, DAPlot
 
-    include("TimeSeries.jl") #Has Docs: Omitted EchoStateNetwork Fns
+    include("TimeSeries.jl") #Has Docs
     export RollingWindow, EchoStateNetwork, TuneRidge, PredictFn, EWMA, Variance, Limits, update,
         SimpleAverage, NaiveForecast, update!, update
 

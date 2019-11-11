@@ -405,9 +405,15 @@ end
 
 Applies Dynamic Time Warping of spectrum `A` so it maps to reference `B`.
 
-Returns the DTW distance, shortest path, and the DTW cost matrix.
+Returns the DTW distance, shortest path, and the DTW cost matrix. This does not
+automatically rescale `A` to `B`, the way inwhich you want to do that is up to the user
+for now.
+
+Sakoe, Hiroaki; Chiba, Seibi (1978). "Dynamic programming algorithm optimization for spoken word recognition".
+IEEE Transactions on Acoustics, Speech, and Signal Processing. 26 (1): 43–49. doi:10.1109/tassp.1978.1163055.
 """
 function DynamicTimeWarping( A, B )
+    #TODO: Add different distances
     DTW = SquareEuclideanDistance( A, B )
     Na, Nb = size( DTW )
     DTW[1,:] = cumsum(DTW[1,:])
