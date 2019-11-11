@@ -324,7 +324,7 @@ and optionally the maximum slack parameter.
 Note: Not fully tested.
 
 "Aligning of single and multiple wavelength chromatographic profiles for chemometric data analysis using correlation optimised warping"
-Nielsen, N. P. V.; Carstensen, J. M.; Smedsgaard, J.Journal of Chromatography A1998,805, 17–35.
+Nielsen, N. P. V.; Carstensen, J. M.; Smedsgaard, J.Journal of Chromatography A. 1998,805, 17–35.
 """
 function COW( A, B;
                   segments = 20, slack = 1,
@@ -332,7 +332,7 @@ function COW( A, B;
    @warn "This code (COW) is mostly untested. Please report any bugs!"
    vars = length( A )
    seglen = Int( floor( vars / segments ) )
-   @assert( vars == length( B ), "spectra should have the same dimensionality" )
+   #@assert( vars == length( B ), "spectra should have the same dimensionality" )
    @assert(seglen > slack, "Slack cannot exceed the length of segments ($seglen)")
    @assert(maxslack < (seglen - 2), "Maximum slack cannot exceed the length of segments ($seglen - 2)")
    if seglen < 10
@@ -342,6 +342,7 @@ function COW( A, B;
    seginit[end] = vars
    extent = ( (length(seginit) - segments) == 1 ) ? (1:segments) : (1:(segments - 1))
    goalsegments = [ B[ seginit[i]:seginit[(i + 1)] ] for i in extent ]
+   goallengths = length.(goalsegments)
    slacks = (-slack):slack
    nodes = copy(seginit)
    corr, oldstate = zeros( segments -1 ), zeros(Int, segments - 2 )
@@ -356,12 +357,12 @@ function COW( A, B;
       update = seginit[(difference+1):(end-1)] .+ curstate[difference:end]
       nodes[ (difference+1):(end-1) ] = collect(update)
       #Check validity of segments
-      if all(nodes .<= vars) && all( abs.(nodes .- seginit) .<= maxslack )
+      if all(nodes[2:(end-1)] .<= vars) && all( abs.(nodes[2:(end-1)] .- seginit[2:(end-1)]) .<= maxslack )
          #Get score
          for d in difference : ( segments - 1 )
             span = nodes[ d ]: (nodes[ d + 1 ] - 1)
-            resampled = LinearResample( A[ span ], length( goalsegments[ d ] ) )
-            corr[ d ] = CorrelationVectors( resampled, goalsegments[d] )
+            resampled = LinearResample( A[ span ], goallengths[d] )
+            corr[ d ] = Statistics.cor( resampled, goalsegments[d] )
          end
          #Store the best score
          if sum(corr) > highscore
@@ -380,6 +381,11 @@ function COW( A, B;
    return COW(nodes, length.(goalsegments) )
 end
 
+"""
+    (moo::COW)(A)
+
+Applies a learned warping from a COW object to spectrum A.
+"""
 function (moo::COW)(A)
    warped = []
    for s in 1 : (length(moo.Nodes) - 1)
@@ -394,6 +400,50 @@ function (moo::COW)(A)
    return warped
 end
 
+"""
+    DynamicTimeWarping( A, B )
+
+Applies Dynamic Time Warping of spectrum `A` so it maps to reference `B`.
+
+Returns the DTW distance, shortest path, and the DTW cost matrix.
+"""
+function DynamicTimeWarping( A, B )
+    DTW = SquareEuclideanDistance( A, B )
+    Na, Nb = size( DTW )
+    DTW[1,:] = cumsum(DTW[1,:])
+    DTW[:,1] = cumsum(DTW[:,1])
+    for i = 2:Na, j = 2:Nb
+        options = DTW[i-1, j-1]
+        if i < Na
+            options = vcat( options, DTW[i-1, j] )
+        end
+        if j < Nb
+            options = vcat( options, DTW[i, j-1] )
+        end
+        DTW[i, j] += minimum(options)
+    end
+    shortestpath = [(Na, Nb)]
+    cost = 0.0
+    for step in 2 : Na
+        lastposition = shortestpath[end]
+        if lastposition[1] == 1
+            push!(shortestpath, (1, lastposition[2] - 1) )
+        elseif lastposition[1] == 1
+            push!(shortestpath, (lastposition[1] - 1, 1) )
+        else
+            legalmoves = [ lastposition .- 1,
+                            (lastposition[1], lastposition[2] - 1),
+                            (lastposition[1] - 1, lastposition[2]) ]
+            bestmove = argmin( DTW[CartesianIndex.( legalmoves )] )
+            push!(shortestpath, legalmoves[bestmove] )
+        end
+    end
+    if shortestpath[end] != (1,1)
+        push!(shortestpath, (1,1))
+    end
+    cost = sum( DTW[ CartesianIndex.( shortestpath ) ] )
+    return cost, shortestpath, DTW
+end
 
 """
     AssessHealth( X )
