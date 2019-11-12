@@ -63,7 +63,7 @@ module ChemometricsTools
         StandardNormalVariate, Scale1Norm, Scale2Norm, ScaleInfNorm, ScaleFNorm,
         ScaleMinMax, ScaleByIntensity, offsetToZero, boxcar, ALSSmoother,
         PerfectSmoother, CORAL, TransferByOrthogonalProjection, Noise, LinearResample,
-        ConvFilter1DFFT
+        ConvFilter1DFFT, FourierUpsample, SincInterpolation
 
     include("RegressionModels.jl") # Has Docs
     export ClassicLeastSquares, OrdinaryLeastSquares, RidgeRegression,

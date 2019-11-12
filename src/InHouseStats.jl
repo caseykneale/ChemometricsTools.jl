@@ -3,8 +3,10 @@
     rbinomial( p, size... )
 
 Makes an N-dimensional array of size(s) `size` with a probability of being a 1 over a 0 of 1 `p`.
+
+Suggested by Baggepinnen on Discourse!
 """
-rbinomial( p, size... ) = map( x -> ( x < p ) ? 1 : 0, rand( size... ) )
+rbinomial( p, size... ) = rand( size... ) .< p
 
 """
     EmpiricalQuantiles(X, quantiles)
