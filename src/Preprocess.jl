@@ -270,10 +270,11 @@ function ConvFilter1DFFT(a, filter)
     @assert(length(filter) <= length(a), "Length of filter should be less than the length of the vector." )
     NewSize = length(a) + length(filter) - 1;
     ADiff = Int(round((NewSize - length(a)) ))
+    ADiffhalf = Int(floor(ADiff / 2))
     filterDiff = Int(round((NewSize - length(filter)) ))
     X = fft( vcat( a, zeros( ADiff ) ) )
     H = fft( vcat( filter, zeros( filterDiff ) ) )
-    return real.(ifft( X .* H ))[ (ADiff+1):(end-ADiff) ]
+    return real.(ifft( X .* H ))[ (ADiffhalf + 1):(end-ADiffhalf) ]
 end
 
 """
