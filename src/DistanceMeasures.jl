@@ -94,7 +94,7 @@ function LevenshteinDistance(s::AbstractString, t::AbstractString)
 
     s₁, t₁ = s[2:end], t[2:end]
     ld₁ = LevenshteinDistance(s₁, t₁)
-    s[1] == t[1] ? ld₁ : 1 + min(ld₁, levendist(s, t₁), levendist(s₁, t))
+    s[1] == t[1] ? ld₁ : 1 + min(ld₁, LevenshteinDistance(s, t₁), LevenshteinDistance(s₁, t))
 end
 
 """
