@@ -134,7 +134,7 @@ Computes the in class Adjacency matrix with K nearest neighbors.
 function InClassAdjacencyMatrix(DistanceMatrix, YHOT, K = 1)
     Result = zeros( size( DistanceMatrix ) )
     for rowx in 1 : ( size( DistanceMatrix )[ 1 ] )
-        ClassNumber = findfirst( YHOT[ rowx, : ] .== 1 )
+        ClassNumber = findfirst( yh -> yh == 1, YHOT[ rowx, : ] )
         ClassInstances = findall( YHOT[ :, ClassNumber ] .== 1 )
         ClassInstances = setdiff(ClassInstances, rowx)
         k = K
@@ -155,7 +155,7 @@ Computes the out of class Adjacency matrix with K nearest neighbors.
 function OutOfClassAdjacencyMatrix(DistanceMatrix, YHOT, K = 1)
     Result = zeros( size( DistanceMatrix ) )
     for rowx in 1 : ( size( DistanceMatrix )[ 1 ] )
-        ClassNumber = findfirst( YHOT[ rowx, : ] .== 1 )
+        ClassNumber = findfirst( yh -> yh == 1, YHOT[ rowx, : ] )
         ClassInstances = findall( YHOT[ :, ClassNumber ] .== 0 )
         k = K
         if length(ClassInstances) < K
