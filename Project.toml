@@ -28,7 +28,7 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
-Arpack = "^0.3.1"
+Arpack = "^0.3.1, 0.4"
 BenchmarkTools = "^0.4.3"
 CSV = "^0.5.14"
 Combinatorics = "^0.7.0"
