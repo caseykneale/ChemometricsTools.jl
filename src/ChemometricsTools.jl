@@ -1,6 +1,6 @@
 module ChemometricsTools
     using DataFrames, LinearAlgebra, Statistics, StatsBase, SparseArrays,
-            RecipesBase, Distributions, Dates, Combinatorics, Revise, FFTW
+            RecipesBase, Distributions, Dates, Combinatorics, FFTW
     using CSV: read
     #DSP.jl is currently broken and has been removed as a dependancy from
     #this project until further notice.
