@@ -103,8 +103,8 @@ function MulticlassStats(Y, GT, schema; Microaverage = true)
     for y in 1 : size(Y)[1]
         ConfusionMatrix[ Y[ y ], GT[ y ] ] += 1
     end
-    TP = repeat( [0], schema.LabelCount ) ; TN = repeat( [0], schema.LabelCount )
-    FP = repeat( [0], schema.LabelCount ) ; FN = repeat( [0], schema.LabelCount )
+    TP = zeros( schema.LabelCount ) ; TN = zeros( schema.LabelCount )
+    FP = zeros( schema.LabelCount ) ; FN = zeros( schema.LabelCount )
     for c in 1 : schema.LabelCount
         TP[c] = ConfusionMatrix[c,c]
         FP[c] = sum(ConfusionMatrix[:,c]) - TP[c]

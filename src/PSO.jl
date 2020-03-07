@@ -9,7 +9,7 @@ end
 Default constructor for a Bounds object. Returns a bounds object with a lower bound of [0...] and upper bound[1...]
 with length of `dims`.
 """
-Bounds(dims) = Bounds( repeat( [ 0 ], dims ), repeat( [ 1 ], dims ) )
+Bounds(dims) = Bounds( zeros( dims ), ones( dims ) )
 
 """
     Bounds(dims)
@@ -17,7 +17,7 @@ Bounds(dims) = Bounds( repeat( [ 0 ], dims ), repeat( [ 1 ], dims ) )
 Constructor for a Bounds object. Returns a bounds object with a lower bound of [lower...] and upper bound[upper...]
 with length of `dims`.
 """
-Bounds(lower, upper, dims) = Bounds( repeat( [ lower ], dims ), repeat( [ upper ], dims ) )
+Bounds(lower, upper, dims) = Bounds( lower * ones( dims ), upper * ones( dims ) )
 
 mutable struct Particle
     BestPos::Array{Float64, 1}

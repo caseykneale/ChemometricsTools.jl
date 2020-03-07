@@ -472,7 +472,7 @@ Correlation Alignment for Unsupervised Domain Adaptation. Baochen Sun, Jiashi Fe
 function CORAL(X1, X2; lambda = 1.0)
     (Obs1, vars) = size(X1)
     (Obs2, vars) = size(X2)
-    d = lambda .* LinearAlgebra.Diagonal(repeat([1], vars))
+    d = lambda .* LinearAlgebra.Diagonal(ones(Float64, vars))
     c1 = (1.0 / Obs1) * (X1' * X1) .+ d
     c2 = (1.0 / Obs2) * (X2' * X2) .+ d
     CORALXfer = c1 ^ (-1/2) * c2 ^ (1/2)
