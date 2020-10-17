@@ -5,7 +5,7 @@ So you know what you're doing, you're not one of those Friday night chemometrici
 ## Lets load in some data
 ```julia
 using Turing, StatsPlots, Plots, Statistics
-using DataFrames, ChemometricsData
+using DataFrames, ChemometricsData, ChemometricsTools
 
 println( ChemometricsData.search("corn") )
 corn_data = ChemometricsData.load("Cargill_Corn")
