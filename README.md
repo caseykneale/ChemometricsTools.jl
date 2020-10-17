@@ -1,7 +1,7 @@
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://caseykneale.github.io/ChemometricsTools.jl/dev/) [![Build Status](https://travis-ci.org/caseykneale/ChemometricsTools.jl.svg?branch=master)](https://travis-ci.org/caseykneale/ChemometricsTools.jl)
 
 # ChemometricsTools.jl
-This package contains a collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. It is currently richer and more fundamental than any single free chemometrics package available in any other language. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is the symbiosis of applied linear algebra/statistics which is disciplined by the physics and meaning of chemical measurements. This is somewhat orthogonal to most specializations of machine learning where "add more layers" is the modus operandi. Sometimes chemometricians also weigh the pros and cons of black box modelling and break out pure machine learning methods - so some of those techniques are in this package.
+This package contains a collection of tools to perform fundamental and advanced Chemometric analysis' in Julia. It is currently richer than any other free chemometrics package available in any other language. If you are uninformed as to what Chemometrics is; it could nonelegantly be described as the marriage between data science and chemistry. Traditionally it is the symbiosis of applied linear algebra/statistics which is disciplined by the physics and meaning of chemical measurements. This is somewhat orthogonal to most specializations of machine learning where "add more layers" is the modus operandi. Sometimes chemometricians also weigh the pros and cons of black box modelling and break out pure machine learning methods - so some of those techniques are in this package.
 
 ## Tutorials/Demonstrations:
   - [Transforms](https://caseykneale.github.io/ChemometricsTools.jl/dev/Demos/Transforms/)
@@ -54,12 +54,16 @@ methods for Tucker decomposition (HOSVD, and HOOI) have been included. Some prep
 This package has tools for specialized fields of analysis'. For instance, fractional derivatives for the electrochemists (and the adventurous), a handful of smoothing methods for spectroscopists, curve resolution (unimodal and nonnegativity constraints available) for forensics, process fault detection methods, etc. There are certainly plans for other tools for analyzing chemical data that packages in other languages have seemingly left out. Stay tuned.
 
 ## Where's the Data?
-Right now I don't have rights to provide much data; but the 2002 International Diffuse Reflectance Conference Pharmaceutical NIR, iris, Tecator aka 'meat', and ball gear fault detection (NASA) dataset are [included](https://github.com/caseykneale/ChemometricsTools.jl/tree/master/data).
+Please check out [ChemometricsData.jl](https://github.com/caseykneale/ChemometricsData.jl) for access to more publicly available datasets. 
 
-I'd love for a collaborator to contribute some: spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. In the mean time you can load in your own datasets using the Julia ecosystem (XLSX.jl, CSV.jl, JSON.jl, MATLAB.jl, etc).
+Right now the 2002 International Diffuse Reflectance Conference Pharmaceutical NIR, iris, Tecator aka 'meat', and ball gear fault detection (NASA) dataset are [included](https://github.com/caseykneale/ChemometricsTools.jl/tree/master/data) in this package. But, this will be factored out eventually into ChemometricsData.jl. 
+
+I'd love for a collaborator to contribute some: spectra, chromatograms, etc. Please reach out to me if you wish to collaborate/contribute. In the mean time you can load in your own datasets using the full extent of Julia ecosystem (XLSX.jl, CSV.jl, JSON.jl, MATLAB.jl, LibPQ.jl, Feather.jl, Arrow.jl, etc).
 
 ## What about Time Series? Cluster modeling?
-Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has the essentials for online learning covered. Surely many are contemplating packages with time series as a focus. Similarly, if you want clustering methods, just install [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I may add a few supportive odds and ends in here (or contribute to the packages directly) but really, most of the Julia 1.0+ ecosystem is really reliable, well made, and community supported.
+Well, I'd love to hammer in some time series methods. That was originally part of the plan. Then I realized [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) already has the essentials for online learning covered, and a there are many efforts for actual time series((TimeSeries.jl)[https://github.com/JuliaStats/TimeSeries.jl]) modelling in the works. 
+
+Similarly, if clustering methods are important to you, check out [Clustering.jl](https://github.com/JuliaStats/Clustering.jl). I may add a few supportive odds and ends in here (or contribute to the packages directly) but really, most of the Julia 1.0+ ecosystem is really reliable, well made, and community supported.
 
 ## ToDo:
   - Clean up.
