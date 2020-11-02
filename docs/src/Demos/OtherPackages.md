@@ -1,5 +1,5 @@
 # Other Packages:
-So you know what you're doing. You want to compare some basic methods available in ChemometricsTools.jl to some new stuff. Stuff that is catered to your problem - maybe stuff no one has seen before. Great! The nice thing about Julia is, packages tend to work with one another without additional effort. So we can use ChemometricsTools, and other packages to do these kinds of explorations with minimal effort. To demonstrate this I made a little tutorial using (Turing.jl)[https://turing.ml/dev/] and (ChemometricsData.jl)[https://github.com/caseykneale/ChemometricsData.jl].
+So you know what you're doing. You want to compare some basic methods available in ChemometricsTools.jl to some new stuff. Stuff that is catered to your problem - maybe stuff no one has seen before. Great! The nice thing about Julia is, packages tend to work with one another without additional effort. So we can use ChemometricsTools, and other packages to do these kinds of explorations with minimal effort. To demonstrate this I made a little tutorial using [Turing.jl](https://turing.ml/dev/) and [ChemometricsData.jl](https://github.com/caseykneale/ChemometricsData.jl).
 
 This page provides a very basic, and incomplete analysis of some well known Bayesian regression methods on publicly accessible chemical data. The main goal is to show some of the Julia ecosystem working together but also to mess around with some data. This is maybe more of a survey, and me playing with Bayesian methods than anything else.
 
@@ -40,7 +40,7 @@ Y_train, Y_test = y_scaler(Y_train ), y_scaler(Y_test )
 
 Great now our data has been preprocessed. For fun let's try some Bayesian regression methods using the Turing.jl Pobabilistic Programming Language. On the menu for today is: Linear, Ridge, LASSO, Horseshoe, Spike-Slab, and Finnish Horseshoe regressions.
 
-```julia
+```Julia
 # Bayesian linear regression.
 @model function lin_reg(X, y)
     obs,vars = size(X)
@@ -130,7 +130,7 @@ end
 
 ```
 
-Because we've chosen a pretty generic convention for our model parameters, IE: β are the coefficients and α are the bias terms, we can create a generic prediction function. Note: we allow, the user to discard some samples via burnin, and we return prediction intervals based on quantiles of "significance".
+Because we've chosen a pretty generic convention for our model parameters, IE: β are the coefficients and α are the bias terms, we can create a generic prediction function. **Note:** we allow, the user to discard some samples via `burnin`, and we return prediction intervals based on quantiles of "significance".
 
 ```julia
 function prediction(chain, x; burnin = 1, significance = 0.05)
@@ -172,6 +172,7 @@ fhs_chain   = sample(   fhs_model,  NUTS(0.999), 2_500 )
 ```
 
 Whew, that was a doozy, but now that it's done we can start to look at our regression coefficients. Below is an example of how we might go about doing this for one of the regression methods, but I'll spare you the plot code,
+
 ```Julia
 p = get_params( lin_chain[1100:end,:,:] )
 lin_weight = mean( reduce(hcat, p.β ), dims = 1 )
@@ -183,17 +184,16 @@ After a lot of plot code we should see something like the following,
 
 ![Fancies](https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/BayesDemo/Horseshoe_FinnishHS_SpikeSlab_coefficients.png)
 
-What's interesting to note here is that, as described in the literature, Bayesian LASSO does not perform like classical LASSO (Trevor Park & George Casella (2008) The Bayesian Lasso, Journal of the American Statistical Association, 103:482, 681-686, DOI: 10.1198/016214508000000337). It didn't introduce true sparsity in the coefficients, but it did selectively give more weight to interesting regions than say bayesian OLS did. Fun. Mean-while, obvious feature selection/dimension reduction can be obtained by the Horseshoe, Finnish-Horseshoe, and Spike-slab regression approaches.
+What's interesting to note here is that, as described in the literature, Bayesian LASSO does not perform like classical LASSO <sup>1</sup>. It didn't introduce true sparsity in the coefficients, but it did selectively give more weight to interesting regions than say bayesian OLS did. Fun. Mean-while, obvious feature selection/dimension reduction can be obtained by the Horseshoe, Finnish-Horseshoe, and Spike-slab regression approaches.
 
 The Horseshoe regression method gave regression coefficients which had large weights at positions that aligned well with energies attributable to known vibrational states in water (see figure below). A small upweighting near 1500nm and much larger weights occurring around 1900-2200nm coincide somewhat well with the known absorption coefficients. Maybe not the most intuitive results, but somewhat informative nonetheless.
 
 ![TrainPlots](https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/BayesDemo/water_absorption.png)
-K.F. Palmer and D. Williams, "Optical Properties of water in the near infrared," Journal of the Optical Society of America, V.64, pp. 1107-1110, August, 1974.
+*(Reference: 2)*
 
 Perhaps the results would be more clear if we did not downsample the spectra? At the end of the day, sparsity isn't everything, in NIR, the desire to have compact representations of the data is philosophically nuanced.
 
 Sure, everyone wants a single channel in their calibration that is perfectly linear with the property of interest, has impeccable Signal-to-Noise-Ratio, and lacks interferent signal. The reality is, both analyte and interferent information in the NIR portion of the electromagnetic spectrum are extremely collinear. This makes the art of band selection, difficult. Selection of too few channels, and we may overfit chemical effects, not account for drift, or other phenomena. Too many channels, and we may have a multivariate advantage, but also, could receive sub-optimal efficacy due to scatter, noise, nonlinear contributions, decaying quantum efficiency, etc.
-
 
 Now, we might ask ourselves, how good are these models? Sure some have interesting regression coefficients, but let's peak at some predicted vs actual plots for the training and hold out sets.
 
@@ -301,7 +301,11 @@ In this case, Bayesian ridge regression afforded a predictive error that was sim
 
 Worth noting, the Bayesian approach also provided us with uncertainty estimates - for free. Okay, not for free, the computer definitely calculated them, but we didn't need to provide analytic expressions, propagate error over a compute graph, etc. This is a serious advantage of Bayesian modelling methods. The discussion of calculating prediction intervals for advanced regression methods can be extremely technical, and in some cases, world experts are still scratching their heads...
 
-So which model would I choose? Personally I'd choose none of these, I'd spend more time tuning the Turing models and giving each approach a fair chance. Seeing what I could learn from each approach, and then combining that knowledge into a final model. I'd also introduce more metrics, statistical tests, and examine more plots than what is shown here. If I had to chose one, say a deadline was coming up, I would likely choose the horseshoe regression. This method afforded model weights that although not statistically validated, matched a known result. That's better than nothing!
-
 ## Conclusions
 As you can see, the Julia ecosystem is very flexible. We are able to load data from ChemometricsData.jl, do preprocessing via ChemometricsTools.jl, build some compute heavy models in Turing.jl, perform a little post analysis with Statistics.jl, ChemometricsTools.jl, and organize data with DataFrames.jl. All without much trouble whatsoever.
+
+Which model would I choose? Personally I'd choose none of these, I'd spend more time tuning the Turing models and giving each approach a fair chance. Seeing what I could learn from each, and then combining that knowledge into a final model. I'd also introduce more metrics, statistical tests, and examine more plots than what is shown here. Unfortunately, life is rough, and I don't have time to do that right now. But - to escape some caveats - if I had to chose one, say a deadline was coming up, I would likely choose the horseshoe regression. This method afforded model weights that although not statistically validated, matched an empirical result "okay". That's better than nothing!
+
+## References
+1. Trevor Park & George Casella (2008) The Bayesian Lasso, Journal of the American Statistical Association, 103:482, 681-686, DOI: 10.1198/016214508000000337)
+2. K.F. Palmer and D. Williams, "Optical Properties of water in the near infrared," Journal of the Optical Society of America, V.64, pp. 1107-1110, August, 1974.
