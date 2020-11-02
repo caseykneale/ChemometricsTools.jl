@@ -189,6 +189,7 @@ What's interesting to note here is that, as described in the literature, Bayesia
 The Horseshoe regression method gave regression coefficients which had large weights at positions that aligned well with energies attributable to known vibrational states in water (see figure below). A small upweighting near 1500nm and much larger weights occurring around 1900-2200nm coincide somewhat well with the known absorption coefficients. Maybe not the most intuitive results, but somewhat informative nonetheless.
 
 ![TrainPlots](https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/BayesDemo/water_absorption.png)
+
 *(Reference: 2)*
 
 Perhaps the results would be more clear if we did not downsample the spectra? At the end of the day, sparsity isn't everything, in NIR, the desire to have compact representations of the data is philosophically nuanced.
@@ -224,13 +225,13 @@ begin
 end
 ```
 
-![TrainPlots](https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/BayesDemo/train efficacy.png)
+![TrainPlots]("https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/BayesDemo/train efficacy.png")
 
 The actual vs predicted plot's provided evidence which suggested that, Finnish horseshoe regression, and Spike-Slab regression models were poor fits. In defense of these techniques, I didn't cross-validate, tune models, or do a lot of the things I'd do if this weren't a short write-up. Shoot - there could even a bug? Similarly, we'd never judge a regression by a plot or our eyes alone...
 
 That said, the Bayesian implementations of the classical regression methods, and the horseshoe regression, appeared to perform better than the others. The posterior distributions had acceptable Rhats, and the predicted vs actual plots behaved nicely on the calibration data. Let's take a look at the hold out data,
 
-![TestPlots](https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/BayesDemo/test efficacy.png)
+![TestPlots]("https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/BayesDemo/test efficacy.png")
 
 The ability of the model to predict values matching the known properties was similar on both the calibration and validation datasets. The uncertainty of the predictions widened as we would anticipate. It appears we likely over-fit a few models. The root mean squared error tells a similar story.
 
