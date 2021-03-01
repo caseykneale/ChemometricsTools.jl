@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Other Packages: · ChemometricsTools</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>ChemometricsTools</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Demos</span><ul><li><a class="toctext" href="../Transforms/">Transforms</a></li><li><a class="toctext" href="../Pipelines/">Pipelines</a></li><li><a class="toctext" href="../ClassificationExample/">Classification</a></li><li><a class="toctext" href="../RegressionExample/">Regression</a></li><li><a class="toctext" href="../SIPLS/">SIPLS</a></li><li><a class="toctext" href="../CalibXfer/">Calibration Transfer</a></li><li><a class="toctext" href="../CurveResolution/">Curve Resolution</a></li></ul></li><li><span class="toctext">Data</span><ul><li><a class="toctext" href="../../man/datautils/">Data Utilities</a></li><li><a class="toctext" href="../../man/kerneldensity/">Kernel Density Generator</a></li></ul></li><li><span class="toctext">Manipulations</span><ul><li><a class="toctext" href="../../man/Preprocess/">Preprocessing</a></li><li><a class="toctext" href="../../man/Transformations/">Transformations/Pipelines</a></li><li><a class="toctext" href="../../man/Sampling/">Sampling</a></li></ul></li><li><span class="toctext">Visualizations</span><ul><li><a class="toctext" href="../../man/Plotting/">Plotting</a></li></ul></li><li><span class="toctext">Analysis</span><ul><li><a class="toctext" href="../../man/DOE/">DOE</a></li><li><a class="toctext" href="../../man/Univariate/">Univariate</a></li><li><a class="toctext" href="../../man/Dists/">Distances/Kernels</a></li><li><a class="toctext" href="../../man/Analysis/">Analysis</a></li><li><a class="toctext" href="../../man/Clustering/">Clustering</a></li><li><a class="toctext" href="../../man/Stats/">Stats.</a></li></ul></li><li><span class="toctext">Modeling</span><ul><li><a class="toctext" href="../../man/Training/">Training</a></li><li><a class="toctext" href="../../man/TimeSeries/">Time Series</a></li><li><a class="toctext" href="../../man/RegressionModels/">Regression Models</a></li><li><a class="toctext" href="../../man/regressMetrics/">Regression Metrics</a></li><li><a class="toctext" href="../../man/ClassificationModels/">Classification Models</a></li><li><a class="toctext" href="../../man/classMetrics/">Classification Metrics</a></li><li><a class="toctext" href="../../man/Trees/">Tree Methods</a></li><li><a class="toctext" href="../../man/Ensemble/">Ensemble Models</a></li></ul></li><li><span class="toctext">Speciality Tools</span><ul><li><a class="toctext" href="../../man/modelanaly/">Model Analysis</a></li><li><a class="toctext" href="../../man/MultiWay/">MultiWay</a></li><li><a class="toctext" href="../../man/Hyperspectral/">Hyperspectral</a></li><li><a class="toctext" href="../../man/AnomalyDetection/">Anomaly Detection</a></li><li><a class="toctext" href="../../man/CurveResolution/">Curve Resolution</a></li></ul></li><li><span class="toctext">Advanced</span><ul><li><a class="toctext" href="../../man/PSO/">PSO</a></li><li><a class="toctext" href="../../man/GeneticAlgorithms/">Genetic Algorithms</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Other Packages:</a></li></ul><a class="edit-page" href="https://github.com/caseykneale/ChemometricsTools.jl/blob/master/docs/src/Demos/OtherPackages.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Other Packages:</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Other-Packages:-1" href="#Other-Packages:-1">Other Packages:</a></h1><p>So you know what you&#39;re doing, you&#39;re not one of those Friday night chemometricians Brereton talked about, and you want to compare some methods available in ChemometricsTools.jl. Great! The nice thing about Julia is, packages tend to work with one another with zero effort. To demonstrate this I made a little tutorial using (Turing.jl)[https://turing.ml/dev/] and (ChemometricsData.jl)[https://github.com/caseykneale/ChemometricsData.jl] for a very basic incomplete analysis of some well known bayesian regression methods. Let&#39;s get started.</p><h2><a class="nav-anchor" id="Lets-load-in-some-data-1" href="#Lets-load-in-some-data-1">Lets load in some data</a></h2><pre><code class="language-julia">using Turing, StatsPlots, Plots, Statistics
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Other Packages: · ChemometricsTools</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>ChemometricsTools</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Demos</span><ul><li><a class="toctext" href="../Transforms/">Transforms</a></li><li><a class="toctext" href="../Pipelines/">Pipelines</a></li><li><a class="toctext" href="../ClassificationExample/">Classification</a></li><li><a class="toctext" href="../RegressionExample/">Regression</a></li><li><a class="toctext" href="../SIPLS/">SIPLS</a></li><li><a class="toctext" href="../CalibXfer/">Calibration Transfer</a></li><li><a class="toctext" href="../CurveResolution/">Curve Resolution</a></li></ul></li><li><span class="toctext">Data</span><ul><li><a class="toctext" href="../../man/datautils/">Data Utilities</a></li><li><a class="toctext" href="../../man/kerneldensity/">Kernel Density Generator</a></li></ul></li><li><span class="toctext">Manipulations</span><ul><li><a class="toctext" href="../../man/Preprocess/">Preprocessing</a></li><li><a class="toctext" href="../../man/Transformations/">Transformations/Pipelines</a></li><li><a class="toctext" href="../../man/Sampling/">Sampling</a></li></ul></li><li><span class="toctext">Visualizations</span><ul><li><a class="toctext" href="../../man/Plotting/">Plotting</a></li></ul></li><li><span class="toctext">Analysis</span><ul><li><a class="toctext" href="../../man/DOE/">DOE</a></li><li><a class="toctext" href="../../man/Univariate/">Univariate</a></li><li><a class="toctext" href="../../man/Dists/">Distances/Kernels</a></li><li><a class="toctext" href="../../man/Analysis/">Analysis</a></li><li><a class="toctext" href="../../man/Clustering/">Clustering</a></li><li><a class="toctext" href="../../man/Stats/">Stats.</a></li></ul></li><li><span class="toctext">Modeling</span><ul><li><a class="toctext" href="../../man/Training/">Training</a></li><li><a class="toctext" href="../../man/TimeSeries/">Time Series</a></li><li><a class="toctext" href="../../man/RegressionModels/">Regression Models</a></li><li><a class="toctext" href="../../man/regressMetrics/">Regression Metrics</a></li><li><a class="toctext" href="../../man/ClassificationModels/">Classification Models</a></li><li><a class="toctext" href="../../man/classMetrics/">Classification Metrics</a></li><li><a class="toctext" href="../../man/Trees/">Tree Methods</a></li><li><a class="toctext" href="../../man/Ensemble/">Ensemble Models</a></li></ul></li><li><span class="toctext">Speciality Tools</span><ul><li><a class="toctext" href="../../man/modelanaly/">Model Analysis</a></li><li><a class="toctext" href="../../man/MultiWay/">MultiWay</a></li><li><a class="toctext" href="../../man/Hyperspectral/">Hyperspectral</a></li><li><a class="toctext" href="../../man/AnomalyDetection/">Anomaly Detection</a></li><li><a class="toctext" href="../../man/CurveResolution/">Curve Resolution</a></li></ul></li><li><span class="toctext">Advanced</span><ul><li><a class="toctext" href="../../man/PSO/">PSO</a></li><li><a class="toctext" href="../../man/GeneticAlgorithms/">Genetic Algorithms</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Other Packages:</a></li></ul><a class="edit-page" href="https://github.com/caseykneale/ChemometricsTools.jl/blob/master/docs/src/Demos/OtherPackages.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Other Packages:</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Other-Packages:-1" href="#Other-Packages:-1">Other Packages:</a></h1><p>So you know what you&#39;re doing. You want to compare some basic methods available in ChemometricsTools.jl to some new stuff. Stuff that is catered to your problem - maybe stuff no one has seen before. Great! The nice thing about Julia is, packages tend to work with one another without additional effort. So we can use ChemometricsTools, and other packages to do these kinds of explorations with minimal effort. To demonstrate this I made a little tutorial using <a href="https://turing.ml/dev/">Turing.jl</a> and <a href="https://github.com/caseykneale/ChemometricsData.jl">ChemometricsData.jl</a>.</p><p>This page provides a very basic, and incomplete analysis of some well known Bayesian regression methods on publicly accessible chemical data. The main goal is to show some of the Julia ecosystem working together but also to mess around with some data. This is maybe more of a survey, and me playing with Bayesian methods than anything else.</p><h2><a class="nav-anchor" id="Lets-load-in-some-data-1" href="#Lets-load-in-some-data-1">Lets load in some data</a></h2><pre><code class="language-julia">using Turing, StatsPlots, Plots, Statistics
 using DataFrames, ChemometricsData, ChemometricsTools
 
 println( ChemometricsData.search(&quot;corn&quot;) )
@@ -9,13 +9,199 @@ X = Matrix(corn_data[&quot;m5_spectra.csv&quot;])
 xaxis = 1100:2:2498#nm
 
 plot( X&#39;, title = &quot;Cargill Corn M5 Spec&quot;, xlab = &quot;Wavelength (nm)&quot;, ylab = &quot;Absorbance&quot;, legend = false,
-        xticks = (1:50:length(xaxis), xaxis[1:50:end]) )</code></pre><p><img src="https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/BayesDemo/CornSpectra.png" alt="CornEDA"/></p><p>Grab our property values,</p><pre><code class="language-julia">Y = corn_data[&quot;property_values.csv&quot;][!,:Moisture]</code></pre><p>Now let&#39;s center and scale our X and Y values to keep our regression methods happy</p><pre><code class="language-julia">train, test = 1:35, 36:80
+        xticks = (1:50:length(xaxis), xaxis[1:50:end]) )</code></pre><p><img src="https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/BayesDemo/CornSpectra.png" alt="CornEDA"/></p><p>Great out data is loaded, lets grab our property values,</p><pre><code class="language-julia">Y = corn_data[&quot;property_values.csv&quot;][!,:Moisture]</code></pre><p>Now let&#39;s split the data into a calibration set and a validation set. While we&#39;re at it, lets center and scale our X and Y values using ChemometricsTools.jl&#39;s convenience functions. We&#39;ll also down-sample our wavelength axis by a factor of 10 so our sampling goes much more quickly.</p><pre><code class="language-julia">X_processed = X[:, 1:10:end]
+train, test = 1:35, 36:80
 X_train, X_test = X_processed[train,:], X_processed[test,:]
-μx,σx = mean(X_train, dims = 1), std(X_train, dims = 1)
-X_train = (X_train .- μx) ./ σx
-X_test = (X_test .- μx) ./ σx
+x_scaler = CenterScale( X_train )
+X_train, X_test = x_scaler(X_train), x_scaler(X_test)
 
 Y_train, Y_test = Y[train,:], Y[test,:]
-μy,σy = mean(Y_train),std(Y_train)
-Y_train = (Y_train .- μy) ./ σy
-Y_test = (Y_test .- μy) ./ σy</code></pre><p><img src="https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/CV.png" alt="20folds"/></p><p>That&#39;s great right? but, hey that was kind of slow. Knowing what we know about ALS based models, we can do the same operation in linear time with respect to latent factors by computing the most latent variables first and only recomputing the regression coefficients. An example of this is below,</p><pre><code class="language-julia"></code></pre><p>This approach is ~5 times faster on a single core( &lt; 2 seconds), pours through 7Gb less data, and makes 1/5th the allocations (on this dataset at least). If you wanted you could distribute the inner loop (using Distributed.jl) and see drastic speed ups!</p><footer><hr/></footer></article></body></html>
+y_scaler = CenterScale( Y_train )
+Y_train, Y_test = y_scaler(Y_train ), y_scaler(Y_test )</code></pre><p>Great now our data has been preprocessed. For fun let&#39;s try some Bayesian regression methods using the Turing.jl Pobabilistic Programming Language. On the menu for today is: Linear, Ridge, LASSO, Horseshoe, Spike-Slab, and Finnish Horseshoe regressions.</p><pre><code class="language-Julia"># Bayesian linear regression.
+@model function lin_reg(X, y)
+    obs,vars = size(X)
+    α       ~ Normal(0, sqrt(3))
+    β       ~ MvNormal(vars, sqrt(10))
+    σ       ~ truncated( Cauchy(0., 10.0), 0, Inf)
+    y       ~ MvNormal( ( X * β ) .+ α, sqrt(σ))
+end
+
+#Okay it&#39;s not ridge regression it&#39;s a cauchy prior, but that&#39;s more fun.
+@model function ridge_reg(X, y)
+    obs,vars = size(X)
+    α       ~ Normal(0, sqrt(3))
+    c       ~ truncated( Cauchy(0., 10.0), 0, Inf)
+    β       ~ MvNormal( vars, c )
+    σ       ~ truncated( Cauchy(0., 10.0), 0, Inf)
+    y       ~ MvNormal( (X * β) .+ α, sqrt(σ))
+end
+
+&quot;&quot;&quot;
+Not a true LASSO - but, a Laplace prior regression method. Why not?
+&quot;&quot;&quot;
+@model function LASSO_reg(X, y)
+    obs,vars = size(X)
+    α       ~ Normal(0, sqrt(3))
+    c       ~ truncated( Cauchy(0., 100.0), 1e-6, Inf)
+    β       ~ filldist( Laplace(0., c), vars)
+    σ       ~ truncated( Normal(0., sqrt(3)), 1e-6, Inf)
+    y       ~ MvNormal( (X * β) .+ α, sqrt(σ) )
+end
+
+&quot;&quot;&quot;
+Code is based on the description in the following paper:
+Handling Sparsity via the Horseshoe. Carlos M. Carvalho, Nicholas G. Polson, James G. Scott. 2009 Proceedings of the Twelfth International Conference on Artificial Intelligence and Statistics.
+http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
+&quot;&quot;&quot;
+@model function horseshoe_reg(X, y, τ0 = 1.0)
+    obs,vars = size(X)
+    σ       ~ truncated( Normal(0., 10.0), 0, Inf)
+    λ       ~ filldist( truncated( Cauchy(0, 1),0,Inf), vars )
+    τ       ~ truncated( Cauchy(0, τ0),0,Inf)
+    β       ~ MvNormal(zeros(vars), λ .* τ)
+    α       ~ Normal( 0, sqrt(3) )
+    y       ~ MvNormal(X * β .+ α, σ)
+end
+
+&quot;&quot;&quot;
+The code for the Finnish Horseshoe Regression is a port from PyMC3 to Turing.jl
+Code and explanations can be found at the following link
+https://betanalpha.github.io/assets/case_studies/bayes_sparse_regression.html (Michael Betancourt, 2018)
+&quot;&quot;&quot;
+@model function finnish_horseshoe_reg(  X, y;
+                                        m0 = 3,        # Expected number of large slopes
+                                        slab_scale = 2, # Scale for large slopes
+                                        slab_df = 30)    # Effective degrees of freedom for large slopes
+    ltz(x) = (x &lt; 0) ? 0 : x
+    obs,vars = size(X)
+    M, N = obs, vars
+    slab_scale2 = slab_scale^2
+    half_slab_dof = 0.5 * slab_df
+    σ       ~ truncated( Normal( 0, sqrt(3) ), 1e-6, Inf)
+    c2      ~ truncated( InverseGamma( half_slab_dof, slab_scale2 * half_slab_dof),0,Inf)
+    lambda  ~ filldist( truncated( Cauchy(0, 1), 0, Inf), vars )
+    τ       ~ Cauchy( 0, ( ( m0 / (M - m0) ) * ( σ / sqrt(N) ) ) + 1e-6 )
+    lambda_tilde = (sqrt( c2 ) .* lambda.^2) ./ sqrt.(c2 .+ (τ .* lambda) .^ 2)
+    lambda_tilde = ltz.(lambda_tilde)
+    β       ~ MvNormal( τ * lambda_tilde )
+    α       ~ Normal( 0, sqrt(3) )
+    y       ~ MvNormal( (X * β) .+ α, repeat([σ], obs) )
+end
+
+
+&quot;&quot;&quot;
+Believe the code for spike-slab regression was written based on:
+Spike and slab variable selection: Frequentist and Bayesian strategies. Hemant Ishwaran and J. Sunil Rao. Annals of Statistics. Volume 33, Number 2 (2005), 730-773.
+&quot;&quot;&quot;
+@model function spike_slab_reg(X, y, slabwidth, selection_rate = 0.25)
+    csq = slabwidth^2
+    obs,vars = size(X)
+    λ       ~ filldist( Bernoulli( selection_rate ), vars )
+    β       ~ MvNormal( λ .* csq )
+    σ       ~ truncated( Cauchy(0., 10.0), 0, Inf)
+    α       ~ Normal( 0, sqrt(3) )
+    μ       = X * β .+ α
+    y       ~ MvNormal(μ, σ)
+end
+</code></pre><p>Because we&#39;ve chosen a pretty generic convention for our model parameters, IE: β are the coefficients and α are the bias terms, we can create a generic prediction function. <strong>Note:</strong> we allow, the user to discard some samples via <code>burnin</code>, and we return prediction intervals based on quantiles of &quot;significance&quot;.</p><pre><code class="language-julia">function prediction(chain, x; burnin = 1, significance = 0.05)
+    p = get_params(chain[burnin:end,:,:])
+    weight = reduce(hcat, p.β )
+    intercept = p.α
+    targets = intercept&#39; .+ (x * weight&#39;)
+    levels = [significance/2., 0.5, 1. - significance/2]
+    qs = map( q -&gt; quantile.(eachrow(targets), q), levels)
+    extremes = (-3,3)
+    #extrema( vcat( qs[2] .- qs[1], qs[2].+ qs[3]) )#Plot limits
+    return (lower = qs[1], middle = qs[2], upper = qs[3], extremes = extremes)
+end
+
+ErrBounds(x) = ( res.middle - res.lower, res.upper - res.middle)</code></pre><p>And now we&#39;ll begin sampling. Headsup - this will take a while.</p><pre><code class="language-julia">lin_model   = lin_reg(               X_train, Y_train[:] )
+rr_model    = ridge_reg(             X_train, Y_train[:] )
+lr_model    = LASSO_reg(             X_train, Y_train[:] )
+
+lin_chain = sample(lin_model, NUTS(0.999), 2_500)
+rr_chain = sample(rr_model,  NUTS(0.999), 2_500)
+lr_chain = sample(lr_model,  NUTS(0.999), 3_000)
+
+hr_model    = horseshoe_reg(         X_train, Y_train[:] )
+ss_model    = spike_slab_reg(        X_train, Y_train[:],  1.0, 0.3 )
+fhs_model   = finnish_horseshoe_reg( X_train, Y_train[:];
+                                    m0 = 4,        
+                                    slab_scale = 3,
+                                    slab_df = 29 )
+
+hr_chain    = sample(   hr_model,   NUTS(0.999), 2_500 )
+ss_chain    = sample(   ss_model,   PG(300), 4_250 )
+fhs_chain   = sample(   fhs_model,  NUTS(0.999), 2_500 )</code></pre><p>Whew, that was a doozy, but now that it&#39;s done we can start to look at our regression coefficients. Below is an example of how we might go about doing this for one of the regression methods, but I&#39;ll spare you the plot code,</p><pre><code class="language-Julia">p = get_params( lin_chain[1100:end,:,:] )
+lin_weight = mean( reduce(hcat, p.β ), dims = 1 )
+plot( (lin_weight)&#39;, legend = false, title = &quot;Linear Regression&quot;, xticks = newxticks );</code></pre><p>After a lot of plot code we should see something like the following,</p><p><img src="https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/BayesDemo/Lin_ridge_lasso_coefficients.png" alt="Classics"/></p><p><img src="https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/BayesDemo/Horseshoe_FinnishHS_SpikeSlab_coefficients.png" alt="Fancies"/></p><p>What&#39;s interesting to note here is that, as described in the literature, Bayesian LASSO does not perform like classical LASSO &lt;sup&gt;1&lt;/sup&gt;. It didn&#39;t introduce true sparsity in the coefficients, but it did selectively give more weight to interesting regions than say bayesian OLS did. Fun. Mean-while, obvious feature selection/dimension reduction can be obtained by the Horseshoe, Finnish-Horseshoe, and Spike-slab regression approaches.</p><p>The Horseshoe regression method gave regression coefficients which had large weights at positions that aligned well with energies attributable to known vibrational states in water (see figure below). A small upweighting near 1500nm and much larger weights occurring around 1900-2200nm coincide somewhat well with the known absorption coefficients. Maybe not the most intuitive results, but somewhat informative nonetheless.</p><p><img src="https://raw.githubusercontent.com/caseykneale/ChemometricsTools/master/images/BayesDemo/water_absorption.png" alt="TrainPlots"/></p><p><em>(Reference: 2)</em></p><p>Perhaps the results would be more clear if we did not downsample the spectra? At the end of the day, sparsity isn&#39;t everything, in NIR, the desire to have compact representations of the data is philosophically nuanced.</p><p>Sure, everyone wants a single channel in their calibration that is perfectly linear with the property of interest, has impeccable Signal-to-Noise-Ratio, and lacks interferent signal. The reality is, both analyte and interferent information in the NIR portion of the electromagnetic spectrum are extremely collinear. This makes the art of band selection, difficult. Selection of too few channels, and we may overfit chemical effects, not account for drift, or other phenomena. Too many channels, and we may have a multivariate advantage, but also, could receive sub-optimal efficacy due to scatter, noise, nonlinear contributions, decaying quantum efficiency, etc.</p><p>Now, we might ask ourselves, how good are these models? Sure some have interesting regression coefficients, but let&#39;s peak at some predicted vs actual plots for the training and hold out sets.</p><pre><code class="language-julia">begin
+    l = @layout [a b c; d e f]
+    res = prediction( lin_chain, X_train; burnin = 1300 )
+    a = scatter( res.middle, Y_train, xerror = ErrBounds(res), title = &quot;Linear Regression&quot;, legend = false,
+            ylim = extrema(Y_train), xlim = res.extremes, xlabel = &quot;predicted&quot;, ylabel = &quot;actual&quot; )
+    res = prediction( rr_chain, X_train; burnin = 1300 )
+    b = scatter( res.middle, Y_train, xerror = ErrBounds(res), title = &quot;Ridge Regression&quot;,legend = false,
+            ylim = extrema(Y_train), xlim = res.extremes, xlabel = &quot;predicted&quot;, ylabel = &quot;actual&quot; )
+    res = prediction( lr_chain, X_train; burnin = 1600 )
+    c = scatter( res.middle, Y_train, xerror = ErrBounds(res), title = &quot;LASSO Regression&quot;,legend = false,
+            ylim = extrema(Y_train), xlim = res.extremes, xlabel = &quot;predicted&quot;, ylabel = &quot;actual&quot; )
+
+    res = prediction( hr_chain, X_train; burnin = 1100 )
+    d = scatter( res.middle, Y_train, xerror = ErrBounds(res), title = &quot;Horseshoe Regression&quot;,legend = false,
+            ylim = extrema(Y_train), xlim = res.extremes, xlabel = &quot;predicted&quot;, ylabel = &quot;actual&quot; )
+    res = prediction( ss_chain, X_train; burnin = 4000 )
+    e = scatter( res.middle, Y_train, xerror = ErrBounds(res), title = &quot;Spike-Slab Regression&quot;,legend = false,
+            ylim = extrema(Y_train), xlim = res.extremes, xlabel = &quot;predicted&quot;, ylabel = &quot;actual&quot; )
+    res = prediction( fhs_chain, X_train; burnin = 800 )
+    f = scatter( res.middle, Y_train, xerror = ErrBounds(res), title = &quot;Finnish Horseshoe Regression&quot;, legend = false,
+            ylim = extrema(Y_train), xlim = res.extremes, xlabel = &quot;predicted&quot;, ylabel = &quot;actual&quot; )
+    plot(a,b,c,d,e,f, layout = l, size=(1100,800))
+    png(&quot;Images/train efficacy.png&quot;)
+end</code></pre><p><img src="https://raw.githubusercontent.com/caseykneale/ChemometricsTools.jl/master/images/BayesDemo/train%20efficacy.png" alt="TrainPlots"/></p><p>The actual vs predicted plot&#39;s provided evidence which suggested that, Finnish horseshoe regression, and Spike-Slab regression models were poor fits. In defense of these techniques, I didn&#39;t cross-validate, tune models, or do a lot of the things I&#39;d do if this weren&#39;t a short write-up. Shoot - there could even a bug? Similarly, we&#39;d never judge a regression by a plot or our eyes alone...</p><p>That said, the Bayesian implementations of the classical regression methods, and the horseshoe regression, appeared to perform better than the others. The posterior distributions had acceptable Rhats, and the predicted vs actual plots behaved nicely on the calibration data. Let&#39;s take a look at the hold out data,</p><p><img src="https://raw.githubusercontent.com/caseykneale/ChemometricsTools.jl/master/images/BayesDemo/test%20efficacy.png" alt="TestPlots"/></p><p>The ability of the model to predict values matching the known properties was similar on both the calibration and validation datasets. The uncertainty of the predictions widened as we would anticipate. It appears we likely over-fit a few models. The root mean squared error tells a similar story.</p><pre><code class="language-Julia">chains = (      (&quot;Linear&quot;, lin_chain, 1300),
+                (&quot;Lasso&quot;, lr_chain, 1600),
+                (&quot;Horseshoe&quot;, hr_chain, 1100),
+                (&quot;Spike-Slab&quot;, ss_chain, 4100),
+                (&quot;Finnish Horseshoe&quot;, fhs_chain, 900) )
+
+RMSEC, RMSEP = Dict(), Dict()
+
+for (name, chain, burnin) in chains
+        cal = y_scaler( prediction( chain, X_train; burnin = burnin ).middle, inverse = true  )
+        rescale =  y_scaler( Y_train, inverse = true )
+        RMSEC[name] = RMSE( cal, rescale )
+
+        val = y_scaler( prediction( chain, X_test; burnin = burnin ).middle, inverse = true)
+        rescale =  y_scaler( Y_test, inverse = true )
+        RMSEP[name] = RMSE( val, rescale )
+end
+field_df = DataFrame(&quot;Type&quot; =&gt; [:RMSEC, :RMSEP])
+out_df = vcat( DataFrame(RMSEC), DataFrame(RMSEP) )
+
+println(hcat(field_df,out_df))</code></pre><pre><code class="language-none">2×7 DataFrame
+│ Type   │ Finnish Horseshoe │ Horseshoe  │ Lasso      │ Linear     │ Ridge      │ Spike-Slab │
+│ Symbol │ Float64           │ Float64    │ Float64    │ Float64    │ Float64    │ Float64    │
+├────────┼───────────────────┼────────────┼────────────┼────────────┼────────────┼────────────┤
+│ RMSEC  │ 0.0692553         │ 0.00793535 │ 0.00299732 │ 0.00465332 │ 0.00558598 │ 0.172215   │
+│ RMSEP  │ 0.156203          │ 0.0324     │ 0.0208388  │ 0.0609198  │ 0.0432594  │ 0.303853   │</code></pre><p>The nonsparse and sparse methods with the lowest validation error were the LASSO and Horseshoe regressions respectively. For a frame of reference, let&#39;s consider how PLS-1 performs using the exact same pretreatments.</p><pre><code class="language-julia">Err = repeat([0.0], 16);
+Models = []
+for Lv in 16:-1:1
+    for ( i, ( Fold, HoldOut ) ) in enumerate(KFoldsValidation(10, X_train, Y_train))
+        if Lv == 16
+            push!( Models, PartialLeastSquares(Fold[1], Fold[2]; Factors = Lv) )
+        end
+        Err[Lv] += SSE( Models[i]( HoldOut[1]; Factors = Lv), HoldOut[2] )
+    end
+end
+#scatter(Err, xlabel = &quot;Latent Variables&quot;, ylabel = &quot;Cumulative SSE&quot;, title = &quot;10-Folds&quot;, labels = &quot;SSE&quot;)
+BestLV = 7
+PLSR = PartialLeastSquares(X_train, Y_train; Factors = BestLV)
+pls_rmsec = RMSE( y_scaler( PLSR(X_train) , inverse = true), y_scaler(Y_train, inverse = true) )
+pls_rmsep = RMSE( y_scaler( PLSR(X_test) , inverse = true), y_scaler(Y_test, inverse = true)  )
+
+field_df = DataFrame(&quot;PLS-1&quot; =&gt; [pls_rmsec, pls_rmsep])
+println(hcat(out_df,field_df))</code></pre><pre><code class="language-none">2×8 DataFrame
+│ Row │ Type   │ Finnish Horseshoe │ Horseshoe  │ Lasso      │ Linear     │ Ridge      │ Spike-Slab │ PLS-1     │
+│     │ Symbol │ Float64           │ Float64    │ Float64    │ Float64    │ Float64    │ Float64    │ Float64   │
+├─────┼────────┼───────────────────┼────────────┼────────────┼────────────┼────────────┼────────────┼───────────┤
+│ 1   │ RMSEC  │ 0.0692553         │ 0.00793535 │ 0.00299732 │ 0.00465332 │ 0.00558598 │ 0.172215   │ 0.0288213 │
+│ 2   │ RMSEP  │ 0.156203          │ 0.0324     │ 0.0208388  │ 0.0609198  │ 0.0432594  │ 0.303853   │ 0.0430593 │</code></pre><p>In this case, Bayesian ridge regression afforded a predictive error that was similar in magnitude to PLS-1. This isn&#39;t an unusual result, but, it seems convenient. In many instances we see Ridge regression performing about as well as PLS-1. The fun part here is, we didn&#39;t have to search for a regularization hyperparameter, rely on say the spectral norm of the design matrix, or empirically find some number of latent factors. When we changed the problem statement to be based on distributions and not scalar parameters, the Monte Carlo optimization optimized this distribution for us.</p><p>Worth noting, the Bayesian approach also provided us with uncertainty estimates - for free. Okay, not for free, the computer definitely calculated them, but we didn&#39;t need to provide analytic expressions, propagate error over a compute graph, etc. This is a serious advantage of Bayesian modelling methods. The discussion of calculating prediction intervals for advanced regression methods can be extremely technical, and in some cases, world experts are still scratching their heads...</p><h2><a class="nav-anchor" id="Conclusions-1" href="#Conclusions-1">Conclusions</a></h2><p>As you can see, the Julia ecosystem is very flexible. We are able to load data from ChemometricsData.jl, do preprocessing via ChemometricsTools.jl, build some compute heavy models in Turing.jl, perform a little post analysis with Statistics.jl, ChemometricsTools.jl, and organize data with DataFrames.jl. All without much trouble whatsoever.</p><p>Which model would I choose? Personally I&#39;d choose none of these, I&#39;d spend more time tuning the Turing models and giving each approach a fair chance. Seeing what I could learn from each, and then combining that knowledge into a final model. I&#39;d also introduce more metrics, statistical tests, and examine more plots than what is shown here. Unfortunately, life is rough, and I don&#39;t have time to do that right now. But - to escape some caveats - if I had to chose one, say a deadline was coming up, I would likely choose the horseshoe regression. This method afforded model weights that although not statistically validated, matched an empirical result &quot;okay&quot;. That&#39;s better than nothing!</p><h2><a class="nav-anchor" id="References-1" href="#References-1">References</a></h2><ol><li>Trevor Park &amp; George Casella (2008) The Bayesian Lasso, Journal of the American Statistical Association, 103:482, 681-686, DOI: 10.1198/016214508000000337)</li><li>K.F. Palmer and D. Williams, &quot;Optical Properties of water in the near infrared,&quot; Journal of the Optical Society of America, V.64, pp. 1107-1110, August, 1974.</li></ol><footer><hr/></footer></article></body></html>
