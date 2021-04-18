@@ -12,28 +12,26 @@ end
 
 """
     UnivariateCalibration( Y, X )
-
     Performs a univariate least squares regression with a bias/offset term(`y = mx + b`).
 Returns a Univariate Calibration object containing uncertainty in parameters, and other statistics.
-
 """
 function UnivariateCalibration( Y, X )
     len = length( X )
     @assert(len == length(Y))
-    mu_x, mu_y = sum( X ) / len             , sum( Y ) / len
-    SSxx, SSyy = sum( ( X .- mu_x ) .^ 2 )  , sum( ( Y .- mu_y ) .^ 2 )
-    SSxy = sum( ( X .- mu_x ) .* ( Y .- mu_y ) )
+    μ_x, μ_y    = sum( X ) / len                , sum( Y ) / len
+    SSxx, SSyy  = sum( (X .^ 2) .- (μ_x ^ 2) )  , sum( (Y .^ 2) .- (μ_y ^ 2) )
+    SSxy = sum( (X .* Y) .- (μ_x * μ_y) )
 
     m = SSxy / SSxx
-    b = mu_y - ( m * mu_x )
+    b = μ_y - ( m * μ_x )
 
-    Y_hat = ( m * X ) .+ b
+    Y_hat = ( m .* X ) .+ b
     SSe = sum( (Y .- Y_hat) .^ 2 )
     SSr = SSyy - SSe
 
-    Syx = SSe / ( len - 2 )
-    Sm = Syx / SSxx
-    Sb = Syx * ( ( 1 / len ) + ( ( mu_x ^ 2 ) / SSxx ) )
+    Syx = sqrt(SSe / ( len - 2 ))
+    Sm = Syx / sqrt( sum( (X .- μ_x) .^ 2 ))
+    Sb = Syx * sqrt( sum( X .^ 2 ) / ( len * SSxx ) )
 
     Rsq = SSr / SSyy
     Fstat = ( SSxx - SSe ) / Syx
@@ -109,5 +107,31 @@ Returns a tuple of (-, +) of the estimated slope's confidence interval from a `U
 """
 function Confidence_Slope( UC::Univariate; Significance = 0.05 )
     extent = UC.Slope_Uncertainty * quantile( TDist( UC.DOF ), Significance / 2 )
+    return ( UC.Slope - extent, UC.Slope + extent )
+end
+
+"""
+    Confidence_Offset( UC::Univariate; Significance = 0.05 )
+Returns a tuple of (-, +) of the estimated offset/bias's confidence interval from a `UC` Univariate type object.
+"""
+function Confidence_Offset( UC::Univariate; Significance = 0.05 )
+    if UC.DOF < 31
+        extent = UC.Offset_Uncertainty * -quantile( TDist( UC.DOF ), Significance / 2 )
+    else
+        extent = UC.Offset_Uncertainty * -quantile( Normal(), Significance / 2 )
+    end
+    return ( UC.Offset - extent, UC.Offset + extent )
+end
+
+"""
+    Confidence_Slope( UC::Univariate; Significance = 0.05 )
+Returns a tuple of (-, +) of the estimated slope's confidence interval from a `UC` Univariate type object.
+"""
+function Confidence_Slope( UC::Univariate; Significance = 0.05 )
+    if UC.DOF < 31
+        extent = UC.Slope_Uncertainty * -quantile( TDist( UC.DOF ), Significance / 2 )
+    else
+        extent = UC.Slope_Uncertainty * -quantile( Normal(), Significance / 2 )
+    end
     return ( UC.Slope - extent, UC.Slope + extent )
 end
