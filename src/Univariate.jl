@@ -90,28 +90,6 @@ end
 
 """
     Confidence_Offset( UC::Univariate; Significance = 0.05 )
-
-Returns a tuple of (-, +) of the estimated offset/bias's confidence interval from a `UC` Univariate type object.
-
-"""
-function Confidence_Offset( UC::Univariate; Significance = 0.05 )
-    extent = UC.Offset_Uncertainty * quantile( TDist( UC.DOF ), Significance / 2 )
-    return ( UC.Offset - extent, UC.Offset + extent )
-end
-
-"""
-    Confidence_Slope( UC::Univariate; Significance = 0.05 )
-
-Returns a tuple of (-, +) of the estimated slope's confidence interval from a `UC` Univariate type object.
-
-"""
-function Confidence_Slope( UC::Univariate; Significance = 0.05 )
-    extent = UC.Slope_Uncertainty * quantile( TDist( UC.DOF ), Significance / 2 )
-    return ( UC.Slope - extent, UC.Slope + extent )
-end
-
-"""
-    Confidence_Offset( UC::Univariate; Significance = 0.05 )
 Returns a tuple of (-, +) of the estimated offset/bias's confidence interval from a `UC` Univariate type object.
 """
 function Confidence_Offset( UC::Univariate; Significance = 0.05 )
